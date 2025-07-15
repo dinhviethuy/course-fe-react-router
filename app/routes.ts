@@ -5,7 +5,14 @@ export default [
     [
       index('routes/client/home/index.tsx'),
       route('bought-courses', 'routes/client/bought-courses/index.tsx'),
-      route('courses/:courseSlug', 'routes/client/courses/course.tsx')
+      route('courses/:courseSlug', 'routes/client/courses/course.tsx'),
+    ]
+  ),
+  layout('layout/client/layout-auth.tsx',
+    [
+      route('login', 'routes/client/login/index.tsx'),
+      route('register', 'routes/client/register/index.tsx'),
+      route('forgot-password', 'routes/client/forgot-password/index.tsx')
     ]
   )
 ] satisfies RouteConfig

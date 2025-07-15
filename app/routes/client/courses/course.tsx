@@ -30,13 +30,13 @@ export default function Course() {
                 <div className="flex flex-col gap-2">
                   <span className="text-xl font-semibold line-through">1.690.000&nbsp;₫</span>
                   <div className="flex gap-8 items-center">
-                    <span className="text-2xl font-semibold text-white">790.000&nbsp;₫</span>
+                    <span className="text-2xl font-semibold dark:text-white text-black">790.000&nbsp;₫</span>
                     <Badge variant="default" className="text-xs h-10">
                       <span className="text-base">Tiết kiệm 50%</span>
                     </Badge>
                   </div>
                 </div>
-                <ul className="flex flex-col gap-2 text-base text-white my-4">
+                <ul className="flex flex-col gap-2 text-base dark:text-white text-black my-4">
                   <li className="flex gap-2 items-center">
                     <CheckIcon className="w-4 h-4" />
                     <span>Mua 1 lần, học trọn đời</span>

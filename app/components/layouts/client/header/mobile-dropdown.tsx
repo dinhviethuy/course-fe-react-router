@@ -20,6 +20,12 @@ export default function MobileDropdown() {
           <Link to="/">Trang chủ</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
+          <Link to="/login">Đăng nhập</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/register">Đăng ký</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
           <Link to="/profile">Trang quản trị</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>

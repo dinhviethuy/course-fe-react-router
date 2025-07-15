@@ -10,7 +10,7 @@ export default function AvatarDropdown() {
           <AvatarImage src="https://github.com/shadcn.png" className="w-10 h-10 object-cover" />
           <AvatarFallback>CN</AvatarFallback>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-52">
+        <DropdownMenuContent className="w-[224px]" align="end">
           <DropdownMenuLabel>
             <div className="flex flex-col gap-1">
               <span>Dương Nguyễn</span>
@@ -19,16 +19,28 @@ export default function AvatarDropdown() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Link to="/profile">Trang quản trị</Link>
+            <Link to="/">Trang chủ</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/billing">Tài khoản</Link>
+            <Link to="/login">Đăng nhập</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/team">Giỏ hàng</Link>
+            <Link to="/register">Đăng ký</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/subscription">Đơn hàng</Link>
+            <Link to="/admin/dashboard">Trang quản trị</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/profile">Tài khoản</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/bought-courses">Khóa học đã mua</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/cart">Giỏ hàng</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/billing">Đơn hàng</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
