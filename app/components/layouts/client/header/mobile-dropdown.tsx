@@ -17,32 +17,32 @@ export default function MobileDropdown() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Link to="/">Trang chủ</Link>
+          <Link to="/" className="w-full">Trang chủ</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/login">Đăng nhập</Link>
+          <Link to="/login" className="w-full">Đăng nhập</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/register">Đăng ký</Link>
+          <Link to="/register" className="w-full">Đăng ký</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/profile">Trang quản trị</Link>
+          <Link to="/manage/profile" className="w-full">Trang quản trị</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/billing">Tài khoản</Link>
+          <Link to="/manage/billing" className="w-full">Tài khoản</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/bought-courses">Khoá học đã mua</Link>
+          <Link to="/manage/bought-courses" className="w-full">Khoá học đã mua</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/team">Giỏ hàng</Link>
+          <Link to="/manage/cart" className="w-full">Giỏ hàng</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/subscription">Đơn hàng</Link>
+          <Link to="/manage/orders" className="w-full">Đơn hàng</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Link to="/logout">Đăng xuất</Link>
+          <Link to="/logout" className="w-full">Đăng xuất</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

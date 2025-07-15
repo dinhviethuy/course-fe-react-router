@@ -18,33 +18,33 @@ export default function AvatarDropdown() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link to="/">Trang chủ</Link>
+          <DropdownMenuItem >
+            <Link to="/" className="w-full">Trang chủ</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/login">Đăng nhập</Link>
+            <Link to="/login" className="w-full">Đăng nhập</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/register">Đăng ký</Link>
+            <Link to="/register" className="w-full">Đăng ký</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/admin/dashboard">Trang quản trị</Link>
+            <Link to="/admin/dashboard" className="w-full">Trang quản trị</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/profile">Tài khoản</Link>
+            <Link to="/manage/profile" className="w-full">Tài khoản</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/bought-courses">Khóa học đã mua</Link>
+            <Link to="/manage/bought-courses" className="w-full">Khóa học đã mua</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/cart">Giỏ hàng</Link>
+            <Link to="/manage/cart" className="w-full">Giỏ hàng</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/billing">Đơn hàng</Link>
+            <Link to="/manage/orders" className="w-full">Đơn hàng</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Link to="/logout">Đăng xuất</Link>
+            <Link to="/logout" className="w-full">Đăng xuất</Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

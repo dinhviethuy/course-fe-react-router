@@ -12,7 +12,7 @@ export function meta({ }: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <Wrapper className="py-8">
+    <Wrapper>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-center justify-center gap-2">
           <h1 className="text-[20px] font-bold">Mua càng nhiều, giá sẽ càng rẻ</h1>

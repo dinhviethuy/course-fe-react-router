@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 export default function Course() {
   return (
     <Wrapper>
-      <div className="flex flex-col xl:gap-12 gap-8 py-8">
+      <div className="flex flex-col xl:gap-12 gap-8 xl:py-0 py-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tighter">[Pre-order] Nest.js Testing</h1>
           <div className="flex gap-8">
@@ -67,11 +67,14 @@ export default function Course() {
                   </li>
                 </ul>
                 <div className="flex flex-col gap-4">
-                  <Button className="w-full h-12 cursor-pointer">
+                  <Button className="w-full h-10 cursor-pointer">
                     <span className="text-base font-semibold">Mua ngay</span>
                   </Button>
-                  <Button className="w-full h-12 cursor-pointer" variant="outline">
-                    <span className="text-base font-semibold">Thêm vào giỏ hàng</span>
+                  <Button className="w-full h-10 cursor-pointer">
+                    <span className="text-base font-semibold">Tham gia học</span>
+                  </Button>
+                  <Button className="w-full h-10 cursor-pointer" variant="outline">
+                    <span className="text-base font-semibold dark:text-white text-black">Thêm vào giỏ hàng</span>
                   </Button>
                 </div>
               </CardDescription>
