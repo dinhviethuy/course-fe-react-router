@@ -1,4 +1,6 @@
 import { BookOpenCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { useMediaQuery } from 'react-responsive';
 import ArtPlayer from "~/components/art-player/art-player";
 import Comment from "~/components/comment/comment";
 import Wrapper from "~/components/layouts/client/wrapper/wrapper";
@@ -24,6 +26,10 @@ function MenuLesson() {
 const url = 'http://localhost:3000/media/static/videos/293e2050-6d4f-4f82-9579-53c40ac4187d.mp4'
 
 export default function Learn() {
+  const [isOpenMenu, setIsOpenMenu] = useState(false)
+  const isMinLg = useMediaQuery({
+    query: '(min-width: 1024px)'
+  })
   return (
     <Wrapper>
       <div className="py-6">
@@ -34,7 +40,7 @@ export default function Learn() {
           <div className="grid grid-cols-12">
             <div className="lg:col-span-9 col-span-12 flex flex-col gap-4 relative lg:mt-0 mt-6">
               <div className="lg:hidden absolute -top-12 right-4">
-                <Sheet>
+                <Sheet open={isOpenMenu && !isMinLg} onOpenChange={setIsOpenMenu}>
                   <SheetTrigger>
                     <BookOpenCheck className="w-6 h-6 cursor-pointer" />
                   </SheetTrigger>

@@ -26,3 +26,7 @@ export function extractYoutubeId(url: string): string | null {
     return null;
   }
 }
+
+export function formatCurrency(value: number) {
+  return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+}

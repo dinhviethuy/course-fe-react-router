@@ -10,7 +10,7 @@ export default function AvatarDropdown() {
           <AvatarImage src="https://github.com/shadcn.png" className="w-10 h-10 object-cover" />
           <AvatarFallback>CN</AvatarFallback>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[224px]" align="end">
+        <DropdownMenuContent className="w-[224px] sm:block hidden" align="end">
           <DropdownMenuLabel>
             <div className="flex flex-col gap-1">
               <span>Dương Nguyễn</span>
@@ -34,7 +34,7 @@ export default function AvatarDropdown() {
             <Link to="/manage/profile" className="w-full">Tài khoản</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link to="/manage/bought-courses" className="w-full">Khóa học đã mua</Link>
+            <Link to="/bought-courses" className="w-full">Khóa học đã mua</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Link to="/manage/cart" className="w-full">Giỏ hàng</Link>

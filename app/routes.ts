@@ -10,7 +10,8 @@ export default [
       ...prefix('manage', [
         layout('layout/client/layout-manage.tsx', [
           route('profile', 'routes/client/manage/profile/index.tsx'),
-          route('change-password', 'routes/client/manage/change-password/index.tsx')
+          route('change-password', 'routes/client/manage/change-password/index.tsx'),
+          route('cart', 'routes/client/manage/cart/index.tsx')
         ])
       ])
     ]

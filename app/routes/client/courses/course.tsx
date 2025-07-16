@@ -8,6 +8,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardDescription } from "~/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { formatCurrency } from "~/lib/utils";
 
 export default function Course() {
   return (
@@ -28,9 +29,9 @@ export default function Course() {
             <Card className="w-full p-6">
               <CardDescription className="flex flex-col gap-3">
                 <div className="flex flex-col gap-2">
-                  <span className="text-xl font-semibold line-through">1.690.000&nbsp;₫</span>
+                  <span className="text-xl font-semibold line-through">{formatCurrency(1690000)}</span>
                   <div className="flex gap-8 items-center">
-                    <span className="text-2xl font-semibold dark:text-white text-black">790.000&nbsp;₫</span>
+                    <span className="text-2xl font-semibold dark:text-white text-black">{formatCurrency(790000)}</span>
                     <Badge variant="default" className="text-xs h-10">
                       <span className="text-base">Tiết kiệm 50%</span>
                     </Badge>

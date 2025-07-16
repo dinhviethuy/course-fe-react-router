@@ -20,8 +20,6 @@ export default function ArtPlayer({ option, getInstance, className }: PlayerProp
       aspectRatio: true,
       fullscreen: true,
       fullscreenWeb: true,
-      fullscreenNative: true,
-      fullscreenWebNative: true,
       screenshot: true,
       autoMini: true,
       pip: true,

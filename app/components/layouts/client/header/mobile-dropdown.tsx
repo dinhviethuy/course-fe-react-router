@@ -8,7 +8,7 @@ export default function MobileDropdown() {
       <DropdownMenuTrigger className="cursor-pointer flex items-center justify-center">
         <MenuIcon className="w-6 h-6" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-52">
+      <DropdownMenuContent className="w-52 sm:hidden block">
         <DropdownMenuLabel>
           <div className="flex flex-col gap-1">
             <span>Dương Nguyễn</span>
@@ -32,7 +32,7 @@ export default function MobileDropdown() {
           <Link to="/manage/billing" className="w-full">Tài khoản</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/manage/bought-courses" className="w-full">Khoá học đã mua</Link>
+          <Link to="/bought-courses" className="w-full">Khoá học đã mua</Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <Link to="/manage/cart" className="w-full">Giỏ hàng</Link>

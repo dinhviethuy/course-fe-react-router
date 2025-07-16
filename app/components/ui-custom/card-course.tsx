@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader } from "~/components/ui/card";
+import { formatCurrency } from "~/lib/utils";
 
 export default function CardCourse({ isBought = false }: { isBought?: boolean }) {
   return (
@@ -22,8 +23,8 @@ export default function CardCourse({ isBought = false }: { isBought?: boolean })
               <h3 className="m-0 text-base leading-5 tracking-tighter font-bold">[Pre-order] Combo Nest.js Super &amp; Testing &amp; GraphQL</h3>
             </div>
             <div className="flex gap-3 mt-3">
-              <p className="tracking-tighter line-through text-muted-foreground">3.170.000&nbsp;₫</p>
-              <p className="tracking-tighter font-semibold">1.690.000&nbsp;₫</p>
+              <p className="tracking-tighter line-through text-muted-foreground">{formatCurrency(3170000)}</p>
+              <p className="tracking-tighter font-semibold">{formatCurrency(1690000)}</p>
             </div>
           </div>
         </CardContent>
