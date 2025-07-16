@@ -1,6 +1,12 @@
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from '~/components/theme-provider'
+import { Toaster } from '~/components/ui/sonner'
 import type { Route } from './+types/root'
 import './app.css'
 
@@ -17,6 +23,15 @@ export const links: Route.LinksFunction = () => [
   }
 ]
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    },
+  },
+});
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='en'>
@@ -27,12 +42,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <ThemeProvider defaultTheme='system' storageKey='vite-ui-theme'>
-          {children}
-          <ScrollRestoration />
-
-          <Scripts />
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider defaultTheme='system' storageKey='vite-ui-theme'>
+            {children}
+            <ScrollRestoration />=
+            <Scripts />
+          </ThemeProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Toaster />
+        </QueryClientProvider>
       </body>
     </html>
   )
