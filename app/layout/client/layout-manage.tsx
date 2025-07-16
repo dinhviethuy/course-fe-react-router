@@ -32,7 +32,7 @@ export default function LayoutManage() {
         </div>
         <div data-orientation="horizontal" role="none" className="shrink-0 bg-border h-[1px] w-full my-6" />
         <div className="grid grid-cols-6 gap-4">
-          <div className="col-span-1">
+          <div className="col-span-6 lg:col-span-1">
             <div className="flex flex-col gap-2">
               {menu.map((item) => (
                 <NavLink to={item.to} key={item.label} className={({ isActive }) => cn("w-full justify-start cursor-pointer", {
@@ -45,7 +45,7 @@ export default function LayoutManage() {
               ))}
             </div>
           </div>
-          <div className="col-span-5 px-8">
+          <div className="col-span-6 lg:col-span-5 px-8">
             <Outlet />
           </div>
         </div>

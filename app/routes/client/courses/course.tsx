@@ -1,4 +1,5 @@
 import { BrainCircuit, CheckIcon, ListVideo } from "lucide-react";
+import { Link } from "react-router";
 import VideoIframe from "~/components/art-player/video-iframe";
 import Wrapper from "~/components/layouts/client/wrapper/wrapper";
 import CardCourse from "~/components/ui-custom/card-course";
@@ -22,10 +23,10 @@ export default function Course() {
           </div>
         </div>
         <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-12 xl:col-span-8 lg:col-span-7 h-[500px]">
+          <div className="col-span-12 xl:col-span-8 lg:col-span-7 h-[550px]">
             <VideoIframe videoUrl="https://www.youtube.com/watch?v=CdRyfr7WAGs&list=RDCdRyfr7WAGs&start_radio=1" />
           </div>
-          <div className="col-span-12 xl:col-span-4 lg:col-span-5 h-[500px]">
+          <div className="col-span-12 xl:col-span-4 lg:col-span-5 h-[550px]">
             <Card className="w-full p-6">
               <CardDescription className="flex flex-col gap-3">
                 <div className="flex flex-col gap-2">
@@ -71,9 +72,11 @@ export default function Course() {
                   <Button className="w-full h-10 cursor-pointer">
                     <span className="text-base font-semibold">Mua ngay</span>
                   </Button>
-                  <Button className="w-full h-10 cursor-pointer">
-                    <span className="text-base font-semibold">Tham gia học</span>
-                  </Button>
+                  <Link to="/learn/1">
+                    <Button className="w-full h-10 cursor-pointer">
+                      <span className="text-base font-semibold">Tham gia học</span>
+                    </Button>
+                  </Link>
                   <Button className="w-full h-10 cursor-pointer" variant="outline">
                     <span className="text-base font-semibold dark:text-white text-black">Thêm vào giỏ hàng</span>
                   </Button>

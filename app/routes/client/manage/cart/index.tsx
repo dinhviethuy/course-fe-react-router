@@ -351,8 +351,14 @@ export default function Cart() {
   }
   const columns = getColumns({ handleDelete })
   return (
-    <div className="rounded-md border">
-      <BuildTable columns={columns} />
+    <div >
+      <div>
+        <h3 className="text-lg font-medium">Giỏ hàng</h3>
+      </div>
+      <div data-orientation="horizontal" role="none" className="shrink-0 bg-border h-[1px] w-full my-6" />
+      <div>
+        <BuildTable columns={columns} />
+      </div>
     </div>
   )
 }

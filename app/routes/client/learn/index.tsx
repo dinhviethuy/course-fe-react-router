@@ -23,7 +23,7 @@ function MenuLesson() {
   )
 }
 
-const url = 'http://localhost:3000/media/static/videos/293e2050-6d4f-4f82-9579-53c40ac4187d.mp4'
+const url = 'http://localhost:3000/media/static/videos/849998b2-551e-4a48-a784-27c1d3af1614.mp4'
 
 export default function Learn() {
   const [isOpenMenu, setIsOpenMenu] = useState(false)

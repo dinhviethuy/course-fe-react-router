@@ -21,7 +21,6 @@ export default function ArtPlayer({ option, getInstance, className }: PlayerProp
       fullscreen: true,
       fullscreenWeb: true,
       screenshot: true,
-      autoMini: true,
       pip: true,
       fastForward: true
     });
