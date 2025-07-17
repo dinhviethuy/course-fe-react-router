@@ -4,8 +4,8 @@ import Header from '~/components/layouts/client/header/header'
 import { useAuthStore } from '~/stores/useAuthStore'
 
 export default function ClientLayout() {
-  const isAuth = useAuthStore((s) => s.isAuthenticated)
-  if (isAuth) return <Navigate to="/" />
+  const { isAuthenticated } = useAuthStore()
+  if (isAuthenticated) return <Navigate to="/" />
   return (
     <div className="flex flex-col min-h-screen">
       <Header isAuth={false} isHeaderAbsolute />

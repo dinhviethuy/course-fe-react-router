@@ -3,92 +3,12 @@ import ReactMarkdown from 'react-markdown';
 import rehypePrism from 'rehype-prism-plus';
 import remarkGfm from 'remark-gfm';
 
-const markdownContent = `
-# 🧠 Tóm tắt bài học
-
-- Học về Artplayer
-- Thực hành phát video
-- Biết cách tạo menu
-
-## 🔥 Bonus
-
-\`\`\`ts
-class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-  run() {
-    console.log(\`Car \${this.brand} is running...\`);
-  }
-}
-\`\`\`
-\`\`\`ts
-class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-  run() {
-    console.log(\`Car \${this.brand} is running...\`);
-  }
-}
-\`\`\`
-\`\`\`ts
-class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-  run() {
-    console.log(\`Car \${this.brand} is running...\`);
-  }
-}
-\`\`\`
-\`\`\`ts
-class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-  run() {
-    console.log(\`Car \${this.brand} is running...\`);
-  }
-}
-\`\`\`
-\`\`\`ts
-class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-  run() {
-    console.log(\`Car \${this.brand} is running...\`);
-  }
-}
-\`\`\`
-\`\`\`ts
-class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-  run() {
-    console.log(\`Car \${this.brand} is running...\`);
-  }
-}
-\`\`\`
-\`\`\`ts
-class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-  run() {
-    console.log(\`Car \${this.brand} is running...\`);
-  }
-}
-\`\`\`
-`;
-
-export default function MarkdownViewer() {
+export default function MarkdownViewer({ content }: { content: string }) {
+  console.log({ content })
   return (
     <div className="prose dark:prose-invert max-w-none">
       <ReactMarkdown
-        children={markdownContent}
+        children={content}
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypePrism]}
       />

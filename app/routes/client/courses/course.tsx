@@ -1,7 +1,10 @@
+import type { Route } from ".react-router/types/app/routes/client/courses/+types/course";
 import { BrainCircuit, CheckIcon, ListVideo } from "lucide-react";
 import { Link } from "react-router";
 import VideoIframe from "~/components/art-player/video-iframe";
+import NotFound from "~/components/error-page/error-page";
 import Wrapper from "~/components/layouts/client/wrapper/wrapper";
+import Loading from "~/components/loading/loading";
 import CardCourse from "~/components/ui-custom/card-course";
 import CollapsibleCustom from "~/components/ui-custom/collapsible-custom";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -9,32 +12,41 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardDescription } from "~/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { formatCurrency } from "~/lib/utils";
+import { useGetCourseDetailBySlugQuery } from "~/hooks/useCourse";
+import { cn, formatCurrency, formatDate } from "~/lib/utils";
 
-export default function Course() {
+export default function Course({ params }: Route.ComponentProps) {
+  const { courseSlug } = params
+  const { data: courseDetail, isPending, isError } = useGetCourseDetailBySlugQuery({ slug: courseSlug })
+  const courseDetailData = courseDetail?.data
+  if (isPending) return <Loading />
+  if (!courseDetailData || isError) return <NotFound statusCode={404} message="Không tìm thấy trang" />;
+  const { price, discount, title, createdBy: author, benefits, chapters, updatedAt, video, description } = courseDetailData.data
   return (
     <Wrapper>
-      <div className="flex flex-col xl:gap-12 gap-8 xl:py-0 py-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tighter">[Pre-order] Nest.js Testing</h1>
+      <div className="flex flex-col xl:gap-12 gap-6 xl:py-0 py-8">
+        <div className="flex flex-col gap-8">
+          <h1 className="text-3xl font-bold tracking-tighter">{title}</h1>
           <div className="flex gap-8">
-            <span className="text-base">Bởi: Dư Thanh Được</span>
-            <span className="text-base">Cập nhật: 07/2025</span>
+            <span className="text-base">Bởi: {author?.fullName}</span>
+            <span className="text-base">Cập nhật: {formatDate(updatedAt)}</span>
           </div>
         </div>
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12 xl:col-span-8 lg:col-span-7 h-[550px]">
-            <VideoIframe videoUrl="https://www.youtube.com/watch?v=CdRyfr7WAGs&list=RDCdRyfr7WAGs&start_radio=1" />
+            {video && <VideoIframe videoUrl={video} />}
           </div>
           <div className="col-span-12 xl:col-span-4 lg:col-span-5 h-[550px]">
             <Card className="w-full p-6">
               <CardDescription className="flex flex-col gap-3">
                 <div className="flex flex-col gap-2">
-                  <span className="text-xl font-semibold line-through">{formatCurrency(1690000)}</span>
-                  <div className="flex gap-8 items-center">
-                    <span className="text-2xl font-semibold dark:text-white text-black">{formatCurrency(790000)}</span>
+                  <span className="text-xl font-semibold line-through">{formatCurrency(price)}</span>
+                  <div className={cn("flex gap-8 items-center", {
+                    "hidden": !discount
+                  })}>
+                    <span className="text-2xl font-semibold dark:text-white text-black">{formatCurrency(price * (1 - discount / 100))}</span>
                     <Badge variant="default" className="text-xs h-10">
-                      <span className="text-base">Tiết kiệm 50%</span>
+                      <span className="text-base">Tiết kiệm {discount}%</span>
                     </Badge>
                   </div>
                 </div>
@@ -72,7 +84,7 @@ export default function Course() {
                   <Button className="w-full h-10 cursor-pointer">
                     <span className="text-base font-semibold">Mua ngay</span>
                   </Button>
-                  <Link to="/learn/1">
+                  <Link to="/learn/Nest.js-Testing">
                     <Button className="w-full h-10 cursor-pointer">
                       <span className="text-base font-semibold">Tham gia học</span>
                     </Button>
@@ -87,7 +99,7 @@ export default function Course() {
         </div>
         <div className="grid xl:grid-cols-16 lg:grid-cols-16 md:grid-cols-16 grid-cols-1 gap-8 md:gap-0">
           <div className="xl:col-span-14 lg:col-span-14 md:col-span-12 col-span-1">
-            <p className="xl:text-2xl text-xl">Học cả 2 cách tiếp cận (code-first & schema-first) để tạo GraphQL APIs với NestJS. Master các concept GraphQL, tip & trick, và mọi thứ bạn cần biết để làm chủ GraphQL. Bạn sẽ được cung cấp mã nguồn dự án API Ecommerce (của khóa Nest.js Super) để thực hành</p>
+            <p className="xl:text-2xl text-xl">{description}</p>
           </div>
           <div className="xl:col-span-2 lg:col-span-2 md:col-span-4 col-span-1">
             <div className="flex flex-col gap-4 items-center xl:items-end">
@@ -95,7 +107,7 @@ export default function Course() {
                 <AvatarImage src="https://github.com/shadcn.png" className="object-cover" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <span className="text-lg font-semibold">Dư Thanh Được</span>
+              <span className="text-lg font-semibold">{author?.fullName}</span>
             </div>
           </div>
         </div>
@@ -128,22 +140,12 @@ export default function Course() {
                   <h3 className="text-xl font-semibold">Bạn sẽ nhận được</h3>
                 </div>
                 <ul className="grid grid-cols-2 gap-6">
-                  <li className="col-span-1 flex gap-2 items-center">
-                    <CheckIcon className="w-4 h-4" />
-                    <span className="text-base">Được cung cấp mã nguồn dự án Ecommerce API để thực hành</span>
-                  </li>
-                  <li className="col-span-1 flex gap-2 items-center">
-                    <CheckIcon className="w-4 h-4" />
-                    <span className="text-base">Học từng bước cơ bản về GraphQL</span>
-                  </li>
-                  <li className="col-span-1 flex gap-2 items-center">
-                    <CheckIcon className="w-4 h-4" />
-                    <span className="text-base">Đây là khóa bổ trợ tuyệt vời cho khóa học Nest.js Super</span>
-                  </li>
-                  <li className="col-span-1 flex gap-2 items-center">
-                    <CheckIcon className="w-4 h-4" />
-                    <span className="text-base">Đây là khóa bổ trợ tuyệt vời cho khóa học Nest.js Super</span>
-                  </li>
+                  {benefits.map((benefit, index) => (
+                    <li key={index} className="col-span-1 flex gap-2 items-center">
+                      <CheckIcon className="w-4 h-4" />
+                      <span className="text-base">{benefit}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div className="flex flex-col gap-8">
@@ -152,15 +154,11 @@ export default function Course() {
                   <h3 className="text-xl font-semibold">Nội dung học tập</h3>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-2">
-                    <CollapsibleCustom />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <CollapsibleCustom />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <CollapsibleCustom />
-                  </div>
+                  {chapters.map((chapter, index) => (
+                    <div className="flex flex-col gap-2" key={index}>
+                      <CollapsibleCustom chapter={chapter} />
+                    </div>
+                  ))}
                 </div>
               </div>
             </TabsContent>
@@ -175,6 +173,7 @@ export default function Course() {
                 <CardCourse />
                 <CardCourse />
                 <CardCourse />
+
               </div>
             </TabsContent>
           </Tabs>

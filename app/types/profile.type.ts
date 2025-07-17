@@ -1,7 +1,7 @@
-import z from 'zod';
-import { PermissionSchema } from '~/types/permission.type';
-import { RoleSchema } from '~/types/role.type';
-import { UserSchema } from '~/types/user.type';
+import z from 'zod'
+import { PermissionSchema } from '~/types/permission.type'
+import { RoleSchema } from '~/types/role.type'
+import { UserSchema } from '~/types/user.type'
 
 export const GetProfileResSchema = UserSchema.pick({
   id: true,
@@ -34,24 +34,17 @@ export const UpdateProfileResSchema = GetProfileResSchema
 
 export const ChangePasswordBodySchema = z
   .object({
-    password: z.string().min(6),
-    newPassword: z.string().min(6),
-    confirmNewPassword: z.string().min(6)
+    password: z.string().min(6, { message: 'Mật khẩu cũ phải có ít nhất 6 ký tự' }),
+    newPassword: z.string().min(6, { message: 'Mật khẩu mới phải có ít nhất 6 ký tự' }),
+    confirmNewPassword: z.string().min(6, { message: 'Mật khẩu xác nhận phải có ít nhất 6 ký tự' })
   })
-  .strict()
-  .refine((data) => {
-    if (data.newPassword !== data.confirmNewPassword) {
-      return {
-        message: 'Mật khẩu mới và mật khẩu xác nhận không khớp',
-        path: ['confirmNewPassword']
-      }
-    }
-    if (data.password === data.newPassword) {
-      return {
-        message: 'Mật khẩu mới và mật khẩu cũ không được giống nhau',
-        path: ['newPassword']
-      }
-    }
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: 'Mật khẩu mới và mật khẩu xác nhận không khớp',
+    path: ['confirmNewPassword']
+  })
+  .refine((data) => data.password !== data.newPassword, {
+    message: 'Mật khẩu mới và mật khẩu cũ không được giống nhau',
+    path: ['newPassword']
   })
 
 export type GetProfileResType = z.infer<typeof GetProfileResSchema>

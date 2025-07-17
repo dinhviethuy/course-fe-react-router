@@ -5,7 +5,7 @@ import { formatCurrency } from "~/lib/utils";
 
 export default function CardCourse({ isBought = false }: { isBought?: boolean }) {
   return (
-    <Link to={`/courses/111`}>
+    <Link to={`/courses/Nest.js-Testing`}>
       <Card className="pt-0 hover:border-primary transition-colors duration-300 cursor-pointer h-[288px] w-[350px] sm:w-full sm:h-full">
         <CardHeader className="overflow-hidden p-0 h-[200px] relative">
           <CardDescription className="w-full h-full p-0 overflow-hidden">

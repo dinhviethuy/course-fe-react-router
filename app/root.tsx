@@ -5,11 +5,8 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { useEffect } from 'react'
 import { ThemeProvider } from '~/components/theme-provider'
 import { Toaster } from '~/components/ui/sonner'
-import { useGetProfileQuery } from '~/hooks/useUser'
-import { useAuthStore } from '~/stores/useAuthStore'
 import type { Route } from './+types/root'
 import './app.css'
 
@@ -35,18 +32,6 @@ const queryClient = new QueryClient({
   },
 });
 
-function AppInitializer() {
-  const { data, isSuccess } = useGetProfileQuery()
-  const { setIsAuthenticated } = useAuthStore()
-
-  useEffect(() => {
-    if (isSuccess) {
-      setIsAuthenticated(data?.data?.data ? true : false)
-    }
-  }, [setIsAuthenticated, isSuccess, data])
-
-  return null
-}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -60,7 +45,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider defaultTheme='system' storageKey='vite-ui-theme'>
-            <AppInitializer />
             {children}
             <ScrollRestoration />
             <Scripts />

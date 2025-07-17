@@ -25,7 +25,7 @@ const menu = [
 export default function LayoutManage() {
   return (
     <Wrapper>
-      <div>
+      <div className="flex-1">
         <div className="space-y-0.5">
           <h2 className="text-2xl font-bold tracking-tight">Quản lý</h2>
           <p className="text-muted-foreground">Quản lý tài khoản và đơn hàng</p>

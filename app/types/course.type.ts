@@ -82,6 +82,7 @@ export const GetCourseDetailResSchema = CourseSchema.pick({
   video: true,
   courseType: true,
   benefits: true,
+  updatedAt: true
 }).extend({
   duration: z.number().min(0).default(0),
   chapters: z.array(
@@ -127,7 +128,8 @@ export const GetCourseDetailResSchemaForAdmin = CourseSchema.pick({
   image: true,
   video: true,
   courseType: true,
-  benefits: true
+  benefits: true,
+  updatedAt: true
 }).extend({
   duration: z.number().min(0).default(0),
   chapters: z.array(
@@ -257,23 +259,26 @@ export const ValidateSlugBodySchema = z.object({
   slug: z.string().min(1)
 })
 
-export const CanAccessCourseBodySchema = z.object({
-  courseId: z.coerce.number().int().positive().optional(),
-  slug: z.string().min(1).optional()
-}).strict().refine((data) => {
-  if (!data.courseId && !data.slug) {
-    return {
-      message: 'Vui lòng cung cấp courseId hoặc slug',
-      path: ['courseId', 'slug']
+export const CanAccessCourseBodySchema = z
+  .object({
+    courseId: z.coerce.number().int().positive().optional(),
+    slug: z.string().min(1).optional()
+  })
+  .strict()
+  .refine((data) => {
+    if (!data.courseId && !data.slug) {
+      return {
+        message: 'Vui lòng cung cấp courseId hoặc slug',
+        path: ['courseId', 'slug']
+      }
     }
-  }
-  if (data.courseId && data.slug) {
-    return {
-      message: 'Không thể cung cấp cả courseId và slug',
-      path: ['courseId', 'slug']
+    if (data.courseId && data.slug) {
+      return {
+        message: 'Không thể cung cấp cả courseId và slug',
+        path: ['courseId', 'slug']
+      }
     }
-  }
-})
+  })
 
 export type GetCourseDetailResType = z.infer<typeof GetCourseDetailResSchema>
 export type CreateCourseBodyType = z.infer<typeof CreateCourseBodySchema>
