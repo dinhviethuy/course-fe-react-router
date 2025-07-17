@@ -1,11 +1,14 @@
-import { Outlet } from 'react-router'
+import { Navigate, Outlet } from 'react-router'
 import bannerLogin from '~/assets/images/banner-login.webp'
 import Header from '~/components/layouts/client/header/header'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export default function ClientLayout() {
+  const isAuth = useAuthStore((s) => s.isAuthenticated)
+  if (isAuth) return <Navigate to="/" />
   return (
     <div className="flex flex-col min-h-screen">
-      <Header isAuth />
+      <Header isAuth={false} isHeaderAbsolute />
       <main className="flex-1 flex flex-col">
         <div className="grid lg:grid-cols-2 h-screen">
           <div className="relative hidden lg:flex h-full flex-col text-white p-10">

@@ -9,12 +9,14 @@ import { Input } from "~/components/ui/input";
 import { OTPType } from "~/constants/auth.constant";
 import { useRegisterMutation, useSendOtpMutation } from "~/hooks/useAuth";
 import { handleError } from "~/lib/utils";
+import { useAuthStore } from "~/stores/useAuthStore";
 import { RegisterBodySchema, type RegisterBodyType } from "~/types/auth.type";
 
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const { setIsLogout, setIsAuthenticated } = useAuthStore()
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, setError, getValues } = useForm({
     defaultValues: {
@@ -33,6 +35,8 @@ export default function Register() {
     try {
       await registerMutation.mutateAsync(data);
       toast.success("Tạo tài khoản thành công");
+      setIsLogout(false)
+      setIsAuthenticated(true)
       navigate("/login");
     } catch (error) {
       handleError({ error, setError });

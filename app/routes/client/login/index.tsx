@@ -7,11 +7,14 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useLoginMutation } from "~/hooks/useAuth";
 import { handleError } from '~/lib/utils';
+import { useAuthStore } from '~/stores/useAuthStore';
 import { LoginBodySchema, type LoginBodyType } from "~/types/auth.type";
 
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const setIsAuthenticated = useAuthStore((s) => s.setIsAuthenticated)
+  const setIsLogout = useAuthStore((s) => s.setIsLogout)
   const { register, handleSubmit, formState: { errors }, setError } = useForm({
     defaultValues: {
       email: "",
@@ -28,8 +31,11 @@ export default function Login() {
         email: data.email,
         password: data.password,
       });
+      setIsAuthenticated(true)
+      setIsLogout(false)
       navigate("/");
     } catch (error) {
+      setIsAuthenticated(false)
       handleError({ error, setError });
     }
   }

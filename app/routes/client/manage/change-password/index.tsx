@@ -32,6 +32,7 @@ export default function ChangePassword() {
   const [showOldPassword, setShowOldPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+
   return (
     <div>
       <h3 className="text-lg font-medium">Đổi mật khẩu</h3>

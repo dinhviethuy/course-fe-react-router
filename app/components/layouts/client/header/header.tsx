@@ -9,19 +9,21 @@ const navItems = [
   {
     label: "Trang chủ",
     href: "/",
+    isAuth: false
   },
   {
     label: "Khóa học đã mua",
     href: "/bought-courses",
+    isAuth: true
   }
 ]
 
-export default function Header({ isAuth }: { isAuth?: boolean }) {
+export default function Header({ isAuth, isHeaderAbsolute = false }: { isAuth: boolean, isHeaderAbsolute?: boolean }) {
   return (
     <>
       <header className={cn({
-        "sticky top-0 left-0 right-0 z-[50] bg-background h-16 px-4 sm:px-4 xl:px-4 border-b": !isAuth,
-        "absolute top-0 left-0 right-0 z-10 bg-transparent h-16 px-4 sm:px-4 xl:px-4": isAuth
+        "sticky top-0 left-0 right-0 z-[50] bg-background h-16 px-4 sm:px-4 xl:px-4 border-b": !isHeaderAbsolute,
+        "absolute top-0 left-0 right-0 z-10 bg-transparent h-16 px-4 sm:px-4 xl:px-4": isHeaderAbsolute
       })}>
         <div className="flex items-center justify-between h-full w-full mx-auto max-w-[1440px]">
           <div className="flex items-center gap-8">
@@ -33,7 +35,9 @@ export default function Header({ isAuth }: { isAuth?: boolean }) {
             <div>
               <ul className="items-center gap-4 hidden sm:flex">
                 {navItems.map((item) => (
-                  <li key={item.href} className="text-sm font-medium">
+                  <li key={item.href} className={cn("text-sm font-medium", {
+                    "hidden": item.isAuth && !isAuth
+                  })}>
                     <NavLink to={item.href} className={({ isActive }) => isActive ? "text-primary" : "text-muted-foreground"}>{item.label}</NavLink>
                   </li>
                 ))}
@@ -45,12 +49,16 @@ export default function Header({ isAuth }: { isAuth?: boolean }) {
               <ModeToggle />
             </div>
             <div className="hidden sm:flex">
-              <Link to="/login">
+              <Link to="/login" className={cn({
+                "hidden": isAuth
+              })}>
                 <Button variant="ghost" className="cursor-pointer text-muted-foreground hover:text-primary hover:bg-transparent dark:hover:bg-transparent px-2">
                   Đăng nhập
                 </Button>
               </Link>
-              <Link to="/register">
+              <Link to="/register" className={cn({
+                "hidden": isAuth
+              })}>
                 <Button variant="ghost" className="cursor-pointer text-muted-foreground hover:text-primary hover:bg-transparent dark:hover:bg-transparent px-2">
                   Đăng ký
                 </Button>
