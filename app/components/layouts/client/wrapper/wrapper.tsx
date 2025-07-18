@@ -1,9 +1,5 @@
-import { cn } from "~/lib/utils";
+import { cn } from '~/lib/utils'
 
-export default function Wrapper({ children, className }: { children: React.ReactNode, className?: string }) {
-  return (
-    <div className={cn("container mx-auto flex flex-col px-4 py-8 xl:px-4 xl:py-8", className)}>
-      {children}
-    </div>
-  )
+export default function Wrapper({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn('container mx-auto flex flex-col px-4 py-8 xl:px-4 xl:py-8', className)}>{children}</div>
 }

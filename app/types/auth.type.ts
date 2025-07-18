@@ -1,4 +1,3 @@
-
 import { z } from 'zod'
 import { OTPType } from '~/constants/auth.constant'
 import { PermissionSchema } from '~/types/permission.type'

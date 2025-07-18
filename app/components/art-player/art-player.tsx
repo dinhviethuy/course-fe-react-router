@@ -1,14 +1,14 @@
-import Artplayer from 'artplayer';
-import { useEffect, useRef } from 'react';
+import Artplayer from 'artplayer'
+import { useEffect, useRef } from 'react'
 
 interface PlayerProps {
-  option: any;
-  getInstance?: (instance: Artplayer) => void;
-  className?: string;
+  option: any
+  getInstance?: (instance: Artplayer) => void
+  className?: string
 }
 
 export default function ArtPlayer({ option, getInstance, className }: PlayerProps) {
-  const artRef = useRef<HTMLDivElement>(null);
+  const artRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const art = new Artplayer({
@@ -23,18 +23,18 @@ export default function ArtPlayer({ option, getInstance, className }: PlayerProp
       screenshot: true,
       pip: true,
       fastForward: true
-    });
+    })
 
     if (getInstance && typeof getInstance === 'function') {
-      getInstance(art);
+      getInstance(art)
     }
 
     return () => {
       if (art && art.destroy) {
-        art.destroy(false);
+        art.destroy(false)
       }
-    };
-  }, [getInstance, option]);
+    }
+  }, [getInstance, option])
 
-  return <div ref={artRef} className={className}></div>;
+  return <div ref={artRef} className={className}></div>
 }

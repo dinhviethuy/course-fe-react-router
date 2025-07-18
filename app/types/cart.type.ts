@@ -25,8 +25,8 @@ export const GetCartParamsSchema = z.object({
 export const GetCartQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().default(10),
-  orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Asc),
-  sortBy: z.enum([SortBy.CreatedAt, SortBy.Price]).default(SortBy.CreatedAt)
+  orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Asc).optional(),
+  sortBy: z.enum([SortBy.CreatedAt, SortBy.Price]).default(SortBy.CreatedAt).optional()
 })
 
 export const GetListCartResSchema = z.object({

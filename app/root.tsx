@@ -1,9 +1,6 @@
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ThemeProvider } from '~/components/theme-provider'
 import { Toaster } from '~/components/ui/sonner'
@@ -27,11 +24,10 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    },
-  },
-});
-
+      refetchOnMount: false
+    }
+  }
+})
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

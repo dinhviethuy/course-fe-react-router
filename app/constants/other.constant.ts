@@ -4,7 +4,7 @@ export const SortBy = {
   Sale: 'sale',
   FullName: 'fullName',
   Email: 'email',
-  Name: 'name'  
+  Name: 'name'
 } as const
 
 export const OrderBy = {

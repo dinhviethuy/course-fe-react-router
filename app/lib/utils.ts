@@ -1,9 +1,12 @@
 import { AxiosError } from 'axios'
 import { clsx, type ClassValue } from 'clsx'
-import { format } from 'date-fns'
+import { format, intervalToDuration } from 'date-fns'
 import type { UseFormSetError } from 'react-hook-form'
 import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
+import { CouponType } from '~/constants/counpon.constant'
+import { OrderStatus, type OrderStatusType } from '~/constants/order.constant'
+import type { GetCourseDetailResType } from '~/types/course.type'
 import type { ErrorResponse } from '~/types/success.type'
 
 export function cn(...inputs: ClassValue[]) {
@@ -72,12 +75,9 @@ export const handleError = ({
   }
 }
 
-export const formatDate = (date: string | Date) => {
-  return format(date, 'dd/MM/yyyy')
+export const formatDate = (date: string | Date, formatString: string = 'dd/MM/yyyy') => {
+  return format(date, formatString)
 }
-
-import { intervalToDuration } from 'date-fns'
-import type { GetCourseDetailResType } from '~/types/course.type'
 
 export const formatDuration = (duration: number): string => {
   const {
@@ -136,4 +136,46 @@ export const getLessonIdAndChapterId = (chapters: GetCourseDetailResType['chapte
     lessonIdPrev,
     lessonIdNext
   }
+}
+
+export const getTotalPrice = ({
+  coursePrice,
+  courseDiscount,
+  couponDiscount: couponDiscountFromParam,
+  couponType: couponTypeFromParam
+}: {
+  coursePrice: number | null
+  courseDiscount: number | null
+  couponDiscount: number | null
+  couponType: CouponType | null
+}) => {
+  const price = coursePrice ?? 0
+  const discount = courseDiscount ?? 0
+  const couponDiscount = couponDiscountFromParam ?? 0
+  const couponType = couponTypeFromParam ?? CouponType.PERCENT
+  const priceAfterDiscount = price * (1 - discount / 100)
+  let totalPrice = priceAfterDiscount
+  let discountFixed = couponDiscount
+  if (couponType === CouponType.PERCENT) {
+    discountFixed = (totalPrice * couponDiscount) / 100
+    totalPrice = totalPrice - discountFixed
+  } else {
+    discountFixed = Math.min(couponDiscount, totalPrice)
+    totalPrice = totalPrice - discountFixed
+  }
+  return {
+    totalPrice,
+    price,
+    discountFixed,
+    priceAfterDiscount
+  }
+}
+
+export const getOrderStatus = (status: OrderStatusType) => {
+  const orderStatus = {
+    [OrderStatus.PAID]: 'Đã thanh toán',
+    [OrderStatus.PENDING]: 'Chưa thanh toán',
+    [OrderStatus.CANCELLED]: 'Đã hủy'
+  }
+  return orderStatus[status]
 }

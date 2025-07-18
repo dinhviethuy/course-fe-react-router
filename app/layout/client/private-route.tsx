@@ -1,6 +1,15 @@
-import { Link, Outlet } from 'react-router';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '~/components/ui/alert-dialog';
-import { useAuthStore } from "~/stores/useAuthStore";
+import { Link, Outlet } from 'react-router'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '~/components/ui/alert-dialog'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export default function PrivateRoute() {
   const { isAuthenticated, isLogout } = useAuthStore()
@@ -8,19 +17,17 @@ export default function PrivateRoute() {
     if (isLogout) return null
     return (
       <AlertDialog open={true}>
-        <AlertDialogContent className="max-w-sm">
+        <AlertDialogContent className='max-w-sm'>
           <AlertDialogHeader>
             <AlertDialogTitle>Bạn cần đăng nhập để truy cập trang này</AlertDialogTitle>
-            <AlertDialogDescription>
-              Vui lòng đăng nhập để tiếp tục
-            </AlertDialogDescription>
+            <AlertDialogDescription>Vui lòng đăng nhập để tiếp tục</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel asChild>
-              <Link to="/">Đóng</Link>
+              <Link to='/'>Đóng</Link>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
-              <Link to="/login">Đăng nhập</Link>
+              <Link to='/login'>Đăng nhập</Link>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

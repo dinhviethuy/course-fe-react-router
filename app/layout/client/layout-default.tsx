@@ -6,9 +6,9 @@ import { useAuthStore } from '~/stores/useAuthStore'
 export default function ClientLayout() {
   const { isAuthenticated } = useAuthStore()
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className='flex flex-col min-h-screen'>
       <Header isAuth={isAuthenticated} />
-      <main className="flex-1 flex flex-col">
+      <main className='flex-1 flex flex-col'>
         <Outlet />
       </main>
       <Footer />
