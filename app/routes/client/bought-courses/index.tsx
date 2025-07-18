@@ -3,12 +3,14 @@ import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import CardCourse from '~/components/ui-custom/card-course'
 import { useListCourseQuery } from '~/hooks/useCourse'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Khóa học đã mua' }, { name: 'description', content: 'Khóa học đã mua' }]
 }
 
 export default function BoughtCourses() {
-  const { data: listCourse } = useListCourseQuery()
+  const { data: listCourse } = useListCourseQuery({
+    isBought: true
+  })
   const data = listCourse?.data
   return (
     <Wrapper>

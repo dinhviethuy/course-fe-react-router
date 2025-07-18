@@ -27,9 +27,9 @@ export const useGetCourseDetailByIdQuery = (param: GetCourseParamsIdType) => {
   })
 }
 
-export const useListCourseQuery = (query?: GetCoursesQueryType) => {
+export const useListCourseQuery = ({ query, isBought }: { query?: GetCoursesQueryType; isBought?: boolean }) => {
   return useQuery({
-    queryKey: ['list-course', query],
-    queryFn: () => courseApi.listCourse(query)
+    queryKey: ['list-course', query, isBought],
+    queryFn: () => courseApi.listCourse(query, isBought)
   })
 }

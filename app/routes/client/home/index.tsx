@@ -3,12 +3,12 @@ import CardCourse from '~/components/ui-custom/card-course'
 import { useListCourseQuery } from '~/hooks/useCourse'
 import type { Route } from './+types/index'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Trang chủ' }, { name: 'description', content: 'Trang chủ' }]
 }
 
 export default function Home() {
-  const { data: listCourse } = useListCourseQuery()
+  const { data: listCourse } = useListCourseQuery({})
   const data = listCourse?.data
   return (
     <Wrapper>

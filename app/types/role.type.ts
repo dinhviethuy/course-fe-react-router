@@ -33,8 +33,8 @@ export const GetRolesResSchema = z.object({
 
 export const GetRolesQuerySchema = z
   .object({
-    page: z.coerce.number().int().positive().default(1),
-    limit: z.coerce.number().int().positive().default(10),
+    page: z.coerce.number().int().positive().default(1).optional(),
+    limit: z.coerce.number().int().positive().default(10).optional(),
     getAll: z
       .preprocess((value: any) => {
         if (typeof value === 'string') {

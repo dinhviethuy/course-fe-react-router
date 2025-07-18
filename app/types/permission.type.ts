@@ -31,8 +31,8 @@ export const GetPermissionsResSchema = z.object({
 
 export const GetPermissionsQuerySchema = z
   .object({
-    page: z.coerce.number().int().positive().default(1),
-    limit: z.coerce.number().int().positive().default(10)
+    page: z.coerce.number().int().positive().default(1).optional(),
+    limit: z.coerce.number().int().positive().default(10).optional()
   })
   .strict()
 

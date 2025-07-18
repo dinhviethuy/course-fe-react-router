@@ -55,8 +55,8 @@ export const GetOrderListResSchema = z.object({
 })
 
 export const GetOrderListQuerySchema = z.object({
-  page: z.number().int().positive().default(1),
-  limit: z.number().int().positive().default(10),
+  page: z.number().int().positive().default(1).optional(),
+  limit: z.number().int().positive().default(10).optional(),
   status: z.preprocess(
     (value) => {
       if (typeof value === 'string') {

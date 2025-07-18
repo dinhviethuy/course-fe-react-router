@@ -1,5 +1,11 @@
 import http from '~/lib/http'
-import type { GetCartParamsType, GetCartQueryType, GetListCartResType } from '~/types/cart.type'
+import type {
+  CreateCartBodyType,
+  CreateCartResType,
+  GetCartParamsType,
+  GetCartQueryType,
+  GetListCartResType
+} from '~/types/cart.type'
 import type { SuccessResponse } from '~/types/success.type'
 
 const cartApi = {
@@ -12,6 +18,7 @@ const cartApi = {
     if (sortBy) queryString.set('sortBy', sortBy)
     return http.get<SuccessResponse<GetListCartResType>>(`/carts?${queryString.toString()}`)
   },
+  addToCart: (body: CreateCartBodyType) => http.post<SuccessResponse<CreateCartResType>>(`/carts`, body),
   deleteCart: (params: GetCartParamsType) => http.delete<SuccessResponse<boolean>>(`/carts/${params.cartId}`)
 }
 

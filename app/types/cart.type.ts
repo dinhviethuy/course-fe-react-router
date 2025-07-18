@@ -23,10 +23,18 @@ export const GetCartParamsSchema = z.object({
 })
 
 export const GetCartQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().default(10),
+  page: z.coerce.number().int().positive().default(1).optional(),
+  limit: z.coerce.number().int().positive().default(10).optional(),
   orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Asc).optional(),
-  sortBy: z.enum([SortBy.CreatedAt, SortBy.Price]).default(SortBy.CreatedAt).optional()
+  sortBy: z.enum([SortBy.CreatedAt, SortBy.Price]).default(SortBy.CreatedAt).optional(),
+  getAll: z
+    .preprocess((value: any) => {
+      if (typeof value === 'string') {
+        return value.toLowerCase() === 'true'
+      }
+      return false
+    }, z.boolean())
+    .optional()
 })
 
 export const GetListCartResSchema = z.object({

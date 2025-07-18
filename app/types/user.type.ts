@@ -61,8 +61,8 @@ export const GetUsersResSchema = z.object({
 
 export const GetUsersQuerySchema = z
   .object({
-    page: z.coerce.number().int().positive().default(1),
-    limit: z.coerce.number().int().positive().default(10),
+    page: z.coerce.number().int().positive().default(1).optional(),
+    limit: z.coerce.number().int().positive().default(10).optional(),
     search: z.string().optional(),
     status: z.preprocess(
       (value) => {

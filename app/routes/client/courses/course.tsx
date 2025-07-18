@@ -1,6 +1,7 @@
 import type { Route } from '.react-router/types/app/routes/client/courses/+types/course'
 import { BrainCircuit, CheckIcon, ListVideo } from 'lucide-react'
 import { Link } from 'react-router'
+import { toast } from 'sonner'
 import VideoIframe from '~/components/art-player/video-iframe'
 import NotFound from '~/components/error-page/error-page'
 import Wrapper from '~/components/layouts/client/wrapper/wrapper'
@@ -12,8 +13,9 @@ import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardDescription } from '~/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { useAddToCartMutation, useGetListCart } from '~/hooks/useCart'
 import { useGetCourseDetailBySlugQuery, useListCourseQuery } from '~/hooks/useCourse'
-import { cn, formatCurrency, formatDate } from '~/lib/utils'
+import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
 
 export function meta({ params }: Route.MetaArgs) {
   return [{ title: `${params.courseSlug}` }, { name: 'description', content: `${params.courseSlug}` }]
@@ -23,7 +25,14 @@ export default function Course({ params }: Route.ComponentProps) {
   const { courseSlug } = params
   const { data: courseDetail, isPending, isError } = useGetCourseDetailBySlugQuery({ slug: courseSlug })
   const courseDetailData = courseDetail?.data
-  const { data: listCourse } = useListCourseQuery()
+  const { data: listCourse } = useListCourseQuery({})
+  const { data: listCourseBought } = useListCourseQuery({ isBought: true })
+  const addToCartMutation = useAddToCartMutation()
+  const { data: listCart, refetch } = useGetListCart({
+    getAll: true
+  })
+  const listCartData = listCart?.data
+  const listCourseBoughtData = listCourseBought?.data
   const data = listCourse?.data
   if (isPending) return <Loading />
   if (!courseDetailData || isError) return <NotFound statusCode={404} message='Không tìm thấy trang' />
@@ -38,6 +47,17 @@ export default function Course({ params }: Route.ComponentProps) {
     video,
     description
   } = courseDetailData.data
+  const handleAddToCart = async () => {
+    try {
+      await addToCartMutation.mutateAsync({
+        courseId: courseDetailData.data.id
+      })
+      refetch()
+      toast.success('Thêm vào giỏ hàng thành công')
+    } catch (error) {
+      handleError({ error })
+    }
+  }
   return (
     <Wrapper>
       <div className='flex flex-col xl:gap-12 gap-6 xl:py-0 py-8'>
@@ -108,17 +128,34 @@ export default function Course({ params }: Route.ComponentProps) {
                   </li>
                 </ul>
                 <div className='flex flex-col gap-4'>
-                  <Button className='w-full h-10 cursor-pointer'>
-                    <span className='text-base font-semibold'>Mua ngay</span>
-                  </Button>
-                  <Link to={`/learn/${courseSlug}`}>
-                    <Button className='w-full h-10 cursor-pointer'>
-                      <span className='text-base font-semibold'>Tham gia học</span>
-                    </Button>
-                  </Link>
-                  <Button className='w-full h-10 cursor-pointer' variant='outline'>
-                    <span className='text-base font-semibold dark:text-white text-black'>Thêm vào giỏ hàng</span>
-                  </Button>
+                  {
+                    listCourseBoughtData?.data.courses.find((course) => course.slug === courseSlug) ? (
+                      <Link to={`/learn/${courseSlug}`}>
+                        <Button className='w-full h-10 cursor-pointer'>
+                          <span className='text-base font-semibold'>Tham gia học</span>
+                        </Button>
+                      </Link>
+                    ) : (
+                      <>
+                        {listCartData?.data.cartItems.find((cart) => cart.course.slug === courseSlug) ? (
+                          <Link to={`/manage/cart`}>
+                            <Button className='w-full h-10 cursor-pointer'>
+                              <span className='text-base font-semibold'>Tiến hành thanh toán</span>
+                            </Button>
+                          </Link>
+                        ) : (
+                          <>
+                            <Button className='w-full h-10 cursor-pointer'>
+                              <span className='text-base font-semibold'>Mua ngay</span>
+                            </Button>
+                            <Button variant='outline' className='w-full h-10 cursor-pointer' onClick={handleAddToCart}>
+                              <span className='text-base text-primary font-semibold'>Thêm vào giỏ hàng</span>
+                            </Button>
+                          </>
+                        )}
+                      </>
+                    )
+                  }
                 </div>
               </CardDescription>
             </Card>
