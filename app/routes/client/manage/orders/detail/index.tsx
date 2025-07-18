@@ -15,7 +15,7 @@ export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>()
   const { data: orderDetail } = useGetOrderDetail({ orderId: Number(orderId) })
   const data = orderDetail?.data
-  if (!data) return <NotFound statusCode={404} message='Đơn hàng không tồn tại' />
+  if (!data) return <NotFound statusCode={404} message='Đơn hàng không tồn tại' isShowButton={false} />
   const order = data.data
   const { totalPrice, price, discountFixed, priceAfterDiscount } = getTotalPrice({
     coursePrice: order.snapshots[0].coursePrice,

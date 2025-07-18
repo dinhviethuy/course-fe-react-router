@@ -6,7 +6,7 @@ interface IProps {
   isShowButton?: boolean
 }
 
-export default function ErrorPage({ message, statusCode, isShowButton }: IProps) {
+export default function ErrorPage({ message, statusCode, isShowButton = true }: IProps) {
   return (
     <div className='flex items-center flex-1 px-4 py-12 sm:px-6 md:px-8 lg:px-12 xl:px-16'>
       <div className='w-full space-y-6 text-center'>
