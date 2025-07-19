@@ -23,8 +23,12 @@ export const links: Route.LinksFunction = () => [
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchInterval: 1000 * 60 * 5,
+      staleTime: 0,
+      refetchIntervalInBackground: true,
     }
   }
 })

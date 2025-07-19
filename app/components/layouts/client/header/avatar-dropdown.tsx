@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router'
 import { Avatar, AvatarFallback } from '~/components/ui/avatar'
 import {
@@ -14,10 +13,10 @@ import { useGetProfileQuery } from '~/hooks/useUser'
 import { cn, handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 
+
 export default function AvatarDropdown() {
   const { isAuthenticated, setIsAuthenticated, setIsLogout } = useAuthStore()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const { data: profile } = useGetProfileQuery()
   const user = profile?.data?.data
   const logoutMutation = useLogoutMutation()
@@ -26,12 +25,11 @@ export default function AvatarDropdown() {
       await logoutMutation.mutateAsync({})
       setIsAuthenticated(false)
       setIsLogout(true)
-      queryClient.removeQueries({ predicate: (query) => query.queryKey[0] === 'profile' })
       navigate('/')
     } catch (error) {
       handleError({
         error,
-        setError: () => {}
+        setError: () => { }
       })
     }
   }

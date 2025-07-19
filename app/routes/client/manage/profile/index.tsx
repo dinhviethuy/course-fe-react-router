@@ -11,12 +11,12 @@ import { useGetProfileQuery, useUpdateProfileMutation } from '~/hooks/useUser'
 import { handleError } from '~/lib/utils'
 import { UpdateProfileBodySchema, type UpdateProfileBodyType } from '~/types/profile.type'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Thông tin cá nhân' }, { name: 'description', content: 'Thông tin cá nhân' }]
 }
 
 export default function Profile() {
-  const { data, refetch } = useGetProfileQuery()
+  const { data } = useGetProfileQuery()
   const updateProfileMutation = useUpdateProfileMutation()
 
   const form = useForm<UpdateProfileBodyType>({
@@ -39,7 +39,6 @@ export default function Profile() {
     try {
       await updateProfileMutation.mutateAsync(data)
       toast.success('Cập nhật thông tin tài khoản thành công')
-      refetch()
     } catch (error) {
       handleError({
         error,

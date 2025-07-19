@@ -8,7 +8,7 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const { data: listCourse } = useListCourseQuery({})
+  const { data: listCourse } = useListCourseQuery()
   const data = listCourse?.data
   return (
     <Wrapper>

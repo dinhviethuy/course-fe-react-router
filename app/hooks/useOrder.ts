@@ -4,14 +4,14 @@ import type { CreateOrderBodyType, GetOrderListQueryType, GetOrderParamType } fr
 
 export const useGetOrder = (query?: GetOrderListQueryType) => {
   return useQuery({
-    queryKey: ['orders', query],
+    queryKey: ['order-list', query],
     queryFn: () => orderApi.getOrder(query)
   })
 }
 
 export const useGetOrderDetail = (params: GetOrderParamType) => {
   return useQuery({
-    queryKey: ['orders', params],
+    queryKey: ['order-detail', params],
     queryFn: () => orderApi.getOrderDetail(params)
   })
 }

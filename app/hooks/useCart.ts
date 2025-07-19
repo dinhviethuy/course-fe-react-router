@@ -4,7 +4,7 @@ import type { CreateCartBodyType, GetCartParamsType, GetCartQueryType } from '~/
 
 export const useGetListCart = (query?: GetCartQueryType) => {
   return useQuery({
-    queryKey: ['cart'],
+    queryKey: ['cart', query],
     queryFn: () => cartApi.getCart(query)
   })
 }

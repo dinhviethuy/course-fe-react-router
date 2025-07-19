@@ -1,10 +1,13 @@
 import type { Route } from '.react-router/types/app/routes/client/manage/orders/detail/+types'
 import { CheckIcon, Loader2Icon } from 'lucide-react'
+import { useEffect } from 'react'
 import { useParams } from 'react-router'
+import { toast } from 'sonner'
 import NotFound from '~/components/error-page/error-page'
 import { Badge } from '~/components/ui/badge'
 import { OrderStatus } from '~/constants/order.constant'
 import { useGetOrderDetail } from '~/hooks/useOrder'
+import { paymentSocket } from '~/lib/socket'
 import { cn, formatCurrency, formatDate, getOrderStatus, getTotalPrice } from '~/lib/utils'
 
 export function meta({ params }: Route.MetaArgs) {
@@ -13,8 +16,14 @@ export function meta({ params }: Route.MetaArgs) {
 
 export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>()
-  const { data: orderDetail } = useGetOrderDetail({ orderId: Number(orderId) })
-  const data = orderDetail?.data
+  const getOrderDetail = useGetOrderDetail({ orderId: Number(orderId) })
+  const data = getOrderDetail?.data?.data
+  useEffect(() => {
+    paymentSocket.on('payment', () => {
+      toast.success('Đơn hàng đã được thanh toán thành công')
+      getOrderDetail.refetch()
+    })
+  }, [getOrderDetail])
   if (!data) return <NotFound statusCode={404} message='Đơn hàng không tồn tại' isShowButton={false} />
   const order = data.data
   const { totalPrice, price, discountFixed, priceAfterDiscount } = getTotalPrice({
@@ -23,6 +32,7 @@ export default function OrderDetail() {
     couponDiscount: order.snapshots[0].couponDiscount,
     couponType: order.snapshots[0].couponType
   })
+
   return (
     <div>
       <div>
@@ -98,7 +108,7 @@ export default function OrderDetail() {
                 khi sẽ không nhận diện được QR này)
               </p>
               <div>
-                <img src='https://github.com/shadcn.png' alt='QR Code' width={320} height={320} />
+                <img src={`https://qr.sepay.vn/img?acc=08062479789&bank=TPBank&amount=${totalPrice}&des=DH${order.id}`} alt='QR Code' width={320} height={320} />
               </div>
             </div>
           </div>

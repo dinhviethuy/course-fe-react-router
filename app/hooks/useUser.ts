@@ -5,7 +5,8 @@ import type { ChangePasswordBodyType, UpdateProfileBodyType } from '~/types/prof
 export const useGetProfileQuery = () => {
   return useQuery({
     queryKey: ['profile'],
-    queryFn: () => userApi.getProfile()
+    queryFn: () => userApi.getProfile(),
+    staleTime: 0
   })
 }
 

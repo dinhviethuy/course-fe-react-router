@@ -33,7 +33,7 @@ import { useCancalOrderMutation, useGetOrder } from '~/hooks/useOrder'
 import { cn, formatCurrency, getOrderStatus, handleError } from '~/lib/utils'
 import type { GetOrderListResType } from '~/types/order.type'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Đơn hàng' }, { name: 'description', content: 'Đơn hàng' }]
 }
 

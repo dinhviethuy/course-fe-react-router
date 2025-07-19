@@ -14,7 +14,7 @@ import { Button } from '~/components/ui/button'
 import { Card, CardDescription } from '~/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useAddToCartMutation, useGetListCart } from '~/hooks/useCart'
-import { useGetCourseDetailBySlugQuery, useListCourseQuery } from '~/hooks/useCourse'
+import { useBoughtCoursesQuery, useGetCourseDetailBySlugQuery, useListCourseQuery } from '~/hooks/useCourse'
 import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
 
 export function meta({ params }: Route.MetaArgs) {
@@ -25,8 +25,8 @@ export default function Course({ params }: Route.ComponentProps) {
   const { courseSlug } = params
   const { data: courseDetail, isPending, isError } = useGetCourseDetailBySlugQuery({ slug: courseSlug })
   const courseDetailData = courseDetail?.data
-  const { data: listCourse } = useListCourseQuery({})
-  const { data: listCourseBought } = useListCourseQuery({ isBought: true })
+  const { data: listCourse } = useListCourseQuery()
+  const { data: listCourseBought } = useBoughtCoursesQuery()
   const addToCartMutation = useAddToCartMutation()
   const { data: listCart, refetch } = useGetListCart({
     getAll: true
@@ -78,19 +78,19 @@ export default function Course({ params }: Route.ComponentProps) {
                 <div className='flex flex-col gap-2'>
                   <span
                     className={cn('text-xl font-semibold line-through', {
-                      hidden: discount === 0
+                      hidden: discount === 0 || price == 0
                     })}
                   >
                     {formatCurrency(price)}
                   </span>
                   <div className='flex gap-8 items-center'>
                     <span className='text-2xl font-semibold dark:text-white text-black'>
-                      {formatCurrency(price * (1 - discount / 100))}
+                      {price === 0 ? 'Miễn phí' : formatCurrency(price * (1 - discount / 100))}
                     </span>
                     <Badge
                       variant='default'
                       className={cn('text-xs h-10', {
-                        hidden: discount === 0
+                        hidden: discount === 0 || price === 0
                       })}
                     >
                       <span className='text-base'>Tiết kiệm {discount}%</span>

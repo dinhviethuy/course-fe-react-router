@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { MenuIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
 import {
@@ -17,7 +16,6 @@ import { useAuthStore } from '~/stores/useAuthStore'
 export default function MobileDropdown() {
   const { isAuthenticated, setIsAuthenticated, setIsLogout } = useAuthStore()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const { data: profile } = useGetProfileQuery()
   const user = profile?.data?.data
   const logoutMutation = useLogoutMutation()
@@ -26,12 +24,11 @@ export default function MobileDropdown() {
       await logoutMutation.mutateAsync({})
       setIsAuthenticated(false)
       setIsLogout(true)
-      queryClient.removeQueries({ predicate: (query) => query.queryKey[0] === 'profile' })
       navigate('/')
     } catch (error) {
       handleError({
         error,
-        setError: () => {}
+        setError: () => { }
       })
     }
   }

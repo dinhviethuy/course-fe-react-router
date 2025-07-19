@@ -36,7 +36,7 @@ import type { GetListCartResType } from '~/types/cart.type'
 import type { GetValidateCouponResType } from '~/types/coupon.type'
 import type { CreateOrderBodyType } from '~/types/order.type'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Giỏ hàng' }, { name: 'description', content: 'Giỏ hàng' }]
 }
 
@@ -184,8 +184,10 @@ function ShowDialogPay({
                   <span className='text-base font-semibold text-primary'>{course.title}</span>
                 </div>
                 <div className='flex flex-col gap-2 col-span-1'>
-                  <span className='text-base font-semibold text-primary'>{formatCurrency(total)}</span>
-                  {course.discount > 0 && (
+                  <span className='text-base font-semibold text-primary'>
+                    {course.price === 0 ? 'Miễn phí' : formatCurrency(course.price * (1 - course.discount / 100))}
+                  </span>
+                  {course.discount > 0 && course.price !== 0 && (
                     <span className={cn('text-sm text-muted-foreground line-through')}>
                       {formatCurrency(course.price)}
                     </span>
@@ -265,9 +267,9 @@ function getColumns({
       cell: ({ row }) => (
         <div className='flex flex-col gap-2'>
           <span className={cn('text-base font-semibold text-primary')}>
-            {formatCurrency(row.original.course.price * (1 - row.original.course.discount / 100))}
+            {row.original.course.price === 0 ? 'Miễn phí' : formatCurrency(row.original.course.price * (1 - row.original.course.discount / 100))}
           </span>
-          {row.original.course.discount > 0 && (
+          {row.original.course.discount > 0 && row.original.course.price !== 0 && (
             <span className={cn('text-sm text-muted-foreground line-through')}>
               {formatCurrency(row.original.course.price)}
             </span>

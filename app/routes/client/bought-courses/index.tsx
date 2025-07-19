@@ -1,16 +1,14 @@
 import type { Route } from '.react-router/types/app/routes/client/bought-courses/+types'
 import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import CardCourse from '~/components/ui-custom/card-course'
-import { useListCourseQuery } from '~/hooks/useCourse'
+import { useBoughtCoursesQuery } from '~/hooks/useCourse'
 
 export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Khóa học đã mua' }, { name: 'description', content: 'Khóa học đã mua' }]
 }
 
 export default function BoughtCourses() {
-  const { data: listCourse } = useListCourseQuery({
-    isBought: true
-  })
+  const { data: listCourse } = useBoughtCoursesQuery()
   const data = listCourse?.data
   return (
     <Wrapper>
