@@ -2,7 +2,8 @@ import type { Route } from '.react-router/types/app/routes/client/courses/+types
 import { Accordion } from '@radix-ui/react-accordion'
 import { useQueryClient } from '@tanstack/react-query'
 import { BrainCircuit, CheckIcon, ListVideo } from 'lucide-react'
-import { Link } from 'react-router'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import VideoIframe from '~/components/art-player/video-iframe'
 import NotFound from '~/components/error-page/error-page'
@@ -25,17 +26,156 @@ import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardDescription } from '~/components/ui/card'
+import { Input } from '~/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { OrderStatus } from '~/constants/order.constant'
 import { useAddToCartMutation, useGetListCart } from '~/hooks/useCart'
+import { useValidateCouponMutation } from '~/hooks/useCounpon'
 import { useBoughtCoursesQuery, useGetCourseDetailBySlugQuery, useListCourseQuery } from '~/hooks/useCourse'
+import { useCreateOrderMutation, useGetOrder } from '~/hooks/useOrder'
 import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
+import type { GetListCartResType } from '~/types/cart.type'
+import type { GetValidateCouponResType } from '~/types/coupon.type'
+import type { CreateOrderBodyType } from '~/types/order.type'
 
 export function meta({ params }: Route.MetaArgs) {
   return [{ title: `${params.courseSlug}` }, { name: 'description', content: `${params.courseSlug}` }]
 }
 
+function ShowDialogPay({
+  item,
+  handleCreateOrder
+}: {
+  item: GetListCartResType['cartItems'][number]
+  handleCreateOrder: (body: CreateOrderBodyType) => void
+}) {
+  const [open, setOpen] = useState(true)
+  const [voucher, setVoucher] = useState('')
+  const [resAfterValidate, setResAfterValidate] = useState<GetValidateCouponResType>()
+  const validateCouponMutation = useValidateCouponMutation()
+  const queryClient = useQueryClient()
+  const { course } = item || {}
+  const total = course.price * (1 - course.discount / 100)
+  const [totalPay, setTotalPay] = useState(total)
+  const handleAddVoucher = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      const resItem = await validateCouponMutation.mutateAsync({
+        code: voucher,
+        courseId: item.course.id
+      })
+      // nếu người dùng nhập cái mới thì cập nhật cái cũ
+      const total = totalPay - resItem.data.data.discountAmount + (resAfterValidate?.discountAmount || 0)
+      setResAfterValidate(resItem.data.data)
+      setTotalPay(total)
+    } catch (error) {
+      handleError({
+        error
+      })
+    } finally {
+      setVoucher('')
+    }
+  }
+
+  const handleCreate = () => {
+    let body: CreateOrderBodyType = {
+      cartId: item.id
+    }
+    if (resAfterValidate) {
+      body = {
+        ...body,
+        couponId: resAfterValidate.id
+      }
+    }
+    try {
+      console.log(body)
+      handleCreateOrder(body)
+      setOpen(false)
+    } catch (error) {
+      handleError({ error })
+    }
+  }
+
+  const handleClose = () => {
+    queryClient.refetchQueries({ queryKey: ['cart'] })
+    setOpen(false)
+  }
+
+  return (
+    <AlertDialog open={open} onOpenChange={handleClose}>
+      <AlertDialogContent className='w-full max-w-[90vw] md:max-w-[792px]'>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Xác nhận đơn hàng</AlertDialogTitle>
+          <AlertDialogDescription asChild>
+            <div className='flex flex-col gap-6'>
+              <div className='grid grid-cols-6 gap-4'>
+                <div className='flex gap-2 items-center md:col-span-3 col-span-6'>
+                  <img src={course.image} alt={course.title} className='w-12 h-12 rounded-md object-cover' />
+                  <span className='text-base font-semibold text-primary'>{course.title}</span>
+                </div>
+                <div className='flex flex-col gap-2 col-span-1 md:col-span-1'>
+                  <span className='text-base font-semibold text-primary'>
+                    {course.price === 0 ? 'Miễn phí' : formatCurrency(course.price * (1 - course.discount / 100))}
+                  </span>
+                  {course.discount > 0 && course.price !== 0 && (
+                    <span className={cn('text-sm text-muted-foreground line-through')}>
+                      {formatCurrency(course.price)}
+                    </span>
+                  )}
+                </div>
+                <div className='flex flex-col gap-2 col-span-6 md:col-span-2'>
+                  <form onSubmit={handleAddVoucher} className='flex gap-2 items-center'>
+                    <Input
+                      type='text'
+                      className='w-full h-10'
+                      placeholder='Voucher'
+                      value={voucher}
+                      onChange={(e) => setVoucher(e.target.value)}
+                    />
+                    <Button className='cursor-pointer h-10 w-auto' type='submit'>
+                      Thêm
+                    </Button>
+                  </form>
+                  {resAfterValidate && (
+                    <div className='grid grid-cols-2 gap-2'>
+                      <span className='text-sm text-muted-foreground col-span-1 max-w-[150px] truncate'>
+                        {resAfterValidate.code}
+                      </span>
+                      <span className='text-sm text-primary col-span-1 max-w-full truncate'>
+                        -{formatCurrency(resAfterValidate.discountAmount)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className='grid grid-cols-6 gap-4'>
+                <div className='flex gap-2 items-center col-span-3'>
+                  <span className='text-base font-semibold text-primary'>Tổng tiền thanh toán</span>
+                </div>
+                <div className='flex flex-col gap-1 col-span-1'>
+                  <span className='text-base font-semibold text-primary'>{formatCurrency(totalPay)}</span>
+                  {totalPay < total && (
+                    <span className='text-sm text-muted-foreground line-through'>{formatCurrency(total)}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
+          <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={handleCreate}>
+            Tiếp tục
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
 export default function Course({ params }: Route.ComponentProps) {
+  const [item, setItem] = useState<GetListCartResType['cartItems'][number] | null>(null)
   const { isAuthenticated } = useAuthStore()
   const { courseSlug } = params
   const { data: courseDetail, isPending, isError } = useGetCourseDetailBySlugQuery({ slug: courseSlug })
@@ -44,6 +184,13 @@ export default function Course({ params }: Route.ComponentProps) {
   const { data: listCourseBought } = useBoughtCoursesQuery()
   const addToCartMutation = useAddToCartMutation()
   const queryClient = useQueryClient()
+  const createOrderMutation = useCreateOrderMutation()
+  const { data: order } = useGetOrder({
+    getAll: true,
+    status: OrderStatus.PENDING
+  })
+  const orderData = order?.data
+  const navigate = useNavigate()
   const { data: listCart } = useGetListCart({
     getAll: true
   })
@@ -63,17 +210,44 @@ export default function Course({ params }: Route.ComponentProps) {
     video,
     description
   } = courseDetailData.data
-  const handleAddToCart = async () => {
+
+  const handleCreateOrder = async (body: CreateOrderBodyType) => {
     try {
-      await addToCartMutation.mutateAsync({
+      const ressult = await createOrderMutation.mutateAsync(body)
+      if (item) {
+        setItem(null)
+      }
+      queryClient.refetchQueries({ queryKey: ['cart'] })
+      queryClient.refetchQueries({ queryKey: ['order'] })
+      toast.success('Tạo đơn hàng thành công')
+      navigate(`/manage/orders/detail/${ressult.data.data.id}`)
+    } catch (error) {
+      handleError({
+        error
+      })
+    }
+  }
+  const handleAddToCart = async (isBuyNow?: boolean) => {
+    try {
+      const res = await addToCartMutation.mutateAsync({
         courseId: courseDetailData.data.id
       })
-      queryClient.refetchQueries({ queryKey: ['cart'] })
-      toast.success('Thêm vào giỏ hàng thành công')
+      if (isBuyNow) {
+        setItem({
+          ...res.data.data,
+          course: courseDetailData.data
+        })
+      }
+      else {
+        queryClient.refetchQueries({ queryKey: ['cart'] })
+        toast.success('Thêm vào giỏ hàng thành công')
+      }
     } catch (error) {
       handleError({ error })
     }
   }
+  const isExistCart = listCartData?.data.cartItems.find((cart) => cart.course.slug === courseSlug)
+  const isExistOrderPending = orderData?.data.orders.find((order) => order.snapshots.find((snapshot) => snapshot.courseId === courseDetailData.data.id))?.id || null
   return (
     <Wrapper>
       <div className='flex flex-col xl:gap-12 gap-6 xl:py-0 py-8'>
@@ -153,8 +327,8 @@ export default function Course({ params }: Route.ComponentProps) {
                       </Link>
                     ) : (
                       <>
-                        {listCartData?.data.cartItems.find((cart) => cart.course.slug === courseSlug) ? (
-                          <Link to={`/manage/cart`}>
+                        {isExistCart || isExistOrderPending ? (
+                          <Link to={isExistCart ? '/manage/cart' : `/manage/orders/detail/${isExistOrderPending}`}>
                             <Button className='w-full h-10 cursor-pointer'>
                               <span className='text-base font-semibold'>Tiến hành thanh toán</span>
                             </Button>
@@ -163,10 +337,11 @@ export default function Course({ params }: Route.ComponentProps) {
                           <>
                             {isAuthenticated && (
                               <>
-                                <Button className='w-full h-10 cursor-pointer'>
-                                  <span className='text-base font-semibold'>Mua ngay</span>
+                                <Button variant='default' className='cursor-pointer w-full h-10' onClick={() => handleAddToCart(true)}>
+                                  Mua ngay
                                 </Button>
-                                <Button variant='outline' className='w-full h-10 cursor-pointer' onClick={handleAddToCart}>
+                                {item && <ShowDialogPay item={item} handleCreateOrder={handleCreateOrder} />}
+                                <Button variant='outline' className='w-full h-10 cursor-pointer' onClick={() => handleAddToCart()}>
                                   <span className='text-base text-primary font-semibold'>Thêm vào giỏ hàng</span>
                                 </Button>
                               </>

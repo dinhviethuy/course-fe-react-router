@@ -46,7 +46,7 @@ export default function OrderDetail() {
       </div>
       <div data-orientation='horizontal' role='none' className='shrink-0 bg-border h-[1px] w-full my-6' />
       <div className='grid grid-cols-2 gap-4'>
-        <div className='col-span-1'>
+        <div className='lg:col-span-1 col-span-2'>
           <h3 className='text-2xl font-medium'>Thông tin chuyển khoản</h3>
           <div className='flex flex-col gap-4 py-6'>
             <ul className='flex flex-col gap-4'>
@@ -80,7 +80,7 @@ export default function OrderDetail() {
               <ul className='flex flex-col gap-4 py-4'>
                 <li className='grid grid-cols-2 gap-4'>
                   <span className='grid-cols-1 text-base '>Ngân hàng</span>
-                  <span className='grid-cols-1 text-base'>OCB - Ngân hàng TMCP Phương Đông</span>
+                  <span className='grid-cols-1 text-base'>TPB- Ngân hàng Thương mại Cổ phần Tiên Phong</span>
                 </li>
                 <li className='grid grid-cols-2 gap-4'>
                   <span className='grid-cols-1 text-base '>
@@ -113,7 +113,7 @@ export default function OrderDetail() {
             </div>
           </div>
         </div>
-        <div className='col-span-1'>
+        <div className='lg:col-span-1 col-span-2  '>
           <h3 className='text-2xl font-medium'>Thông tin hóa đơn</h3>
           <ul className='flex flex-col gap-6 py-6'>
             <li className='space-x-2'>
@@ -123,7 +123,7 @@ export default function OrderDetail() {
               </span>
             </li>
             <li className='grid grid-cols-3 gap-4'>
-              <div className='col-span-2 text-base flex items-center gap-4'>
+              <div className='col-span-2 text-base flex items-center flex-wrap md:flex-nowrap gap-4'>
                 <img
                   src={order.snapshots[0].courseImage || ''}
                   alt={order.snapshots[0].courseTitle || ''}

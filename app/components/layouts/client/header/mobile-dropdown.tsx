@@ -39,10 +39,12 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
         <MenuIcon className='w-6 h-6' />
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-52 sm:hidden block z-[1000]'>
-        <DropdownMenuLabel>
+        <DropdownMenuLabel className={cn({
+          'hidden': !isAuthenticated || !user
+        })}>
           <div className='flex flex-col gap-1'>
-            <span>{user?.fullName}</span>
-            <span>{user?.email}</span>
+            <span className='wrap-break-word'>{user?.fullName}</span>
+            <span className='wrap-break-word'>{user?.email}</span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator
@@ -112,7 +114,9 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             }
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem className={cn({
+          hidden: !isAuthenticated || !user
+        })}>
           <Link to='/manage/orders' className='w-full'>
             Đơn hàng
           </Link>

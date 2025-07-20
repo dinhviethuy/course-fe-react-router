@@ -132,7 +132,8 @@ function ShowDialogPay({
   const [resAfterValidate, setResAfterValidate] = useState<GetValidateCouponResType>()
   const validateCouponMutation = useValidateCouponMutation()
   const queryClient = useQueryClient()
-  const handleAddVoucher = async () => {
+  const handleAddVoucher = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     try {
       const resItem = await validateCouponMutation.mutateAsync({
         code: voucher,
@@ -176,17 +177,17 @@ function ShowDialogPay({
           Thanh toán
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent className='max-w-[792px]!'>
+      <AlertDialogContent className='w-full max-w-[90vw] md:max-w-[792px]'>
         <AlertDialogHeader>
           <AlertDialogTitle>Xác nhận đơn hàng</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className='flex flex-col gap-6'>
               <div className='grid grid-cols-6 gap-4'>
-                <div className='flex gap-2 items-center col-span-3'>
+                <div className='flex gap-2 items-center md:col-span-3 col-span-6'>
                   <img src={course.image} alt={course.title} className='w-12 h-12 rounded-md object-cover' />
                   <span className='text-base font-semibold text-primary'>{course.title}</span>
                 </div>
-                <div className='flex flex-col gap-2 col-span-1'>
+                <div className='flex flex-col gap-2 col-span-1 md:col-span-1'>
                   <span className='text-base font-semibold text-primary'>
                     {course.price === 0 ? 'Miễn phí' : formatCurrency(course.price * (1 - course.discount / 100))}
                   </span>
@@ -196,8 +197,8 @@ function ShowDialogPay({
                     </span>
                   )}
                 </div>
-                <div className='flex flex-col gap-2 col-span-2'>
-                  <div className='flex gap-2 items-center'>
+                <div className='flex flex-col gap-2 col-span-6 md:col-span-2'>
+                  <form onSubmit={handleAddVoucher} className='flex gap-2 items-center'>
                     <Input
                       type='text'
                       className='w-full h-10'
@@ -205,10 +206,10 @@ function ShowDialogPay({
                       value={voucher}
                       onChange={(e) => setVoucher(e.target.value)}
                     />
-                    <Button className='cursor-pointer h-10 w-auto' onClick={handleAddVoucher}>
+                    <Button className='cursor-pointer h-10 w-auto' type='submit'>
                       Thêm
                     </Button>
-                  </div>
+                  </form>
                   {resAfterValidate && (
                     <div className='grid grid-cols-2 gap-2'>
                       <span className='text-sm text-muted-foreground col-span-1 max-w-[150px] truncate'>
@@ -258,9 +259,9 @@ function getColumns({
       accessorKey: 'title',
       header: 'Khóa học',
       cell: ({ row }) => (
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 flex-wrap'>
           <img src={row.original.course.image} alt={row.original.course.title} className='w-10 h-10 rounded-md' />
-          <span>{row.original.course.title}</span>
+          <span className='wrap-break-word'>{row.original.course.title}</span>
         </div>
       )
     },
@@ -302,7 +303,7 @@ function getColumns({
               <AlertDialogFooter>
                 <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
                 <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
-                  Tiếp tục
+                  Xóa
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

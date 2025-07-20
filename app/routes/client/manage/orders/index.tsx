@@ -30,6 +30,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { CouponType } from '~/constants/counpon.constant'
 import { OrderStatus, type OrderStatusType } from '~/constants/order.constant'
 import { useCancalOrderMutation, useGetOrder } from '~/hooks/useOrder'
+import { paymentSocket } from '~/lib/socket'
 import { cn, formatCurrency, getOrderStatus, handleError } from '~/lib/utils'
 import type { GetOrderListResType } from '~/types/order.type'
 
@@ -145,13 +146,13 @@ function getColumns({
       accessorKey: 'title',
       header: 'Khóa học',
       cell: ({ row }) => (
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 flex-wrap'>
           <img
-            src={row.original.snapshots[0].courseImage || ''}
-            alt={row.original.snapshots[0].courseTitle || ''}
+            src={row.original.snapshots[0]?.courseImage || ''}
+            alt={row.original.snapshots[0]?.courseTitle || ''}
             className='w-10 h-10 rounded-md'
           />
-          <span>{row.original.snapshots[0].courseTitle}</span>
+          <span className='wrap-break-word'>{row.original.snapshots[0]?.courseTitle}</span>
         </div>
       )
     },
@@ -160,7 +161,7 @@ function getColumns({
       header: 'Giá',
       cell: ({ row }) => {
         const { snapshots } = row.original
-        const { coursePrice, courseDiscount, couponDiscount, couponType } = snapshots[0]
+        const { coursePrice, courseDiscount, couponDiscount, couponType } = snapshots[0] || {}
         let total = coursePrice ? coursePrice * (1 - (courseDiscount || 0) / 100) : 0
         if (couponType && couponDiscount) {
           if (couponType === CouponType.PERCENT) {
@@ -220,7 +221,7 @@ function getColumns({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Bạn đang thực hiện hủy đơn hàng {row.original.snapshots[0].courseTitle}. Bạn có thể thêm đơn hàng
+                    Bạn đang thực hiện hủy đơn hàng {row.original.snapshots[0]?.courseTitle}. Bạn có thể thêm đơn hàng
                     này vào giỏ hàng sau.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -340,6 +341,12 @@ export default function Orders() {
       })
     }
   }
+  useEffect(() => {
+    paymentSocket.on('payment', () => {
+      toast.success('Đơn hàng đã được thanh toán thành công')
+      refetch()
+    })
+  }, [refetch])
   const columns = getColumns({ handleCancel })
   return (
     <div>

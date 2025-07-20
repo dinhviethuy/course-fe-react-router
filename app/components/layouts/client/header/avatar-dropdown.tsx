@@ -60,8 +60,8 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
           })}
         >
           <div className='flex flex-col gap-1'>
-            <span>{user?.fullName}</span>
-            <span>{user?.email}</span>
+            <span className='wrap-break-word'>{user?.fullName}</span>
+            <span className='wrap-break-word'>{user?.email}</span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator
