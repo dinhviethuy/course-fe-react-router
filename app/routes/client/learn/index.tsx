@@ -8,7 +8,8 @@ import Comment from '~/components/comment/comment'
 import { default as Forbidden, default as NotFound } from '~/components/error-page/error-page'
 import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import MarkdownPreview from '~/components/markdown-preview/markdown-preview'
-import CollapsibleCustom from '~/components/ui-custom/collapsible-custom'
+import AccordionCustom from '~/components/ui-custom/accordion-custom'
+import { Accordion } from '~/components/ui/accordion'
 import { Button } from '~/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '~/components/ui/sheet'
 import { useCanAccessCourseMutation, useGetCourseDetailBySlugQuery } from '~/hooks/useCourse'
@@ -23,27 +24,39 @@ export function meta({ }: Route.MetaArgs) {
 function MenuLesson({
   chapters,
   lessonId,
-  chapterId,
-  courseSlug
+  courseSlug,
+  titleChapter
 }: {
   chapters: GetCourseDetailResType['chapters']
   lessonId?: number
   chapterId?: number
-  courseSlug: string
+  courseSlug: string,
+  titleChapter: string
 }) {
+  const [openAccordion, setOpenAccordion] = useState<string[]>([titleChapter])
+
+  useEffect(() => {
+    setOpenAccordion([titleChapter])
+  }, [titleChapter])
+
   return (
     <>
-      {chapters.map((chapter, index) => (
-        <div className='flex flex-col gap-4' key={index}>
-          <CollapsibleCustom
-            isOpenInit={chapterId === chapter.id}
+      <Accordion
+        type="multiple"
+        className="w-full"
+        value={openAccordion}
+        onValueChange={setOpenAccordion}
+      >
+        {chapters.map((chapter) => (
+          <AccordionCustom
             chapter={chapter}
             isLearn={true}
             lessonId={lessonId}
             courseSlug={courseSlug}
+            key={chapter.id}
           />
-        </div>
-      ))}
+        ))}
+      </Accordion >
     </>
   )
 }
@@ -53,17 +66,21 @@ function RenderLesson({
   chapters,
   courseSlug,
   lessonIdPrev,
-  lessonIdNext
+  lessonIdNext,
+  setTitleChapter
 }: {
   lessonId: number
   chapters: GetCourseDetailResType['chapters']
   courseSlug: string
   lessonIdPrev?: number
-  lessonIdNext?: number
+  lessonIdNext?: number,
+  setTitleChapter: (title: string) => void
 }) {
   const { data: lessonDetail, isPending } = useGetLessonDetailQuery({ lessonId })
   if (isPending) return null
   if (!lessonDetail) return <NotFound statusCode={404} message='Không tìm thấy bài học' />
+  const titleChapter = chapters.find((chapter) => chapter.id === lessonDetail?.data.data.chapterId)?.title || ''
+  setTitleChapter(titleChapter)
   return (
     <>
       <div className='pr-2'>
@@ -90,7 +107,7 @@ function RenderLesson({
             <div className='lg:flex hidden flex-col gap-1'>
               <h3 className='text-lg font-bold'>{lessonDetail?.data.data.title}</h3>
               <h4 className='text-sm text-gray-500'>
-                {chapters.find((chapter) => chapter.id === lessonDetail?.data.data.chapterId)?.title}
+                {titleChapter}
               </h4>
             </div>
           </div>
@@ -108,7 +125,7 @@ function RenderLesson({
         <div className='flex flex-col gap-1 lg:hidden mt-4 pr-2'>
           <h3 className='text-lg font-bold'>{lessonDetail?.data.data.title}</h3>
           <h4 className='text-sm text-gray-500'>
-            {chapters.find((chapter) => chapter.id === lessonDetail?.data.data.chapterId)?.title}
+            {titleChapter}
           </h4>
         </div>
         <div className='mt-6 max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
@@ -130,6 +147,7 @@ function Lesson({
   courseSlug: string
 }) {
   const [isOpenMenu, setIsOpenMenu] = useState(false)
+  const [titleChapter, setTitleChapter] = useState(chapters.length > 0 ? chapters[0].title : '')
   const isMinLg = useMediaQuery({ query: '(min-width: 1024px)' })
   const { lessonIdQuery, chapterIdQuery, lessonIdPrev, lessonIdNext } = getLessonIdAndChapterId(chapters, lessonId)
   return (
@@ -143,7 +161,7 @@ function Lesson({
               </SheetTrigger>
               <SheetContent className='z-[9999]'>
                 <div className='pl-4 mt-8 pr-2 flex sticky top-16 flex-col max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-                  <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} courseSlug={courseSlug} />
+                  <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} courseSlug={courseSlug} titleChapter={titleChapter} />
                 </div>
               </SheetContent>
             </Sheet>
@@ -155,12 +173,13 @@ function Lesson({
               courseSlug={courseSlug}
               lessonIdPrev={lessonIdPrev}
               lessonIdNext={lessonIdNext}
+              setTitleChapter={setTitleChapter}
             />
           )}
         </div>
         <div className='hidden lg:block lg:col-span-3 col-span-12'>
           <div className='pl-4 pr-2 flex sticky top-16 flex-col max-h-[750px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-            <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} courseSlug={courseSlug} />
+            <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} courseSlug={courseSlug} titleChapter={titleChapter} />
           </div>
         </div>
       </div>

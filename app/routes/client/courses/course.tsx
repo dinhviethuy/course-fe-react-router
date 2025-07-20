@@ -1,4 +1,5 @@
 import type { Route } from '.react-router/types/app/routes/client/courses/+types/course'
+import { Accordion } from '@radix-ui/react-accordion'
 import { useQueryClient } from '@tanstack/react-query'
 import { BrainCircuit, CheckIcon, ListVideo } from 'lucide-react'
 import { Link } from 'react-router'
@@ -7,8 +8,8 @@ import VideoIframe from '~/components/art-player/video-iframe'
 import NotFound from '~/components/error-page/error-page'
 import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import Loading from '~/components/loading/loading'
+import AccordionCustom from '~/components/ui-custom/accordion-custom'
 import CardCourse from '~/components/ui-custom/card-course'
-import CollapsibleCustom from '~/components/ui-custom/collapsible-custom'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -87,7 +88,7 @@ export default function Course({ params }: Route.ComponentProps) {
           <div className='col-span-12 xl:col-span-8 lg:col-span-7 h-[550px]'>
             {video && <VideoIframe videoUrl={video} />}
           </div>
-          <div className='col-span-12 xl:col-span-4 lg:col-span-5 h-[550px]'>
+          <div className='col-span-12 xl:col-span-4 lg:col-span-5 max-[550px]'>
             <Card className='w-full p-6'>
               <CardDescription className='flex flex-col gap-3'>
                 <div className='flex flex-col gap-2'>
@@ -273,11 +274,15 @@ export default function Course({ params }: Route.ComponentProps) {
                   <h3 className='text-xl font-semibold'>Nội dung học tập</h3>
                 </div>
                 <div className='flex flex-col'>
-                  {chapters.map((chapter, index) => (
-                    <div className='flex flex-col gap-2' key={index}>
-                      <CollapsibleCustom chapter={chapter} />
-                    </div>
-                  ))}
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="w-full"
+                  >
+                    {chapters.map((chapter) => (
+                      <AccordionCustom chapter={chapter} key={chapter.id} />
+                    ))}
+                  </Accordion>
                 </div>
               </div>
             </TabsContent>
