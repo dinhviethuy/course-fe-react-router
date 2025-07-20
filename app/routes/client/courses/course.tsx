@@ -1,4 +1,5 @@
 import type { Route } from '.react-router/types/app/routes/client/courses/+types/course'
+import { useQueryClient } from '@tanstack/react-query'
 import { BrainCircuit, CheckIcon, ListVideo } from 'lucide-react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
@@ -8,6 +9,17 @@ import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import Loading from '~/components/loading/loading'
 import CardCourse from '~/components/ui-custom/card-course'
 import CollapsibleCustom from '~/components/ui-custom/collapsible-custom'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '~/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -16,19 +28,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { useAddToCartMutation, useGetListCart } from '~/hooks/useCart'
 import { useBoughtCoursesQuery, useGetCourseDetailBySlugQuery, useListCourseQuery } from '~/hooks/useCourse'
 import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export function meta({ params }: Route.MetaArgs) {
   return [{ title: `${params.courseSlug}` }, { name: 'description', content: `${params.courseSlug}` }]
 }
 
 export default function Course({ params }: Route.ComponentProps) {
+  const { isAuthenticated } = useAuthStore()
   const { courseSlug } = params
   const { data: courseDetail, isPending, isError } = useGetCourseDetailBySlugQuery({ slug: courseSlug })
   const courseDetailData = courseDetail?.data
   const { data: listCourse } = useListCourseQuery()
   const { data: listCourseBought } = useBoughtCoursesQuery()
   const addToCartMutation = useAddToCartMutation()
-  const { data: listCart, refetch } = useGetListCart({
+  const queryClient = useQueryClient()
+  const { data: listCart } = useGetListCart({
     getAll: true
   })
   const listCartData = listCart?.data
@@ -52,7 +67,7 @@ export default function Course({ params }: Route.ComponentProps) {
       await addToCartMutation.mutateAsync({
         courseId: courseDetailData.data.id
       })
-      refetch()
+      queryClient.refetchQueries({ queryKey: ['cart'] })
       toast.success('Thêm vào giỏ hàng thành công')
     } catch (error) {
       handleError({ error })
@@ -145,12 +160,46 @@ export default function Course({ params }: Route.ComponentProps) {
                           </Link>
                         ) : (
                           <>
-                            <Button className='w-full h-10 cursor-pointer'>
-                              <span className='text-base font-semibold'>Mua ngay</span>
-                            </Button>
-                            <Button variant='outline' className='w-full h-10 cursor-pointer' onClick={handleAddToCart}>
-                              <span className='text-base text-primary font-semibold'>Thêm vào giỏ hàng</span>
-                            </Button>
+                            {isAuthenticated && (
+                              <>
+                                <Button className='w-full h-10 cursor-pointer'>
+                                  <span className='text-base font-semibold'>Mua ngay</span>
+                                </Button>
+                                <Button variant='outline' className='w-full h-10 cursor-pointer' onClick={handleAddToCart}>
+                                  <span className='text-base text-primary font-semibold'>Thêm vào giỏ hàng</span>
+                                </Button>
+                              </>
+                            )}
+                            {!isAuthenticated && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button className='w-full h-10 cursor-pointer'>
+                                    <span className='text-base font-semibold'>Mua ngay</span>
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogTrigger>
+                                  <Button variant='outline' className='w-full h-10 cursor-pointer'>
+                                    <span className='text-base text-primary font-semibold'>Thêm vào giỏ hàng</span>
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className='max-w-sm'>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Bạn cần đăng nhập để truy cập trang này</AlertDialogTitle>
+                                    <AlertDialogDescription>Vui lòng đăng nhập để tiếp tục</AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel asChild>
+                                      <span className='cursor-pointer'>Đóng</span>
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction asChild>
+                                      <Link to='/login' className='cursor-pointer'>
+                                        Đăng nhập
+                                      </Link>
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
                           </>
                         )}
                       </>

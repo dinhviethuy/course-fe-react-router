@@ -9,10 +9,11 @@ interface CollapsibleCustomProps {
   isOpenInit?: boolean
   chapter: GetCourseDetailResType['chapters'][number]
   isLearn?: boolean
-  lessonId?: number
+  lessonId?: number,
+  courseSlug: string
 }
 
-export default function CollapsibleCustom({ isOpenInit, chapter, isLearn, lessonId }: CollapsibleCustomProps) {
+export default function CollapsibleCustom({ isOpenInit, chapter, isLearn, lessonId, courseSlug }: CollapsibleCustomProps) {
   const [isOpen, setIsOpen] = useState(isOpenInit || false)
   const { title, duration, lessons } = chapter
   return (
@@ -37,7 +38,7 @@ export default function CollapsibleCustom({ isOpenInit, chapter, isLearn, lesson
               {isLearn ? (
                 <>
                   <Link
-                    to={`/learn/Nest.js-Testing?lessonId=${lesson.id}`}
+                    to={`/learn/${courseSlug}?lessonId=${lesson.id}`}
                     className={cn('flex gap-2 items-center cursor-pointer hover:text-primary', {
                       underline: lesson.id === lessonId
                     })}

@@ -8,5 +8,10 @@ export default defineConfig({
   css: {
     devSourcemap: true
   },
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths(), devtoolsJson()]
+  plugins: [tailwindcss(), reactRouter(), tsconfigPaths(), devtoolsJson()],
+  server: {
+    warmup: {
+      clientFiles: ['./app/root.tsx']
+    }
+  }
 })

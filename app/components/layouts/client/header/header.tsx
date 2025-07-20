@@ -3,6 +3,7 @@ import AvatarDropdown from '~/components/layouts/client/header/avatar-dropdown'
 import MobileDropdown from '~/components/layouts/client/header/mobile-dropdown'
 import { ModeToggle } from '~/components/mode-toggle'
 import { Button } from '~/components/ui/button'
+import { useGetListCart } from '~/hooks/useCart'
 import { cn } from '~/lib/utils'
 
 const navItems = [
@@ -19,6 +20,10 @@ const navItems = [
 ]
 
 export default function Header({ isAuth, isHeaderAbsolute = false }: { isAuth: boolean; isHeaderAbsolute?: boolean }) {
+  const { data: listCartData } = useGetListCart({
+    getAll: true
+  })
+  const totalCart = listCartData?.data?.data?.totalItems || 0
   return (
     <>
       <header
@@ -54,7 +59,7 @@ export default function Header({ isAuth, isHeaderAbsolute = false }: { isAuth: b
               </ul>
             </div>
           </div>
-          <div className='flex items-center gap-4'>
+          <div className='flex items-center gap-1'>
             <div>
               <ModeToggle />
             </div>
@@ -87,10 +92,10 @@ export default function Header({ isAuth, isHeaderAbsolute = false }: { isAuth: b
               </Link>
             </div>
             <div className='hidden sm:block'>
-              <AvatarDropdown />
+              <AvatarDropdown totalCart={totalCart} />
             </div>
             <div className='sm:hidden'>
-              <MobileDropdown />
+              <MobileDropdown totalCart={totalCart} />
             </div>
           </div>
         </div>

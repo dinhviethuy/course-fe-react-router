@@ -1,5 +1,6 @@
 import { MenuIcon } from 'lucide-react'
 import { Link, useNavigate } from 'react-router'
+import { Badge } from '~/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +14,7 @@ import { useGetProfileQuery } from '~/hooks/useUser'
 import { cn, handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 
-export default function MobileDropdown() {
+export default function MobileDropdown({ totalCart }: { totalCart: number }) {
   const { isAuthenticated, setIsAuthenticated, setIsLogout } = useAuthStore()
   const navigate = useNavigate()
   const { data: profile } = useGetProfileQuery()
@@ -105,7 +106,10 @@ export default function MobileDropdown() {
           })}
         >
           <Link to='/manage/cart' className='w-full'>
-            Giỏ hàng
+            <span>Giỏ hàng</span>
+            {totalCart > 0 &&
+              <Badge variant='default' className='ml-2'>{totalCart}</Badge>
+            }
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>

@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router'
 import { Avatar, AvatarFallback } from '~/components/ui/avatar'
+import { Badge } from '~/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,7 @@ import { cn, handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 
 
-export default function AvatarDropdown() {
+export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
   const { isAuthenticated, setIsAuthenticated, setIsLogout } = useAuthStore()
   const navigate = useNavigate()
   const { data: profile } = useGetProfileQuery()
@@ -42,7 +43,9 @@ export default function AvatarDropdown() {
             hidden: !isAuthenticated || !user
           })}
         >
-          <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
+          <Avatar className='relative'>
+            <AvatarFallback className='bg-muted'>{user?.fullName?.charAt(0)}</AvatarFallback>
+          </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-[224px] sm:block hidden z-[1000]' align='end'>
           <DropdownMenuLabel
@@ -116,7 +119,10 @@ export default function AvatarDropdown() {
             })}
           >
             <Link to='/manage/cart' className='w-full'>
-              Giỏ hàng
+              <span>Giỏ hàng</span>
+              {totalCart > 0 &&
+                <Badge variant='default' className='ml-2'>{totalCart}</Badge>
+              }
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem

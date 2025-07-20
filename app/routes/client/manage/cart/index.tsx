@@ -1,4 +1,5 @@
 import type { Route } from '.react-router/types/app/routes/client/manage/cart/+types'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   flexRender,
   getCoreRowModel,
@@ -130,6 +131,7 @@ function ShowDialogPay({
   const [voucher, setVoucher] = useState('')
   const [resAfterValidate, setResAfterValidate] = useState<GetValidateCouponResType>()
   const validateCouponMutation = useValidateCouponMutation()
+  const queryClient = useQueryClient()
   const handleAddVoucher = async () => {
     try {
       const resItem = await validateCouponMutation.mutateAsync({
@@ -161,6 +163,7 @@ function ShowDialogPay({
     }
     try {
       handleCreateOrder(body)
+      queryClient.refetchQueries({ queryKey: ['cart'] })
     } catch (error) {
       handleError({ error })
     }
@@ -387,19 +390,21 @@ export default function Cart() {
     pageIndex: 0,
     pageSize: 10
   })
-  const { data: cart, refetch } = useGetListCart({
+  const { data: cart } = useGetListCart({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize
   })
+  const queryClient = useQueryClient()
   const createOrderMutation = useCreateOrderMutation()
   const deleteCartMutation = useDeleteCartMutation()
   const navigate = useNavigate()
   const handleCreateOrder = async (body: CreateOrderBodyType) => {
     try {
       const ressult = await createOrderMutation.mutateAsync(body)
+      queryClient.refetchQueries({ queryKey: ['cart'] })
+      // queryClient.refetchQueries({ queryKey: ['order'] })
       toast.success('Tạo đơn hàng thành công')
       navigate(`/manage/orders/detail/${ressult.data.data.id}`)
-      refetch()
     } catch (error) {
       handleError({
         error
@@ -410,8 +415,8 @@ export default function Cart() {
   const handleDelete = async (cartId: number) => {
     try {
       await deleteCartMutation.mutateAsync({ cartId })
+      queryClient.refetchQueries({ queryKey: ['cart'] })
       toast.success('Xóa giỏ hàng thành công')
-      refetch()
     } catch (error) {
       handleError({ error })
     }

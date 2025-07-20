@@ -16,18 +16,20 @@ import { useGetLessonDetailQuery } from '~/hooks/useLesson'
 import { cn, getLessonIdAndChapterId } from '~/lib/utils'
 import type { GetCourseDetailResType } from '~/types/course.type'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Khu vực học tập' }, { name: 'description', content: 'Khu vực học tập' }]
 }
 
 function MenuLesson({
   chapters,
   lessonId,
-  chapterId
+  chapterId,
+  courseSlug
 }: {
   chapters: GetCourseDetailResType['chapters']
   lessonId?: number
   chapterId?: number
+  courseSlug: string
 }) {
   return (
     <>
@@ -38,6 +40,7 @@ function MenuLesson({
             chapter={chapter}
             isLearn={true}
             lessonId={lessonId}
+            courseSlug={courseSlug}
           />
         </div>
       ))}
@@ -140,7 +143,7 @@ function Lesson({
               </SheetTrigger>
               <SheetContent className='z-[9999]'>
                 <div className='pl-4 mt-8 pr-2 flex sticky top-16 flex-col max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-                  <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} />
+                  <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} courseSlug={courseSlug} />
                 </div>
               </SheetContent>
             </Sheet>
@@ -157,7 +160,7 @@ function Lesson({
         </div>
         <div className='hidden lg:block lg:col-span-3 col-span-12'>
           <div className='pl-4 pr-2 flex sticky top-16 flex-col max-h-[750px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-            <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} />
+            <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} courseSlug={courseSlug} />
           </div>
         </div>
       </div>
