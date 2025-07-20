@@ -29,6 +29,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { CouponType } from '~/constants/counpon.constant'
 import { OrderStatus, type OrderStatusType } from '~/constants/order.constant'
+import { PAGE_LIMIT } from '~/constants/other.constant'
 import { useCancalOrderMutation, useGetOrder } from '~/hooks/useOrder'
 import { paymentSocket } from '~/lib/socket'
 import { cn, formatCurrency, getOrderStatus, handleError } from '~/lib/utils'
@@ -321,7 +322,7 @@ export default function Orders() {
   const [status, setStatus] = useState<OrderStatusType | 'ALL'>('ALL')
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10
+    pageSize: PAGE_LIMIT
   })
   const { data: orders, refetch } = useGetOrder({
     page: pagination.pageIndex + 1,

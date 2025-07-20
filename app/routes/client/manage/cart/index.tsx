@@ -29,6 +29,7 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
+import { PAGE_LIMIT } from '~/constants/other.constant'
 import { useDeleteCartMutation, useGetListCart } from '~/hooks/useCart'
 import { useValidateCouponMutation } from '~/hooks/useCounpon'
 import { useCreateOrderMutation } from '~/hooks/useOrder'
@@ -389,7 +390,7 @@ function BuildTable({
 export default function Cart() {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10
+    pageSize: PAGE_LIMIT
   })
   const { data: cart } = useGetListCart({
     page: pagination.pageIndex + 1,
