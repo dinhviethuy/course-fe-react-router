@@ -20,7 +20,7 @@ export default function BoughtCourses() {
     page: page - 1,
   })
   const data = listCourse?.data
-  if (data && page > data.data.totalPages) {
+  if (data && page > 1 && page > data.data.totalPages) {
     return <NotFound statusCode={404} message='Không tìm thấy trang' />
   }
   return (
