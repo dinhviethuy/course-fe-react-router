@@ -97,7 +97,10 @@ export const formatDuration = (duration: number): string => {
   return [pad(hours), pad(minutes), pad(seconds)].join(':').replace(/^00:/, '')
 }
 
-export const getLessonIdAndChapterId = (chapters: GetCourseDetailResType['chapters'], lessonId: number) => {
+export const getLessonIdAndChapterId = (
+  chapters: GetCourseDetailResType['chapters'] | GetCourseDetailResTypeForAdmin['chapters'],
+  lessonId: number
+) => {
   let lessonIdQuery: number | undefined = undefined
   let chapterIdQuery: number | undefined = undefined
   let lessonIdPrev: number | undefined = undefined

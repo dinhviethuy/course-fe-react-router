@@ -52,10 +52,9 @@ export default function DragCourse({ course }: { course: GetCourseDetailResTypeF
   function handleDragStart(event: DragStartEvent) {
     setActiveItem(event.active)
 
-    // Nếu đang kéo một chapter, tạm thời đóng tất cả các chapter khác
     if (event.active.id.toString().startsWith('chapter-')) {
-      prevExpandedChaptersRef.current = expandedChapters // Lưu trạng thái hiện tại
-      setExpandedChapters([]) // Đóng tất cả các chapter
+      prevExpandedChaptersRef.current = expandedChapters
+      setExpandedChapters([])
     }
   }
 

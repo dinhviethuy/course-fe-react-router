@@ -3,13 +3,13 @@ import z from 'zod'
 export const LessonSchema = z.object({
   id: z.number().int().positive(),
   title: z.string(),
-  description: z.string().default(''),
-  order: z.number().min(0).default(0),
-  isDraft: z.boolean().default(true),
+  description: z.string().default('').optional(),
+  order: z.number().min(0).default(0).optional(),
+  isDraft: z.boolean().default(true).optional(),
   chapterId: z.number().int().positive(),
-  duration: z.number().min(0).default(0),
+  duration: z.number().min(0).default(0).optional(),
   videoUrl: z.string().nullable().optional(),
-  key: z.string().nullable(),
+  key: z.string().nullable().optional(),
 
   createdAt: z.date(),
   updatedAt: z.date(),

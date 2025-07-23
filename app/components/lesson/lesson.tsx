@@ -1,54 +1,48 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '@radix-ui/react-dropdown-menu'
-import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Switch } from '~/components/ui/switch'
 import UploadVideo from '~/components/uploads/upload-video'
-import type { FileMetadata } from '~/hooks/use-file-upload'
+import type { FileMetadata, FileWithPreview } from '~/hooks/use-file-upload'
 import { ClientOnly } from '~/layout/admin/ClientOnly'
 import MarkdownEditor from '~/layout/admin/MarkdownEditor'
-import { CreateLessonBodySchema, type CreateLessonBodyType } from '~/types/lesson.type'
+import { type CreateLessonBodyType, type UpdateLessonBodyType } from '~/types/lesson.type'
 
-export default function Lesson() {
-  const [file, setFile] = useState<File | FileMetadata | null>(null)
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-    control
-  } = useForm({
-    defaultValues: {
-      title: '',
-      description: '',
-      videoUrl: '',
-      isDraft: true
-    },
-    resolver: zodResolver(
-      CreateLessonBodySchema.pick({
-        title: true,
-        description: true,
-        videoUrl: true,
-        isDraft: true
-      })
-    )
-  })
-
-  const onSubmit = (body: Omit<CreateLessonBodyType, 'chapterId' | 'courseId' | 'duration'>) => {
-    console.log(file)
-    console.log(body)
+type LessonType = CreateLessonBodyType | UpdateLessonBodyType
+interface IProps {
+  lesson: LessonType,
+  onSubmit: (data: Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>) => void,
+  handleSubmit: UseFormHandleSubmit<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
+  register: UseFormRegister<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
+  errors: FieldErrors<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
+  control: Control<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
+  watch: UseFormWatch<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
+  setValue: UseFormSetValue<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
+  setFile: (file: File | FileMetadata | null) => void,
+  uploadFile: {
+    handleDragEnter: (e: React.DragEvent<HTMLElement>) => void
+    handleDragLeave: (e: React.DragEvent<HTMLElement>) => void
+    handleDragOver: (e: React.DragEvent<HTMLElement>) => void
+    handleDrop: (e: React.DragEvent<HTMLElement>) => void
+    openFileDialog: () => void
+    removeFile: (id: string) => void
+    getInputProps: (
+      props?: React.InputHTMLAttributes<HTMLInputElement>
+    ) => React.InputHTMLAttributes<HTMLInputElement> & { ref: React.Ref<HTMLInputElement> }
+    files: FileWithPreview[]
+    isDragging: boolean
+    errors: string[]
   }
+}
+
+export default function Lesson({ lesson, onSubmit, handleSubmit, control, register, errors, watch, setValue, setFile, uploadFile }: IProps) {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit, (e) => {
-        console.log(e)
-      })}
+      onSubmit={handleSubmit(onSubmit)}
       className='w-full max-w-5xl'
     >
       <div className=' space-y-10'>
@@ -84,9 +78,10 @@ export default function Lesson() {
             <div className='rounded-xl overflow-hidden border relative'>
               <UploadVideo
                 register={register}
-                videoUrl='http://localhost:3000/media/static/videos/849998b2-551e-4a48-a784-27c1d3af1614.mp4'
+                videoUrl={lesson?.videoUrl}
                 setFile={setFile}
                 setValue={setValue}
+                uploadFile={uploadFile}
               />
               {errors.videoUrl && <p className='text-red-500'>{errors.videoUrl.message}</p>}
             </div>
@@ -117,7 +112,7 @@ export default function Lesson() {
         </Card>
         <CardFooter className='flex justify-center'>
           <Button type='submit' className='cursor-pointer'>
-            Tạo bài học
+            Cập nhật bài học
           </Button>
         </CardFooter>
       </div>

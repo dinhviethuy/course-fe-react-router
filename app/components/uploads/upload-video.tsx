@@ -5,30 +5,36 @@ import ArtPlayer from '~/components/art-player/art-player'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
-import { useFileUpload, type FileMetadata } from '~/hooks/use-file-upload'
+import { type FileMetadata, type FileWithPreview } from '~/hooks/use-file-upload'
 import { cn } from '~/lib/utils'
 
 export default memo(function UploadVideo({
   register,
   videoUrl,
   setValue,
-  setFile
+  setFile,
+  uploadFile
 }: {
   register: UseFormRegister<any>
-  videoUrl: string
+  videoUrl: string | null | undefined
   setValue: UseFormSetValue<any>
   setFile: (file: File | FileMetadata) => void
+  uploadFile: {
+    handleDragEnter: (e: React.DragEvent<HTMLElement>) => void
+    handleDragLeave: (e: React.DragEvent<HTMLElement>) => void
+    handleDragOver: (e: React.DragEvent<HTMLElement>) => void
+    handleDrop: (e: React.DragEvent<HTMLElement>) => void
+    openFileDialog: () => void
+    removeFile: (id: string) => void
+    getInputProps: (
+      props?: React.InputHTMLAttributes<HTMLInputElement>
+    ) => React.InputHTMLAttributes<HTMLInputElement> & { ref: React.Ref<HTMLInputElement> }
+    files: FileWithPreview[]
+    isDragging: boolean
+    errors: string[]
+  }
 }) {
-  const maxSizeGB = 2
-  const maxSize = maxSizeGB * 1024 * 1024 * 1024
-
-  const [
-    { files, isDragging, errors },
-    { handleDragEnter, handleDragLeave, handleDragOver, handleDrop, openFileDialog, removeFile, getInputProps }
-  ] = useFileUpload({
-    accept: 'video/mp4,video/mov,video/avi,video/wmv,video/flv,video/mkv,video/webm',
-    maxSize
-  })
+  const { errors, files, getInputProps, handleDragEnter, handleDragLeave, handleDragOver, handleDrop, isDragging, openFileDialog, removeFile } = uploadFile
 
   const previewUrl = files[0]?.preview || videoUrl || null
 

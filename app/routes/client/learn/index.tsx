@@ -17,7 +17,7 @@ import { useGetLessonDetailQuery } from '~/hooks/useLesson'
 import { cn, getLessonIdAndChapterId } from '~/lib/utils'
 import type { GetCourseDetailResType } from '~/types/course.type'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Khu vực học tập' }, { name: 'description', content: 'Khu vực học tập' }]
 }
 
@@ -138,7 +138,7 @@ function Lesson({
   courseSlug: string
 }) {
   const [isOpenMenu, setIsOpenMenu] = useState(false)
-  const [titleChapter, setTitleChapter] = useState(chapters.length > 0 ? chapters[0].title : '')
+  const [titleChapter, setTitleChapter] = useState(chapters.length > 0 ? chapters[0].title! : '')
   const isMinLg = useMediaQuery({ query: '(min-width: 1024px)' })
   const { lessonIdQuery, chapterIdQuery, lessonIdPrev, lessonIdNext } = getLessonIdAndChapterId(chapters, lessonId)
   return (

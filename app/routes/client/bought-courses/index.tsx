@@ -7,7 +7,7 @@ import PaginationCustom from '~/components/ui-custom/pagination-custom'
 import { PAGE_LIMIT } from '~/constants/other.constant'
 import { useBoughtCoursesQuery } from '~/hooks/useCourse'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Khóa học đã mua' }, { name: 'description', content: 'Khóa học đã mua' }]
 }
 
@@ -17,7 +17,7 @@ export default function BoughtCourses() {
   if (isNaN(page)) page = 1
   const { data: listCourse } = useBoughtCoursesQuery({
     limit: PAGE_LIMIT,
-    page: page - 1
+    page: page
   })
   const data = listCourse?.data
   if (data && page > 1 && page > data.data.totalPages) {

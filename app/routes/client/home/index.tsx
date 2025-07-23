@@ -7,7 +7,7 @@ import { PAGE_LIMIT } from '~/constants/other.constant'
 import { useListCourseQuery } from '~/hooks/useCourse'
 import type { Route } from './+types/index'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Trang chủ' }, { name: 'description', content: 'Trang chủ' }]
 }
 
@@ -17,7 +17,7 @@ export default function Home() {
   if (isNaN(page)) page = 1
   const { data: listCourse } = useListCourseQuery({
     limit: PAGE_LIMIT,
-    page: page - 1
+    page: page
   })
   const data = listCourse?.data
   if (data && page > 1 && page > data.data.totalPages) {
