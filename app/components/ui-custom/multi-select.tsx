@@ -39,7 +39,7 @@ export function MultiSelect({ options, selected, onChange }: IProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[300px] justify-between"
+          className="w-full h-auto justify-between"
         >
           {selected.length > 0 ? (
             <div className="flex flex-wrap gap-2">
@@ -72,7 +72,7 @@ export function MultiSelect({ options, selected, onChange }: IProps) {
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput placeholder="Tìm kiếm..." />
           <CommandList>

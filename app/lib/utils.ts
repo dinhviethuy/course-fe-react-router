@@ -6,7 +6,11 @@ import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 import { CouponType } from '~/constants/counpon.constant'
 import { OrderStatus, type OrderStatusType } from '~/constants/order.constant'
-import type { GetCourseDetailResType } from '~/types/course.type'
+import type {
+  GetCourseDetailResType,
+  GetCourseDetailResTypeForAdmin,
+  ReorderChaptersAndLessonsBodyType
+} from '~/types/course.type'
 import type { ErrorResponse } from '~/types/success.type'
 
 export function cn(...inputs: ClassValue[]) {
@@ -178,4 +182,23 @@ export const getOrderStatus = (status: OrderStatusType) => {
     [OrderStatus.CANCELLED]: 'Đã hủy'
   }
   return orderStatus[status]
+}
+
+export const getOrder = (chapters: GetCourseDetailResTypeForAdmin['chapters']): ReorderChaptersAndLessonsBodyType => {
+  const body = chapters.map((chapter, index) => {
+    const lesson = chapter.lessons.map((lesson, index) => {
+      return {
+        id: lesson.id,
+        order: index
+      }
+    })
+    return {
+      id: chapter.id,
+      order: index,
+      lessons: lesson
+    }
+  })
+  return {
+    chapters: body
+  }
 }

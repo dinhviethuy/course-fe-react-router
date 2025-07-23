@@ -4,7 +4,7 @@ import type { UseFormRegister, UseFormSetValue } from "react-hook-form"
 
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
-import { useFileUpload, type FileMetadata } from "~/hooks/use-file-upload"
+import { type FileMetadata, type FileWithPreview } from "~/hooks/use-file-upload"
 import { cn } from "~/lib/utils"
 
 export default function UploadImage({
@@ -12,30 +12,28 @@ export default function UploadImage({
   image,
   setValue,
   setFile,
+  uploadFile,
 }: {
   register: UseFormRegister<any>
   image: string
   setValue: UseFormSetValue<any>
-  setFile: (file: File | FileMetadata) => void
+  setFile: (file: File | FileMetadata) => void,
+  uploadFile: {
+    handleDragEnter: (e: React.DragEvent<HTMLElement>) => void,
+    handleDragLeave: (e: React.DragEvent<HTMLElement>) => void,
+    handleDragOver: (e: React.DragEvent<HTMLElement>) => void,
+    handleDrop: (e: React.DragEvent<HTMLElement>) => void,
+    openFileDialog: () => void,
+    removeFile: (id: string) => void,
+    getInputProps: (props?: React.InputHTMLAttributes<HTMLInputElement>) => React.InputHTMLAttributes<HTMLInputElement> & { ref: React.Ref<HTMLInputElement> },
+    files: FileWithPreview[],
+    isDragging: boolean,
+    errors: string[],
+    maxSizeMB: number
+  }
 }) {
-  const maxSizeMB = 2
-  const maxSize = maxSizeMB * 1024 * 1024
 
-  const [
-    { files, isDragging, errors },
-    {
-      handleDragEnter,
-      handleDragLeave,
-      handleDragOver,
-      handleDrop,
-      openFileDialog,
-      removeFile,
-      getInputProps,
-    },
-  ] = useFileUpload({
-    accept: "image/svg+xml,image/png,image/jpeg,image/jpg,image/gif",
-    maxSize,
-  })
+  const { errors, files, getInputProps, handleDragEnter, handleDragLeave, handleDragOver, handleDrop, isDragging, openFileDialog, removeFile, maxSizeMB } = uploadFile
 
   const previewUrl = files[0]?.preview || image || null
 
@@ -76,6 +74,7 @@ export default function UploadImage({
               />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
                 <Button
+                  type="button"
                   variant="secondary"
                   className="flex gap-2 cursor-pointer"
                   onClick={openFileDialog}
@@ -97,7 +96,7 @@ export default function UploadImage({
               <p className="text-muted-foreground text-xs">
                 SVG, PNG, JPG or GIF (max. {maxSizeMB}MB)
               </p>
-              <Button variant="outline" className="mt-4" onClick={openFileDialog}>
+              <Button variant="outline" type="button" className="mt-4" onClick={openFileDialog}>
                 <UploadIcon className="-ms-1 size-4 opacity-60" aria-hidden="true" />
                 Select image
               </Button>
@@ -112,7 +111,7 @@ export default function UploadImage({
               className={cn(
                 "focus-visible:border-ring focus-visible:ring-ring/50 z-50 flex size-8 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white transition-[color,box-shadow] outline-none hover:bg-black/80 focus-visible:ring-[3px]",
                 {
-                  "opacity-0": previewUrl === image,
+                  "hidden": previewUrl === image,
                 }
               )}
               onClick={() => {

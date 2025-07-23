@@ -7,9 +7,9 @@ import { UserSchema } from '~/types/user.type'
 
 export const CourseSchema = z.object({
   id: z.number().int().positive(),
-  title: z.string(),
+  title: z.string().min(1),
   description: z.string().default('').optional(),
-  slug: z.string(),
+  slug: z.string().min(1),
   price: z.number().min(0).optional(),
   isDraft: z.boolean().default(true).optional(),
   discount: z.number().min(0).max(100).default(0).optional(),
@@ -59,17 +59,16 @@ export const GetCoursesQuerySchema = z
   .strict()
 
 export const GetManageCoursesQuerySchema = GetCoursesQuerySchema.extend({
-  isDraft: z.preprocess((value) => {
-    if (typeof value === 'string') {
-      const lowered = value.trim().toLowerCase()
-      if (lowered === 'true') return true
-      if (lowered === 'false') return false
-      return undefined
-    }
-    if (typeof value === 'boolean') return value
-    return undefined
-  }, z.boolean().optional()),
-  createdById: z.coerce.number().int().positive().optional()
+  isDraft: z.string().optional(),
+  createdById: z.coerce.number().int().positive().optional(),
+  getAll: z
+    .preprocess((value: any) => {
+      if (typeof value === 'string') {
+        return value.toLowerCase() === 'true'
+      }
+      return false
+    }, z.boolean())
+    .optional()
 })
 
 export const GetCourseDetailResSchema = CourseSchema.pick({

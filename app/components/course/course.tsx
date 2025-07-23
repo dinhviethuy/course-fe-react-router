@@ -1,6 +1,6 @@
 import { X } from "lucide-react"
 import { useState } from "react"
-import { Controller, type Control, type FieldErrors, type UseFormGetValues, type UseFormHandleSubmit, type UseFormRegister, type UseFormReset, type UseFormSetValue } from "react-hook-form"
+import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormReset, type UseFormSetValue, type UseFormWatch } from "react-hook-form"
 import { MultiSelect } from "~/components/ui-custom/multi-select"
 import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
@@ -12,11 +12,10 @@ import { Switch } from "~/components/ui/switch"
 import { Textarea } from "~/components/ui/textarea"
 import UploadImage from "~/components/uploads/upload-image"
 import { CourseType } from "~/constants/course.constant"
-import type { FileMetadata } from "~/hooks/use-file-upload"
+import { type FileMetadata, type FileWithPreview } from "~/hooks/use-file-upload"
+import { useListCourseAdminQuery } from "~/hooks/useCourse"
 import { cn } from "~/lib/utils"
 import type { CreateCourseBodyType, UpdateCourseBodyType } from "~/types/course.type"
-
-const ids = [1, 2, 3, 4]
 
 interface IProps {
   register: UseFormRegister<UpdateCourseBodyType | CreateCourseBodyType>,
@@ -31,8 +30,21 @@ interface IProps {
   isDirty: boolean,
   titleHeader: string,
   buttonText: string,
-  getValues: UseFormGetValues<UpdateCourseBodyType | CreateCourseBodyType>,
-  isUpdate?: boolean
+  isUpdate?: boolean,
+  watch: UseFormWatch<UpdateCourseBodyType | CreateCourseBodyType>,
+  uploadFile: {
+    handleDragEnter: (e: React.DragEvent<HTMLElement>) => void,
+    handleDragLeave: (e: React.DragEvent<HTMLElement>) => void,
+    handleDragOver: (e: React.DragEvent<HTMLElement>) => void,
+    handleDrop: (e: React.DragEvent<HTMLElement>) => void,
+    openFileDialog: () => void,
+    removeFile: (id: string) => void,
+    getInputProps: (props?: React.InputHTMLAttributes<HTMLInputElement>) => React.InputHTMLAttributes<HTMLInputElement> & { ref: React.Ref<HTMLInputElement> },
+    files: FileWithPreview[],
+    isDragging: boolean,
+    errors: string[],
+    maxSizeMB: number
+  },
 }
 
 export default function Course({
@@ -48,12 +60,19 @@ export default function Course({
   isDirty,
   titleHeader,
   buttonText,
-  getValues,
-  isUpdate
+  isUpdate,
+  uploadFile,
+  watch
 }: IProps) {
   const [newBenefit, setNewBenefit] = useState("")
+  const { data: getListCourse } = useListCourseAdminQuery({
+    getAll: true
+  })
+  const courses = getListCourse?.data.data
   return (
-    <form className="space-y-6" onSubmit={handleSubmit(handleSubmitForm)}>
+    <form className="space-y-6" onSubmit={handleSubmit(handleSubmitForm, e => {
+      console.log(e)
+    })}>
       <Card>
         <CardHeader className="flex justify-between items-center">
           <CardTitle className="text-2xl">{titleHeader}</CardTitle>
@@ -69,12 +88,12 @@ export default function Course({
             <div className="space-y-4 col-span-2 lg:col-span-1">
               <div className="space-y-2">
                 <Label>Tiêu đề</Label>
-                <Input {...register('title')} placeholder="Tiêu đề khóa học" />
+                <Input {...register('title')} placeholder="Tiêu đề khóa học" required />
                 {errors.title && <p className="text-red-500">{errors.title.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Slug</Label>
-                <Input {...register('slug')} placeholder="nestjs-super" />
+                <Input {...register('slug')} placeholder="nestjs-super" required />
                 {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
               </div>
               <div className="space-y-2">
@@ -83,6 +102,7 @@ export default function Course({
                   type="number"
                   {...register('price', { valueAsNumber: true })}
                   placeholder="Nhập giá"
+                  required
                   min={0}
                 />
                 {errors.price && <p className="text-red-500">{errors.price.message}</p>}
@@ -94,12 +114,15 @@ export default function Course({
                   {...register('discount', { valueAsNumber: true })}
                   placeholder="0"
                   min={0}
+                  required
+                  max={100}
+                  step={1}
                 />
                 {errors.discount && <p className="text-red-500">{errors.discount.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>Video giới thiệu (YouTube)</Label>
-                <Input {...register('video')} placeholder="https://youtube.com/..." />
+                <Input {...register('video')} placeholder="https://youtube.com/..." required />
                 {errors.video && <p className="text-red-500">{errors.video.message}</p>}
               </div>
               <div className="grid grid-cols-2">
@@ -125,8 +148,8 @@ export default function Course({
                           <SelectValue placeholder="Chọn loại" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="SINGLE">SINGLE</SelectItem>
-                          <SelectItem value="COMBO">COMBO</SelectItem>
+                          <SelectItem value={CourseType.SINGLE}>SINGLE</SelectItem>
+                          <SelectItem value={CourseType.COMBO}>COMBO</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -135,7 +158,7 @@ export default function Course({
                     <p className="text-red-500">{errors.courseType.message}</p>
                   )}
                 </div>
-                {getValues('courseType') === CourseType.COMBO && <div className="space-y-2 col-span-1">
+                {watch('courseType') === CourseType.COMBO && courses && <div className="space-y-2 col-span-2">
                   <Label>Khóa học con</Label>
                   <Controller
                     control={control}
@@ -144,9 +167,9 @@ export default function Course({
                       <MultiSelect
                         selected={field.value || []}
                         onChange={field.onChange}
-                        options={ids.map((id) => ({
-                          id,
-                          title: id.toString()
+                        options={courses?.courses.filter((course) => course.slug !== data?.slug).map((course) => ({
+                          id: course.id,
+                          title: course.title
                         }))}
                       />
                     )}
@@ -169,7 +192,13 @@ export default function Course({
               </div>
               <div className="space-y-2">
                 <Label>Ảnh bìa khóa học</Label>
-                <UploadImage register={register} image={data.image} setValue={setValue} setFile={setFile} />
+                <UploadImage
+                  register={register}
+                  image={data.image}
+                  setValue={setValue}
+                  setFile={setFile}
+                  uploadFile={uploadFile}
+                />
                 {errors.image && <p className="text-red-500">{errors.image.message}</p>}
               </div>
             </div>
