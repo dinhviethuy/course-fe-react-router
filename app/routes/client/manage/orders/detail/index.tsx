@@ -108,7 +108,12 @@ export default function OrderDetail() {
                 khi sẽ không nhận diện được QR này)
               </p>
               <div>
-                <img src={`https://qr.sepay.vn/img?acc=08062479789&bank=TPBank&amount=${totalPrice}&des=DH${order.id}`} alt='QR Code' width={320} height={320} />
+                <img
+                  src={`https://qr.sepay.vn/img?acc=08062479789&bank=TPBank&amount=${totalPrice}&des=DH${order.id}`}
+                  alt='QR Code'
+                  width={320}
+                  height={320}
+                />
               </div>
             </div>
           </div>

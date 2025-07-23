@@ -29,7 +29,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
     } catch (error) {
       handleError({
         error,
-        setError: () => { }
+        setError: () => {}
       })
     }
   }
@@ -39,9 +39,11 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
         <MenuIcon className='w-6 h-6' />
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-52 sm:hidden block z-[1000]'>
-        <DropdownMenuLabel className={cn({
-          'hidden': !isAuthenticated || !user
-        })}>
+        <DropdownMenuLabel
+          className={cn({
+            hidden: !isAuthenticated || !user
+          })}
+        >
           <div className='flex flex-col gap-1'>
             <span className='wrap-break-word'>{user?.fullName}</span>
             <span className='wrap-break-word'>{user?.email}</span>
@@ -109,14 +111,18 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
         >
           <Link to='/manage/cart' className='w-full'>
             <span>Giỏ hàng</span>
-            {totalCart > 0 &&
-              <Badge variant='default' className='ml-2'>{totalCart}</Badge>
-            }
+            {totalCart > 0 && (
+              <Badge variant='default' className='ml-2'>
+                {totalCart}
+              </Badge>
+            )}
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem className={cn({
-          hidden: !isAuthenticated || !user
-        })}>
+        <DropdownMenuItem
+          className={cn({
+            hidden: !isAuthenticated || !user
+          })}
+        >
           <Link to='/manage/orders' className='w-full'>
             Đơn hàng
           </Link>

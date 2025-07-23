@@ -8,7 +8,7 @@ import type { GetCourseDetailResType } from '~/types/course.type'
 interface AccordionCustomProps {
   chapter: GetCourseDetailResType['chapters'][number]
   isLearn?: boolean
-  lessonId?: number,
+  lessonId?: number
   courseSlug?: string
 }
 
@@ -22,7 +22,7 @@ export default function AccordioneCustom({ chapter, isLearn, lessonId, courseSlu
           <span className='text-sm xl:text-md font-semibold text-left'>{formatDuration(duration)}</span>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="flex flex-col gap-4 text-balance">
+      <AccordionContent className='flex flex-col gap-4 text-balance'>
         <ul className='flex flex-col pt-2 gap-y-3'>
           {lessons.map((lesson) => (
             <li key={lesson.id} className='flex gap-2 items-center'>

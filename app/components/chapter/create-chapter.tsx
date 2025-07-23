@@ -1,25 +1,31 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import Chapter from "~/components/chapter/chapter"
-import { Button } from "~/components/ui/button"
-import { useCreateChapterMutation } from "~/hooks/useChapter"
-import { handleError } from "~/lib/utils"
-import { CreateChapterBodySchema, type CreateChapterBodyType } from "~/types/chapter.type"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import Chapter from '~/components/chapter/chapter'
+import { Button } from '~/components/ui/button'
+import { useCreateChapterMutation } from '~/hooks/useChapter'
+import { handleError } from '~/lib/utils'
+import { CreateChapterBodySchema, type CreateChapterBodyType } from '~/types/chapter.type'
 
 interface IProps {
-  courseId: number,
+  courseId: number
   // setChapters: React.Dispatch<React.SetStateAction<GetCourseDetailResTypeForAdmin['chapters']>>
 }
 export default function CreateChapter({ courseId }: IProps) {
   const [open, setOpen] = useState(false)
-  const { register, handleSubmit, formState: { errors }, control, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    reset
+  } = useForm({
     defaultValues: {
       title: undefined,
       description: undefined,
-      isDraft: true,
+      isDraft: true
     },
     resolver: zodResolver(CreateChapterBodySchema.omit({ courseId: true }))
   })

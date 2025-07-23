@@ -1,10 +1,10 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
-import { ThemeProvider } from '~/components/theme-provider';
-import { Toaster } from '~/components/ui/sonner';
-import type { Route } from './+types/root';
-import './app.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import { ThemeProvider } from '~/components/theme-provider'
+import { Toaster } from '~/components/ui/sonner'
+import type { Route } from './+types/root'
+import './app.css'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -27,7 +27,7 @@ const queryClient = new QueryClient({
       refetchOnReconnect: true,
       refetchInterval: 1000 * 60 * 5,
       staleTime: 0,
-      refetchIntervalInBackground: true,
+      refetchIntervalInBackground: true
     }
   }
 })

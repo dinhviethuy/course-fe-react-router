@@ -5,9 +5,9 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination"
-import { usePagination } from "~/hooks/use-pagination"
+  PaginationPrevious
+} from '~/components/ui/pagination'
+import { usePagination } from '~/hooks/use-pagination'
 
 type PaginationProps = {
   currentPage: number
@@ -15,15 +15,11 @@ type PaginationProps = {
   paginationItemsToDisplay?: number
 }
 
-export default function PaginationCustom({
-  currentPage,
-  totalPages,
-  paginationItemsToDisplay = 5,
-}: PaginationProps) {
+export default function PaginationCustom({ currentPage, totalPages, paginationItemsToDisplay = 5 }: PaginationProps) {
   const { pages, showLeftEllipsis, showRightEllipsis } = usePagination({
     currentPage,
     totalPages,
-    paginationItemsToDisplay,
+    paginationItemsToDisplay
   })
 
   return (
@@ -31,20 +27,17 @@ export default function PaginationCustom({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
+            className='aria-disabled:pointer-events-none aria-disabled:opacity-50'
             href={currentPage === 1 ? undefined : `?page=${currentPage - 1}`}
             aria-disabled={currentPage === 1 ? true : undefined}
-            role={currentPage === 1 ? "link" : undefined}
+            role={currentPage === 1 ? 'link' : undefined}
           />
         </PaginationItem>
 
         {showLeftEllipsis && pages[0] > 1 && (
           <>
             <PaginationItem>
-              <PaginationLink
-                href={`?page=${1}`}
-                isActive={currentPage === 1}
-              >
+              <PaginationLink href={`?page=${1}`} isActive={currentPage === 1}>
                 {1}
               </PaginationLink>
             </PaginationItem>
@@ -56,10 +49,7 @@ export default function PaginationCustom({
 
         {pages.map((page) => (
           <PaginationItem key={page}>
-            <PaginationLink
-              href={`?page=${page}`}
-              isActive={page === currentPage}
-            >
+            <PaginationLink href={`?page=${page}`} isActive={page === currentPage}>
               {page}
             </PaginationLink>
           </PaginationItem>
@@ -71,10 +61,7 @@ export default function PaginationCustom({
               <PaginationEllipsis />
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink
-                href={`?page=${totalPages}`}
-                isActive={currentPage === totalPages}
-              >
+              <PaginationLink href={`?page=${totalPages}`} isActive={currentPage === totalPages}>
                 {totalPages}
               </PaginationLink>
             </PaginationItem>
@@ -83,14 +70,10 @@ export default function PaginationCustom({
 
         <PaginationItem>
           <PaginationNext
-            className="aria-disabled:pointer-events-none aria-disabled:opacity-50"
-            href={
-              currentPage === totalPages
-                ? undefined
-                : `?page=${currentPage + 1}`
-            }
+            className='aria-disabled:pointer-events-none aria-disabled:opacity-50'
+            href={currentPage === totalPages ? undefined : `?page=${currentPage + 1}`}
             aria-disabled={currentPage === totalPages ? true : undefined}
-            role={currentPage === totalPages ? "link" : undefined}
+            role={currentPage === totalPages ? 'link' : undefined}
           />
         </PaginationItem>
       </PaginationContent>

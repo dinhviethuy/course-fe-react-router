@@ -1,22 +1,33 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import Chapter from "~/components/chapter/chapter";
-import { UpdateChapterBodySchema, type UpdateChatperBodyType } from "~/types/chapter.type";
-import type { GetCourseDetailResTypeForAdmin } from "~/types/course.type";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import Chapter from '~/components/chapter/chapter'
+import { UpdateChapterBodySchema, type UpdateChatperBodyType } from '~/types/chapter.type'
+import type { GetCourseDetailResTypeForAdmin } from '~/types/course.type'
 
-export default function EditChapter({ chapter, handleUpdateChapter, isPending, children }: {
-  chapter: GetCourseDetailResTypeForAdmin['chapters'][number],
-  handleUpdateChapter: (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number) => void,
-  isPending: boolean,
+export default function EditChapter({
+  chapter,
+  handleUpdateChapter,
+  isPending,
+  children
+}: {
+  chapter: GetCourseDetailResTypeForAdmin['chapters'][number]
+  handleUpdateChapter: (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number) => void
+  isPending: boolean
   children: React.ReactElement
 }) {
   const [open, setOpen] = useState(false)
-  const { register, handleSubmit, formState: { errors }, control, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    reset
+  } = useForm({
     defaultValues: {
       title: chapter.title,
       description: chapter.description,
-      isDraft: chapter.isDraft,
+      isDraft: chapter.isDraft
     },
     resolver: zodResolver(UpdateChapterBodySchema.omit({ courseId: true }))
   })

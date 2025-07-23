@@ -1,15 +1,15 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router"
-import { toast } from "sonner"
-import Course from "~/components/course/course"
-import { CourseType } from "~/constants/course.constant"
-import { useFileUpload, type FileMetadata } from "~/hooks/use-file-upload"
-import { useCreateCourseMutation } from "~/hooks/useCourse"
-import { useUploadImageMutation } from "~/hooks/useMedia"
-import { handleError } from "~/lib/utils"
-import { CreateCourseBodySchema, type CreateCourseBodyType } from "~/types/course.type"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
+import { toast } from 'sonner'
+import Course from '~/components/course/course'
+import { CourseType } from '~/constants/course.constant'
+import { useFileUpload, type FileMetadata } from '~/hooks/use-file-upload'
+import { useCreateCourseMutation } from '~/hooks/useCourse'
+import { useUploadImageMutation } from '~/hooks/useMedia'
+import { handleError } from '~/lib/utils'
+import { CreateCourseBodySchema, type CreateCourseBodyType } from '~/types/course.type'
 
 export default function Component() {
   const maxSizeMB = 2
@@ -17,36 +17,38 @@ export default function Component() {
 
   const [
     { files, isDragging, errors: errorsUploadFile },
-    {
-      handleDragEnter,
-      handleDragLeave,
-      handleDragOver,
-      handleDrop,
-      openFileDialog,
-      removeFile,
-      getInputProps
-    },
+    { handleDragEnter, handleDragLeave, handleDragOver, handleDrop, openFileDialog, removeFile, getInputProps }
   ] = useFileUpload({
-    accept: "image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,image/webp",
-    maxSize,
+    accept: 'image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,image/webp',
+    maxSize
   })
   const [file, setFile] = useState<File | FileMetadata | null>(null)
   const defaultValues: CreateCourseBodyType = {
     benefits: [],
-    title: "",
-    slug: "",
+    title: '',
+    slug: '',
     price: 0,
     discount: 0,
     video: undefined,
     isDraft: true,
     description: undefined,
-    image: "",
-    courseType: "SINGLE",
-    courseIds: undefined,
+    image: '',
+    courseType: 'SINGLE',
+    courseIds: undefined
   }
-  const { register, handleSubmit, formState: { errors, isDirty }, reset, control, setValue, getValues, setError, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset,
+    control,
+    setValue,
+    getValues,
+    setError,
+    watch
+  } = useForm({
     defaultValues,
-    resolver: zodResolver(CreateCourseBodySchema),
+    resolver: zodResolver(CreateCourseBodySchema)
   })
   const uploadImageMutation = useUploadImageMutation()
   const createCourseMutation = useCreateCourseMutation()
@@ -69,8 +71,7 @@ export default function Component() {
       } else {
         setError('image', { message: 'Vui lòng tải lên ảnh bìa khóa học' })
       }
-    }
-    catch (error) {
+    } catch (error) {
       handleError({ error })
     }
   }
@@ -87,12 +88,13 @@ export default function Component() {
       isDirty={isDirty}
       register={register}
       data={defaultValues}
-      buttonText="Tạo ngay"
-      titleHeader="Tạo khóa học mới"
+      buttonText='Tạo ngay'
+      titleHeader='Tạo khóa học mới'
       watch={watch}
       uploadFile={{
         errors: errorsUploadFile,
-        files, getInputProps,
+        files,
+        getInputProps,
         handleDragEnter,
         handleDragLeave,
         handleDragOver,
@@ -100,7 +102,7 @@ export default function Component() {
         isDragging,
         maxSizeMB,
         openFileDialog,
-        removeFile,
+        removeFile
       }}
     />
   )

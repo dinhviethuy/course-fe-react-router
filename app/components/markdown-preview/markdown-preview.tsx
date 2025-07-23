@@ -7,7 +7,11 @@ export default function MarkdownViewer({ content }: { content: string }) {
   console.log({ content })
   return (
     <div className='prose dark:prose-invert max-w-none'>
-      <ReactMarkdown children={content.replace(/\\```/g, '```')} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypePrism]} />
+      <ReactMarkdown
+        children={content.replace(/\\```/g, '```')}
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypePrism]}
+      />
     </div>
   )
 }

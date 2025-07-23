@@ -1,19 +1,19 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import Course from "~/components/course/course"
-import { CourseType } from "~/constants/course.constant"
-import { useFileUpload, type FileMetadata } from "~/hooks/use-file-upload"
-import { useUpdateCourseMutaion } from "~/hooks/useCourse"
-import { useUploadImageMutation } from "~/hooks/useMedia"
-import { handleError } from "~/lib/utils"
-import { UpdateCourseBodySchema, type GetCourseDetailResTypeForAdmin } from "~/types/course.type"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import Course from '~/components/course/course'
+import { CourseType } from '~/constants/course.constant'
+import { useFileUpload, type FileMetadata } from '~/hooks/use-file-upload'
+import { useUpdateCourseMutaion } from '~/hooks/useCourse'
+import { useUploadImageMutation } from '~/hooks/useMedia'
+import { handleError } from '~/lib/utils'
+import { UpdateCourseBodySchema, type GetCourseDetailResTypeForAdmin } from '~/types/course.type'
 
 interface IProps {
-  data: GetCourseDetailResTypeForAdmin,
-  courseId: number,
-  refetch: () => void,
+  data: GetCourseDetailResTypeForAdmin
+  courseId: number
+  refetch: () => void
 }
 
 export default function Component({ data, courseId, refetch }: IProps) {
@@ -23,23 +23,24 @@ export default function Component({ data, courseId, refetch }: IProps) {
 
   const [
     { files, isDragging, errors: errorsUploadFile },
-    {
-      handleDragEnter,
-      handleDragLeave,
-      handleDragOver,
-      handleDrop,
-      openFileDialog,
-      removeFile,
-      getInputProps
-    },
+    { handleDragEnter, handleDragLeave, handleDragOver, handleDrop, openFileDialog, removeFile, getInputProps }
   ] = useFileUpload({
-    accept: "image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,image/webp",
-    maxSize,
+    accept: 'image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,image/webp',
+    maxSize
   })
-  const { register, handleSubmit, formState: { errors, isDirty }, reset, control, setValue, getValues, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+    reset,
+    control,
+    setValue,
+    getValues,
+    watch
+  } = useForm({
     defaultValues: {
       benefits: data.benefits,
-      courseIds: data.courseType === CourseType.COMBO ? data.comboChildren.map(item => item.id) : undefined,
+      courseIds: data.courseType === CourseType.COMBO ? data.comboChildren.map((item) => item.id) : undefined,
       courseType: data.courseType,
       description: data.description,
       discount: data.discount,
@@ -50,7 +51,7 @@ export default function Component({ data, courseId, refetch }: IProps) {
       title: data.title,
       video: data.video
     },
-    resolver: zodResolver(UpdateCourseBodySchema),
+    resolver: zodResolver(UpdateCourseBodySchema)
   })
   const uploadImageMutation = useUploadImageMutation()
   const updateCourseMutation = useUpdateCourseMutaion()
@@ -75,7 +76,7 @@ export default function Component({ data, courseId, refetch }: IProps) {
   useEffect(() => {
     reset({
       benefits: data.benefits,
-      courseIds: data.courseType === CourseType.COMBO ? data.comboChildren.map(item => item.id) : undefined,
+      courseIds: data.courseType === CourseType.COMBO ? data.comboChildren.map((item) => item.id) : undefined,
       courseType: data.courseType,
       description: data.description,
       discount: data.discount,
@@ -101,12 +102,13 @@ export default function Component({ data, courseId, refetch }: IProps) {
       register={register}
       data={data}
       watch={watch}
-      buttonText="Lưu thay đổi"
-      titleHeader="Thông tin khóa học"
+      buttonText='Lưu thay đổi'
+      titleHeader='Thông tin khóa học'
       isUpdate
       uploadFile={{
         errors: errorsUploadFile,
-        files, getInputProps,
+        files,
+        getInputProps,
         handleDragEnter,
         handleDragLeave,
         handleDragOver,
@@ -114,7 +116,7 @@ export default function Component({ data, courseId, refetch }: IProps) {
         isDragging,
         maxSizeMB,
         openFileDialog,
-        removeFile,
+        removeFile
       }}
     />
   )

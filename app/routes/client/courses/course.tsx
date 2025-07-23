@@ -237,8 +237,7 @@ export default function Course({ params }: Route.ComponentProps) {
           ...res.data.data,
           course: courseDetailData.data
         })
-      }
-      else {
+      } else {
         queryClient.refetchQueries({ queryKey: ['cart'] })
         toast.success('Thêm vào giỏ hàng thành công')
       }
@@ -247,7 +246,10 @@ export default function Course({ params }: Route.ComponentProps) {
     }
   }
   const isExistCart = listCartData?.data.cartItems.find((cart) => cart.course.slug === courseSlug)
-  const isExistOrderPending = orderData?.data.orders.find((order) => order.snapshots.find((snapshot) => snapshot.courseId === courseDetailData.data.id))?.id || null
+  const isExistOrderPending =
+    orderData?.data.orders.find((order) =>
+      order.snapshots.find((snapshot) => snapshot.courseId === courseDetailData.data.id)
+    )?.id || null
   return (
     <Wrapper>
       <div className='flex flex-col xl:gap-12 gap-6 xl:py-0 py-8'>
@@ -318,69 +320,75 @@ export default function Course({ params }: Route.ComponentProps) {
                   </li>
                 </ul>
                 <div className='flex flex-col gap-4'>
-                  {
-                    listCourseBoughtData?.data.courses.find((course) => course.slug === courseSlug) ? (
-                      <Link to={`/learn/${courseSlug}`}>
-                        <Button className='w-full h-10 cursor-pointer'>
-                          <span className='text-base font-semibold'>Tham gia học</span>
-                        </Button>
-                      </Link>
-                    ) : (
-                      <>
-                        {isExistCart || isExistOrderPending ? (
-                          <Link to={isExistCart ? '/manage/cart' : `/manage/orders/detail/${isExistOrderPending}`}>
-                            <Button className='w-full h-10 cursor-pointer'>
-                              <span className='text-base font-semibold'>Tiến hành thanh toán</span>
-                            </Button>
-                          </Link>
-                        ) : (
-                          <>
-                            {isAuthenticated && (
-                              <>
-                                <Button variant='default' className='cursor-pointer w-full h-10' onClick={() => handleAddToCart(true)}>
-                                  Mua ngay
+                  {listCourseBoughtData?.data.courses.find((course) => course.slug === courseSlug) ? (
+                    <Link to={`/learn/${courseSlug}`}>
+                      <Button className='w-full h-10 cursor-pointer'>
+                        <span className='text-base font-semibold'>Tham gia học</span>
+                      </Button>
+                    </Link>
+                  ) : (
+                    <>
+                      {isExistCart || isExistOrderPending ? (
+                        <Link to={isExistCart ? '/manage/cart' : `/manage/orders/detail/${isExistOrderPending}`}>
+                          <Button className='w-full h-10 cursor-pointer'>
+                            <span className='text-base font-semibold'>Tiến hành thanh toán</span>
+                          </Button>
+                        </Link>
+                      ) : (
+                        <>
+                          {isAuthenticated && (
+                            <>
+                              <Button
+                                variant='default'
+                                className='cursor-pointer w-full h-10'
+                                onClick={() => handleAddToCart(true)}
+                              >
+                                Mua ngay
+                              </Button>
+                              {item && <ShowDialogPay item={item} handleCreateOrder={handleCreateOrder} />}
+                              <Button
+                                variant='outline'
+                                className='w-full h-10 cursor-pointer'
+                                onClick={() => handleAddToCart()}
+                              >
+                                <span className='text-base text-primary font-semibold'>Thêm vào giỏ hàng</span>
+                              </Button>
+                            </>
+                          )}
+                          {!isAuthenticated && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button className='w-full h-10 cursor-pointer'>
+                                  <span className='text-base font-semibold'>Mua ngay</span>
                                 </Button>
-                                {item && <ShowDialogPay item={item} handleCreateOrder={handleCreateOrder} />}
-                                <Button variant='outline' className='w-full h-10 cursor-pointer' onClick={() => handleAddToCart()}>
+                              </AlertDialogTrigger>
+                              <AlertDialogTrigger>
+                                <Button variant='outline' className='w-full h-10 cursor-pointer'>
                                   <span className='text-base text-primary font-semibold'>Thêm vào giỏ hàng</span>
                                 </Button>
-                              </>
-                            )}
-                            {!isAuthenticated && (
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button className='w-full h-10 cursor-pointer'>
-                                    <span className='text-base font-semibold'>Mua ngay</span>
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogTrigger>
-                                  <Button variant='outline' className='w-full h-10 cursor-pointer'>
-                                    <span className='text-base text-primary font-semibold'>Thêm vào giỏ hàng</span>
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent className='max-w-sm'>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Bạn cần đăng nhập để truy cập trang này</AlertDialogTitle>
-                                    <AlertDialogDescription>Vui lòng đăng nhập để tiếp tục</AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel asChild>
-                                      <span className='cursor-pointer'>Đóng</span>
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction asChild>
-                                      <Link to='/login' className='cursor-pointer'>
-                                        Đăng nhập
-                                      </Link>
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            )}
-                          </>
-                        )}
-                      </>
-                    )
-                  }
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className='max-w-sm'>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Bạn cần đăng nhập để truy cập trang này</AlertDialogTitle>
+                                  <AlertDialogDescription>Vui lòng đăng nhập để tiếp tục</AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel asChild>
+                                    <span className='cursor-pointer'>Đóng</span>
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction asChild>
+                                    <Link to='/login' className='cursor-pointer'>
+                                      Đăng nhập
+                                    </Link>
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
                 </div>
               </CardDescription>
             </Card>
@@ -449,11 +457,7 @@ export default function Course({ params }: Route.ComponentProps) {
                   <h3 className='text-xl font-semibold'>Nội dung học tập</h3>
                 </div>
                 <div className='flex flex-col'>
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="w-full"
-                  >
+                  <Accordion type='single' collapsible className='w-full'>
                     {chapters.map((chapter) => (
                       <AccordionCustom chapter={chapter} key={chapter.id} />
                     ))}

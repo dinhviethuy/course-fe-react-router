@@ -30,9 +30,7 @@ export default function CardCourse({ course, isBought = false }: CardCourseProps
             </div>
             <div className='flex gap-3 mt-3'>
               {course.discount > 0 && course.price !== 0 && (
-                <p className='tracking-tighter line-through text-muted-foreground'>
-                  {formatCurrency(course.price)}
-                </p>
+                <p className='tracking-tighter line-through text-muted-foreground'>{formatCurrency(course.price)}</p>
               )}
               <p className='tracking-tighter font-semibold'>
                 {course.price === 0 ? 'Miễn phí' : formatCurrency(course.price * (1 - course.discount / 100))}

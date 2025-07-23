@@ -17,7 +17,7 @@ import { useGetLessonDetailQuery } from '~/hooks/useLesson'
 import { cn, getLessonIdAndChapterId } from '~/lib/utils'
 import type { GetCourseDetailResType } from '~/types/course.type'
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [{ title: 'Khu vực học tập' }, { name: 'description', content: 'Khu vực học tập' }]
 }
 
@@ -30,7 +30,7 @@ function MenuLesson({
   chapters: GetCourseDetailResType['chapters']
   lessonId?: number
   chapterId?: number
-  courseSlug: string,
+  courseSlug: string
   titleChapter: string
 }) {
   const [openAccordion, setOpenAccordion] = useState<string[]>([titleChapter])
@@ -41,12 +41,7 @@ function MenuLesson({
 
   return (
     <>
-      <Accordion
-        type="multiple"
-        className="w-full"
-        value={openAccordion}
-        onValueChange={setOpenAccordion}
-      >
+      <Accordion type='multiple' className='w-full' value={openAccordion} onValueChange={setOpenAccordion}>
         {chapters.map((chapter) => (
           <AccordionCustom
             chapter={chapter}
@@ -56,7 +51,7 @@ function MenuLesson({
             key={chapter.id}
           />
         ))}
-      </Accordion >
+      </Accordion>
     </>
   )
 }
@@ -73,7 +68,7 @@ function RenderLesson({
   chapters: GetCourseDetailResType['chapters']
   courseSlug: string
   lessonIdPrev?: number
-  lessonIdNext?: number,
+  lessonIdNext?: number
   setTitleChapter: (title: string) => void
 }) {
   const { data: lessonDetail, isPending } = useGetLessonDetailQuery({ lessonId })
@@ -106,9 +101,7 @@ function RenderLesson({
             )}
             <div className='lg:flex hidden flex-col gap-1'>
               <h3 className='text-lg font-bold'>{lessonDetail?.data.data.title}</h3>
-              <h4 className='text-sm text-gray-500'>
-                {titleChapter}
-              </h4>
+              <h4 className='text-sm text-gray-500'>{titleChapter}</h4>
             </div>
           </div>
           <div>
@@ -124,9 +117,7 @@ function RenderLesson({
         </div>
         <div className='flex flex-col gap-1 lg:hidden mt-4 pr-2'>
           <h3 className='text-lg font-bold'>{lessonDetail?.data.data.title}</h3>
-          <h4 className='text-sm text-gray-500'>
-            {titleChapter}
-          </h4>
+          <h4 className='text-sm text-gray-500'>{titleChapter}</h4>
         </div>
         <div className='mt-6 max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
           <MarkdownPreview content={lessonDetail?.data.data.description ?? ''} />
@@ -161,7 +152,13 @@ function Lesson({
               </SheetTrigger>
               <SheetContent className='z-[9999]'>
                 <div className='pl-4 mt-8 pr-2 flex sticky top-16 flex-col max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-                  <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} courseSlug={courseSlug} titleChapter={titleChapter} />
+                  <MenuLesson
+                    chapters={chapters}
+                    lessonId={lessonIdQuery}
+                    chapterId={chapterIdQuery}
+                    courseSlug={courseSlug}
+                    titleChapter={titleChapter}
+                  />
                 </div>
               </SheetContent>
             </Sheet>
@@ -179,7 +176,13 @@ function Lesson({
         </div>
         <div className='hidden lg:block lg:col-span-3 col-span-12'>
           <div className='pl-4 pr-2 flex sticky top-16 flex-col max-h-[750px] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-            <MenuLesson chapters={chapters} lessonId={lessonIdQuery} chapterId={chapterIdQuery} courseSlug={courseSlug} titleChapter={titleChapter} />
+            <MenuLesson
+              chapters={chapters}
+              lessonId={lessonIdQuery}
+              chapterId={chapterIdQuery}
+              courseSlug={courseSlug}
+              titleChapter={titleChapter}
+            />
           </div>
         </div>
       </div>

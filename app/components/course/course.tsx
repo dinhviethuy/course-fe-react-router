@@ -1,50 +1,61 @@
-import { X } from "lucide-react"
-import { useState } from "react"
-import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormReset, type UseFormSetValue, type UseFormWatch } from "react-hook-form"
-import { MultiSelect } from "~/components/ui-custom/multi-select"
-import { Badge } from "~/components/ui/badge"
-import { Button } from "~/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
-import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
-import { Switch } from "~/components/ui/switch"
-import { Textarea } from "~/components/ui/textarea"
-import UploadImage from "~/components/uploads/upload-image"
-import { CourseType } from "~/constants/course.constant"
-import { type FileMetadata, type FileWithPreview } from "~/hooks/use-file-upload"
-import { useListCourseAdminQuery } from "~/hooks/useCourse"
-import { cn } from "~/lib/utils"
-import type { CreateCourseBodyType, UpdateCourseBodyType } from "~/types/course.type"
+import { X } from 'lucide-react'
+import { useState } from 'react'
+import {
+  Controller,
+  type Control,
+  type FieldErrors,
+  type UseFormHandleSubmit,
+  type UseFormRegister,
+  type UseFormReset,
+  type UseFormSetValue,
+  type UseFormWatch
+} from 'react-hook-form'
+import { MultiSelect } from '~/components/ui-custom/multi-select'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { Switch } from '~/components/ui/switch'
+import { Textarea } from '~/components/ui/textarea'
+import UploadImage from '~/components/uploads/upload-image'
+import { CourseType } from '~/constants/course.constant'
+import { type FileMetadata, type FileWithPreview } from '~/hooks/use-file-upload'
+import { useListCourseAdminQuery } from '~/hooks/useCourse'
+import { cn } from '~/lib/utils'
+import type { CreateCourseBodyType, UpdateCourseBodyType } from '~/types/course.type'
 
 interface IProps {
-  register: UseFormRegister<UpdateCourseBodyType | CreateCourseBodyType>,
-  errors: FieldErrors<UpdateCourseBodyType | CreateCourseBodyType>,
-  control: Control<UpdateCourseBodyType | CreateCourseBodyType>,
-  reset: UseFormReset<UpdateCourseBodyType | CreateCourseBodyType>,
-  handleSubmit: UseFormHandleSubmit<UpdateCourseBodyType | CreateCourseBodyType>,
-  handleSubmitForm: (data: UpdateCourseBodyType | CreateCourseBodyType) => void,
-  setValue: UseFormSetValue<UpdateCourseBodyType | CreateCourseBodyType>,
-  setFile: (file: File | FileMetadata) => void,
-  data: UpdateCourseBodyType | CreateCourseBodyType,
-  isDirty: boolean,
-  titleHeader: string,
-  buttonText: string,
-  isUpdate?: boolean,
-  watch: UseFormWatch<UpdateCourseBodyType | CreateCourseBodyType>,
+  register: UseFormRegister<UpdateCourseBodyType | CreateCourseBodyType>
+  errors: FieldErrors<UpdateCourseBodyType | CreateCourseBodyType>
+  control: Control<UpdateCourseBodyType | CreateCourseBodyType>
+  reset: UseFormReset<UpdateCourseBodyType | CreateCourseBodyType>
+  handleSubmit: UseFormHandleSubmit<UpdateCourseBodyType | CreateCourseBodyType>
+  handleSubmitForm: (data: UpdateCourseBodyType | CreateCourseBodyType) => void
+  setValue: UseFormSetValue<UpdateCourseBodyType | CreateCourseBodyType>
+  setFile: (file: File | FileMetadata) => void
+  data: UpdateCourseBodyType | CreateCourseBodyType
+  isDirty: boolean
+  titleHeader: string
+  buttonText: string
+  isUpdate?: boolean
+  watch: UseFormWatch<UpdateCourseBodyType | CreateCourseBodyType>
   uploadFile: {
-    handleDragEnter: (e: React.DragEvent<HTMLElement>) => void,
-    handleDragLeave: (e: React.DragEvent<HTMLElement>) => void,
-    handleDragOver: (e: React.DragEvent<HTMLElement>) => void,
-    handleDrop: (e: React.DragEvent<HTMLElement>) => void,
-    openFileDialog: () => void,
-    removeFile: (id: string) => void,
-    getInputProps: (props?: React.InputHTMLAttributes<HTMLInputElement>) => React.InputHTMLAttributes<HTMLInputElement> & { ref: React.Ref<HTMLInputElement> },
-    files: FileWithPreview[],
-    isDragging: boolean,
-    errors: string[],
+    handleDragEnter: (e: React.DragEvent<HTMLElement>) => void
+    handleDragLeave: (e: React.DragEvent<HTMLElement>) => void
+    handleDragOver: (e: React.DragEvent<HTMLElement>) => void
+    handleDrop: (e: React.DragEvent<HTMLElement>) => void
+    openFileDialog: () => void
+    removeFile: (id: string) => void
+    getInputProps: (
+      props?: React.InputHTMLAttributes<HTMLInputElement>
+    ) => React.InputHTMLAttributes<HTMLInputElement> & { ref: React.Ref<HTMLInputElement> }
+    files: FileWithPreview[]
+    isDragging: boolean
+    errors: string[]
     maxSizeMB: number
-  },
+  }
 }
 
 export default function Course({
@@ -64,88 +75,95 @@ export default function Course({
   uploadFile,
   watch
 }: IProps) {
-  const [newBenefit, setNewBenefit] = useState("")
+  const [newBenefit, setNewBenefit] = useState('')
   const { data: getListCourse } = useListCourseAdminQuery({
     getAll: true
   })
   const courses = getListCourse?.data.data
   return (
-    <form className="space-y-6" onSubmit={handleSubmit(handleSubmitForm, e => {
-      console.log(e)
-    })}>
+    <form
+      className='space-y-6'
+      onSubmit={handleSubmit(handleSubmitForm, (e) => {
+        console.log(e)
+      })}
+    >
       <Card>
-        <CardHeader className="flex justify-between items-center">
-          <CardTitle className="text-2xl">{titleHeader}</CardTitle>
-          <div className={cn("flex justify-end gap-4", {
-            "hidden": !isDirty
-          })}>
-            <Button variant="outline" onClick={() => reset(data)}>Hủy</Button>
-            <Button type="submit">{buttonText}</Button>
+        <CardHeader className='flex justify-between items-center'>
+          <CardTitle className='text-2xl'>{titleHeader}</CardTitle>
+          <div
+            className={cn('flex justify-end gap-4', {
+              hidden: !isDirty
+            })}
+          >
+            <Button variant='outline' onClick={() => reset(data)}>
+              Hủy
+            </Button>
+            <Button type='submit'>{buttonText}</Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-4 col-span-2 lg:col-span-1">
-              <div className="space-y-2">
+        <CardContent className='space-y-4'>
+          <div className='grid grid-cols-2 gap-6'>
+            <div className='space-y-4 col-span-2 lg:col-span-1'>
+              <div className='space-y-2'>
                 <Label>Tiêu đề</Label>
-                <Input {...register('title')} placeholder="Tiêu đề khóa học" required />
-                {errors.title && <p className="text-red-500">{errors.title.message}</p>}
+                <Input {...register('title')} placeholder='Tiêu đề khóa học' required />
+                {errors.title && <p className='text-red-500'>{errors.title.message}</p>}
               </div>
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label>Slug</Label>
-                <Input {...register('slug')} placeholder="nestjs-super" required />
-                {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
+                <Input {...register('slug')} placeholder='nestjs-super' required />
+                {errors.slug && <p className='text-red-500'>{errors.slug.message}</p>}
               </div>
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label>Giá</Label>
                 <Input
-                  type="number"
+                  type='number'
                   {...register('price', { valueAsNumber: true })}
-                  placeholder="Nhập giá"
+                  placeholder='Nhập giá'
                   required
                   min={0}
                 />
-                {errors.price && <p className="text-red-500">{errors.price.message}</p>}
+                {errors.price && <p className='text-red-500'>{errors.price.message}</p>}
               </div>
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label>Giảm giá (%)</Label>
                 <Input
-                  type="number"
+                  type='number'
                   {...register('discount', { valueAsNumber: true })}
-                  placeholder="0"
+                  placeholder='0'
                   min={0}
                   required
                   max={100}
                   step={1}
                 />
-                {errors.discount && <p className="text-red-500">{errors.discount.message}</p>}
+                {errors.discount && <p className='text-red-500'>{errors.discount.message}</p>}
               </div>
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label>Video giới thiệu (YouTube)</Label>
-                <Input {...register('video')} placeholder="https://youtube.com/..." required />
-                {errors.video && <p className="text-red-500">{errors.video.message}</p>}
+                <Input {...register('video')} placeholder='https://youtube.com/...' required />
+                {errors.video && <p className='text-red-500'>{errors.video.message}</p>}
               </div>
-              <div className="grid grid-cols-2">
-                <div className="space-y-2 col-span-1">
+              <div className='grid grid-cols-2'>
+                <div className='space-y-2 col-span-1'>
                   <Label>Trạng thái bản nháp</Label>
                   <Controller
-                    name="isDraft"
+                    name='isDraft'
                     control={control}
                     defaultValue={data.isDraft}
                     render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
                   />
-                  {errors.isDraft && <p className="text-red-500">{errors.isDraft.message}</p>}
+                  {errors.isDraft && <p className='text-red-500'>{errors.isDraft.message}</p>}
                 </div>
-                <div className="space-y-2 col-span-1">
+                <div className='space-y-2 col-span-1'>
                   <Label>Loại khóa học</Label>
                   <Controller
-                    name="courseType"
+                    name='courseType'
                     control={control}
                     defaultValue={data.courseType}
                     render={({ field }) => (
                       <Select value={field.value} onValueChange={field.onChange} disabled={isUpdate}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Chọn loại" />
+                          <SelectValue placeholder='Chọn loại' />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value={CourseType.SINGLE}>SINGLE</SelectItem>
@@ -154,43 +172,44 @@ export default function Course({
                       </Select>
                     )}
                   />
-                  {errors.courseType && (
-                    <p className="text-red-500">{errors.courseType.message}</p>
-                  )}
+                  {errors.courseType && <p className='text-red-500'>{errors.courseType.message}</p>}
                 </div>
-                {watch('courseType') === CourseType.COMBO && courses && <div className="space-y-2 col-span-2">
-                  <Label>Khóa học con</Label>
-                  <Controller
-                    control={control}
-                    name="courseIds"
-                    render={({ field }) => (
-                      <MultiSelect
-                        selected={field.value || []}
-                        onChange={field.onChange}
-                        options={courses?.courses.filter((course) => course.slug !== data?.slug).map((course) => ({
-                          id: course.id,
-                          title: course.title
-                        }))}
-                      />
-                    )}
-                  />
-                  {errors.courseIds && <p className="text-red-500">{errors.courseIds.message}</p>}
-                </div>
-                }
+                {watch('courseType') === CourseType.COMBO && courses && (
+                  <div className='space-y-2 col-span-2'>
+                    <Label>Khóa học con</Label>
+                    <Controller
+                      control={control}
+                      name='courseIds'
+                      render={({ field }) => (
+                        <MultiSelect
+                          selected={field.value || []}
+                          onChange={field.onChange}
+                          options={courses?.courses
+                            .filter((course) => course.slug !== data?.slug)
+                            .map((course) => ({
+                              id: course.id,
+                              title: course.title
+                            }))}
+                        />
+                      )}
+                    />
+                    {errors.courseIds && <p className='text-red-500'>{errors.courseIds.message}</p>}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="space-y-4 col-span-2 lg:col-span-1">
-              <div className="space-y-2">
+            <div className='space-y-4 col-span-2 lg:col-span-1'>
+              <div className='space-y-2'>
                 <Label>Mô tả</Label>
                 <Textarea
                   {...register('description')}
                   rows={10}
-                  placeholder="Mô tả khóa học chi tiết..."
-                  className="min-h-48 max-h-48 overflow-auto resize-none scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900"
+                  placeholder='Mô tả khóa học chi tiết...'
+                  className='min-h-48 max-h-48 overflow-auto resize-none scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'
                 />
-                {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+                {errors.description && <p className='text-red-500'>{errors.description.message}</p>}
               </div>
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label>Ảnh bìa khóa học</Label>
                 <UploadImage
                   register={register}
@@ -199,7 +218,7 @@ export default function Course({
                   setFile={setFile}
                   uploadFile={uploadFile}
                 />
-                {errors.image && <p className="text-red-500">{errors.image.message}</p>}
+                {errors.image && <p className='text-red-500'>{errors.image.message}</p>}
               </div>
             </div>
           </div>
@@ -207,33 +226,28 @@ export default function Course({
       </Card>
       <Controller
         control={control}
-        name="benefits"
+        name='benefits'
         render={({ field }) => (
           <Card>
             <CardHeader>
               <CardTitle>Lợi ích học viên</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex gap-2 flex-wrap">
+            <CardContent className='space-y-3'>
+              <div className='flex gap-2 flex-wrap'>
                 {field.value?.map((b: string, i: number) => (
-                  <Badge
-                    key={i}
-                    className="flex items-center gap-1 px-2 py-1 pr-1 pointer-events-none"
-                  >
-                    <span className="pointer-events-auto">{b}</span>
+                  <Badge key={i} className='flex items-center gap-1 px-2 py-1 pr-1 pointer-events-none'>
+                    <span className='pointer-events-auto'>{b}</span>
                     <button
-                      type="button"
-                      className="ml-1 p-0.5 hover:bg-background text-accent-foreground rounded-full cursor-pointer pointer-events-auto"
-                      onClick={() =>
-                        field.onChange(field.value?.filter((_, index) => index !== i))
-                      }
+                      type='button'
+                      className='ml-1 p-0.5 hover:bg-background text-accent-foreground rounded-full cursor-pointer pointer-events-auto'
+                      onClick={() => field.onChange(field.value?.filter((_, index) => index !== i))}
                     >
-                      <X size={12} className="text-muted-foreground" />
+                      <X size={12} className='text-muted-foreground' />
                     </button>
                   </Badge>
                 ))}
               </div>
-              <div className="flex gap-2">
+              <div className='flex gap-2'>
                 <Input
                   value={newBenefit}
                   onChange={(e) => setNewBenefit(e.target.value)}
@@ -246,10 +260,10 @@ export default function Course({
                       }
                     }
                   }}
-                  placeholder="Thêm lợi ích mới"
+                  placeholder='Thêm lợi ích mới'
                 />
                 <Button
-                  type="button"
+                  type='button'
                   onClick={() => {
                     if (newBenefit.trim() !== '') {
                       field.onChange([...(field.value || []), newBenefit.trim()])
@@ -260,9 +274,7 @@ export default function Course({
                   Thêm
                 </Button>
               </div>
-              {errors.benefits && (
-                <p className="text-sm text-red-500">{errors.benefits.message}</p>
-              )}
+              {errors.benefits && <p className='text-sm text-red-500'>{errors.benefits.message}</p>}
             </CardContent>
           </Card>
         )}

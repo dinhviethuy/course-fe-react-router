@@ -14,7 +14,6 @@ import { useGetProfileQuery } from '~/hooks/useUser'
 import { cn, handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 
-
 export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
   const { isAuthenticated, setIsAuthenticated, setIsLogout } = useAuthStore()
   const navigate = useNavigate()
@@ -30,7 +29,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
     } catch (error) {
       handleError({
         error,
-        setError: () => { }
+        setError: () => {}
       })
     }
   }
@@ -42,15 +41,15 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
           hidden: !isAuthenticated || !user
         })}
       >
-        <div className="relative">
+        <div className='relative'>
           <Avatar>
             <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
           </Avatar>
-          {totalCart > 0 &&
-            <Badge className="border-background absolute -top-1.5 left-full min-w-5 -translate-x-3.5 px-1">
+          {totalCart > 0 && (
+            <Badge className='border-background absolute -top-1.5 left-full min-w-5 -translate-x-3.5 px-1'>
               {totalCart}
             </Badge>
-          }
+          )}
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-[224px] sm:block hidden z-[1000]' align='end'>
@@ -126,9 +125,11 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
         >
           <Link to='/manage/cart' className='w-full'>
             <span>Giỏ hàng</span>
-            {totalCart > 0 &&
-              <Badge variant='default' className='ml-2'>{totalCart}</Badge>
-            }
+            {totalCart > 0 && (
+              <Badge variant='default' className='ml-2'>
+                {totalCart}
+              </Badge>
+            )}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem

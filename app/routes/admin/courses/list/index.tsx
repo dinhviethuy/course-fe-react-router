@@ -1,20 +1,39 @@
-import { type ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, type PaginationState, type Table as TableType, type Updater, useReactTable } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PlusCircle, Trash } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
-import { toast } from "sonner";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "~/components/ui/alert-dialog";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
-import { CourseType } from "~/constants/course.constant";
-import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from "~/constants/other.constant";
-import { useDeleteCourseMutation, useListCourseAdminQuery } from "~/hooks/useCourse";
-import { cn, formatCurrency, handleError } from "~/lib/utils";
-import type { ListCoursesResType } from "~/types/course.type";
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  type PaginationState,
+  type Table as TableType,
+  type Updater,
+  useReactTable
+} from '@tanstack/react-table'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PlusCircle, Trash } from 'lucide-react'
+import { useState } from 'react'
+import { Link } from 'react-router'
+import { toast } from 'sonner'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '~/components/ui/alert-dialog'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
+import { CourseType } from '~/constants/course.constant'
+import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
+import { useDeleteCourseMutation, useListCourseAdminQuery } from '~/hooks/useCourse'
+import { cn, formatCurrency, handleError } from '~/lib/utils'
+import type { ListCoursesResType } from '~/types/course.type'
 interface DataTablePaginationProps<TData> {
   table: TableType<TData>
 }
@@ -113,9 +132,11 @@ function getColumns({
       header: 'Loại',
       cell: ({ row }) => {
         const { courseType } = row.original
-        return <div className='flex items-center gap-2 flex-wrap'>
-          <Badge variant={courseType === CourseType.COMBO ? "default" : "secondary"}>{courseType}</Badge>
-        </div>
+        return (
+          <div className='flex items-center gap-2 flex-wrap'>
+            <Badge variant={courseType === CourseType.COMBO ? 'default' : 'secondary'}>{courseType}</Badge>
+          </div>
+        )
       }
     },
     {
@@ -134,9 +155,7 @@ function getColumns({
       header: 'Khuyyến mãi',
       cell: ({ row }) => (
         <div className='flex flex-col gap-2'>
-          <span className={cn('text-base font-semibold text-primary')}>
-            {row.original.discount}%
-          </span>
+          <span className={cn('text-base font-semibold text-primary')}>{row.original.discount}%</span>
         </div>
       )
     },
@@ -153,9 +172,7 @@ function getColumns({
                   </Button>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent className="dark px-2 py-1 text-xs">
-                Xem chi tiết và sửa khóa học
-              </TooltipContent>
+              <TooltipContent className='dark px-2 py-1 text-xs'>Xem chi tiết và sửa khóa học</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <AlertDialog>
@@ -167,9 +184,7 @@ function getColumns({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Bạn đang thực hiện xóa khóa học {row.original.title}.
-                </AlertDialogDescription>
+                <AlertDialogDescription>Bạn đang thực hiện xóa khóa học {row.original.title}.</AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
@@ -261,7 +276,7 @@ export default function Courses() {
   const [search, setSearch] = useState('')
   const [isDraft, setIsDraft] = useState<string>('all')
   const [sort, setSort] = useState<{
-    orderBy: OrderByType,
+    orderBy: OrderByType
     sortBy: Omit<SortByType, 'fullName' | 'email' | 'name'>
   }>({
     orderBy: OrderBy.Desc,
@@ -269,7 +284,7 @@ export default function Courses() {
   })
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: PAGE_LIMIT,
+    pageSize: PAGE_LIMIT
   })
   const { data, refetch } = useListCourseAdminQuery({
     page: pagination.pageIndex + 1,
@@ -295,25 +310,30 @@ export default function Courses() {
 
   return (
     <>
-      <div className="flex items-center flex-wrap gap-4 justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Danh sách khóa học</h1>
+      <div className='flex items-center flex-wrap gap-4 justify-between mb-6'>
+        <h1 className='text-2xl font-semibold'>Danh sách khóa học</h1>
         <Button asChild>
-          <Link to="/admin/courses/new">
-            <PlusCircle className="mr-2 h-4 w-4" />
+          <Link to='/admin/courses/new'>
+            <PlusCircle className='mr-2 h-4 w-4' />
             Tạo khóa học mới
           </Link>
         </Button>
       </div>
-      <div className="mb-4 flex items-center gap-4">
-        <Input placeholder="Tìm kiếm theo tên..." className="w-[300px]" value={search} onChange={(e) => setSearch(e.target.value)} />
+      <div className='mb-4 flex items-center gap-4'>
+        <Input
+          placeholder='Tìm kiếm theo tên...'
+          className='w-[300px]'
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
         <Select value={isDraft} onValueChange={(value) => setIsDraft(value)}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Lọc theo trạng thái" />
+          <SelectTrigger className='w-[200px]'>
+            <SelectValue placeholder='Lọc theo trạng thái' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tất cả</SelectItem>
-            <SelectItem value="false">Đã xuất bản</SelectItem>
-            <SelectItem value="true">Bản nháp</SelectItem>
+            <SelectItem value='all'>Tất cả</SelectItem>
+            <SelectItem value='false'>Đã xuất bản</SelectItem>
+            <SelectItem value='true'>Bản nháp</SelectItem>
           </SelectContent>
         </Select>
         <Select
@@ -323,8 +343,8 @@ export default function Courses() {
             setSort({ sortBy, orderBy })
           }}
         >
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Sắp xếp theo" />
+          <SelectTrigger className='w-[200px]'>
+            <SelectValue placeholder='Sắp xếp theo' />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Desc}`}>Mới nhất</SelectItem>

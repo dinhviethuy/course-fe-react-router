@@ -1,14 +1,13 @@
 import type { Route } from '.react-router/types/app/routes/admin/courses/detail/+types'
 import { useSearchParams } from 'react-router'
 import UpdateCourse from '~/components/course/update-course'
-import DragCourse from "~/components/drag-course/drag-course"
+import DragCourse from '~/components/drag-course/drag-course'
 import NotFound from '~/components/error-page/error-page'
 import Lesson from '~/components/lesson/lesson'
 import { CourseType } from '~/constants/course.constant'
 import { useCourseDetailForAdminQuery } from '~/hooks/useCourse'
 
 export default function CourseDetail({ params }: Route.ActionArgs) {
-
   const getCourseDetailMutation = useCourseDetailForAdminQuery({ courseId: Number(params.courseId) })
 
   const [searchParams] = useSearchParams()
@@ -20,23 +19,23 @@ export default function CourseDetail({ params }: Route.ActionArgs) {
     return <NotFound statusCode={404} message='Không tìm thấy khóa học' />
   }
 
-  const { data: course } = getCourseDetailMutation.data.data;
+  const { data: course } = getCourseDetailMutation.data.data
 
   return (
     <div>
       <UpdateCourse data={course} courseId={Number(params.courseId)} refetch={getCourseDetailMutation.refetch} />
-      {course.courseType !== CourseType.COMBO &&
-        <div className="grid grid-cols-6 p-4">
-          <div className="col-span-6 xl:col-span-2 max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900">
+      {course.courseType !== CourseType.COMBO && (
+        <div className='grid grid-cols-6 p-4'>
+          <div className='col-span-6 xl:col-span-2 max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
             <DragCourse course={course} />
           </div>
-          {lessonId > 0 &&
-            <div className="flex justify-center px-4 mt-10 col-span-6 xl:col-span-4">
+          {lessonId > 0 && (
+            <div className='flex justify-center px-4 mt-10 col-span-6 xl:col-span-4'>
               <Lesson />
             </div>
-          }
+          )}
         </div>
-      }
-    </div >
+      )}
+    </div>
   )
 }

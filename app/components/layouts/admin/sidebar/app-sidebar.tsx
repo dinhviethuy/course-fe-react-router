@@ -8,127 +8,120 @@ import {
   ShieldCheck,
   Ticket,
   Users
-} from "lucide-react"
-import * as React from "react"
-import { NavMain } from "~/components/layouts/admin/sidebar/nav-main"
-import { NavUser } from "~/components/layouts/admin/sidebar/nav-user"
-import { TeamSwitcher } from "~/components/layouts/admin/sidebar/team-switcher"
+} from 'lucide-react'
+import * as React from 'react'
+import { NavMain } from '~/components/layouts/admin/sidebar/nav-main'
+import { NavUser } from '~/components/layouts/admin/sidebar/nav-user'
+import { TeamSwitcher } from '~/components/layouts/admin/sidebar/team-switcher'
 
-
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail
-} from "~/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '~/components/ui/sidebar'
 
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "https://github.com/shadcn.png",
+    name: 'shadcn',
+    email: 'm@example.com',
+    avatar: 'https://github.com/shadcn.png'
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: 'Acme Inc',
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: 'Enterprise'
     },
     {
-      name: "Acme Corp.",
+      name: 'Acme Corp.',
       logo: AudioWaveform,
-      plan: "Startup",
+      plan: 'Startup'
     },
     {
-      name: "Evil Corp.",
+      name: 'Evil Corp.',
       logo: Command,
-      plan: "Free",
-    },
+      plan: 'Free'
+    }
   ],
   navMain: [
     {
-      title: "Ttổng quan",
-      url: "#",
+      title: 'Ttổng quan',
+      url: '#',
       icon: LayoutDashboard,
       isActive: true,
       items: [
         {
-          title: "Danh sách học viên",
-          url: "#",
+          title: 'Danh sách học viên',
+          url: '#'
         }
-      ],
+      ]
     },
     {
-      title: "Khóa học",
-      url: "#",
+      title: 'Khóa học',
+      url: '#',
       icon: BookOpen,
       items: [
         {
-          title: "Danh sách khóa học",
-          url: "/admin/courses",
+          title: 'Danh sách khóa học',
+          url: '/admin/courses'
         },
         {
-          title: "Tạo khóa học mới",
-          url: "/admin/courses/new",
-        },
-      ],
+          title: 'Tạo khóa học mới',
+          url: '/admin/courses/new'
+        }
+      ]
     },
     {
-      title: "Khuyến mãi",
-      url: "#",
+      title: 'Khuyến mãi',
+      url: '#',
       icon: Ticket,
       items: [
         {
-          title: "Danh sách khóa học",
-          url: "/admin/courses",
+          title: 'Danh sách khóa học',
+          url: '/admin/courses'
         },
         {
-          title: "Tạo khóa học mới",
-          url: "/courses/new",
-        },
-      ],
+          title: 'Tạo khóa học mới',
+          url: '/courses/new'
+        }
+      ]
     },
     {
-      title: "Người dùng",
-      url: "#",
+      title: 'Người dùng',
+      url: '#',
       icon: Users,
       items: [
         {
-          title: "Introduction",
-          url: "#",
-        },
-      ],
+          title: 'Introduction',
+          url: '#'
+        }
+      ]
     },
     {
-      title: "Vai trò",
-      url: "#",
+      title: 'Vai trò',
+      url: '#',
       icon: ShieldCheck,
       items: [
         {
-          title: "Introduction",
-          url: "#",
-        },
-      ],
+          title: 'Introduction',
+          url: '#'
+        }
+      ]
     },
     {
-      title: "Quyền",
-      url: "#",
+      title: 'Quyền',
+      url: '#',
       icon: Lock,
       items: [
         {
-          title: "Introduction",
-          url: "#",
-        },
-      ],
-    },
+          title: 'Introduction',
+          url: '#'
+        }
+      ]
+    }
   ]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
