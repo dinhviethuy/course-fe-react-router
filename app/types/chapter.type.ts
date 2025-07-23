@@ -16,18 +16,18 @@ export const ChapterSchema = z.object({
   deletedById: z.number().nullable()
 })
 
-export const CreateChaperBodySchema = ChapterSchema.pick({
+export const CreateChapterBodySchema = ChapterSchema.pick({
   title: true,
   description: true,
   isDraft: true,
   courseId: true
 }).strict()
 
-export const CreateChaperResSchema = ChapterSchema
+export const CreateChapterResSchema = ChapterSchema
 
-export const UpdateChaperBodySchema = CreateChaperBodySchema
+export const UpdateChapterBodySchema = CreateChapterBodySchema
 
-export const UpdateChaperResSchema = ChapterSchema
+export const UpdateChapterResSchema = ChapterSchema
 
 export const GetChapterParamsSchema = z
   .object({
@@ -36,8 +36,8 @@ export const GetChapterParamsSchema = z
   .strict()
 
 export type ChapterType = z.infer<typeof ChapterSchema>
-export type CreateChaperBodyType = z.infer<typeof CreateChaperBodySchema>
-export type CreateChaperResType = z.infer<typeof CreateChaperResSchema>
-export type UpdateChaperBodyType = z.infer<typeof UpdateChaperBodySchema>
-export type UpdateChaperResType = z.infer<typeof UpdateChaperResSchema>
+export type CreateChapterBodyType = z.infer<typeof CreateChapterBodySchema>
+export type CreateChapterResType = z.infer<typeof CreateChapterResSchema>
+export type UpdateChatperBodyType = z.infer<typeof UpdateChapterBodySchema>
+export type UpdateChapterResType = z.infer<typeof UpdateChapterResSchema>
 export type GetChapterParamsType = z.infer<typeof GetChapterParamsSchema>

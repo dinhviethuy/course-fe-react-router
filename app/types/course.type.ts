@@ -8,15 +8,15 @@ import { UserSchema } from '~/types/user.type'
 export const CourseSchema = z.object({
   id: z.number().int().positive(),
   title: z.string(),
-  description: z.string().default(''),
+  description: z.string().default('').optional(),
   slug: z.string(),
-  price: z.number().min(0),
-  isDraft: z.boolean().default(true),
-  discount: z.number().min(0).max(100).default(0),
+  price: z.number().min(0).optional(),
+  isDraft: z.boolean().default(true).optional(),
+  discount: z.number().min(0).max(100).default(0).optional(),
   image: z.string(),
   video: z.string().nullable().optional(),
-  courseType: z.enum([CourseType.COMBO, CourseType.SINGLE]).default(CourseType.SINGLE),
-  benefits: z.array(z.string()).default([]),
+  courseType: z.enum([CourseType.COMBO, CourseType.SINGLE]).default(CourseType.SINGLE).optional(),
+  benefits: z.array(z.string()).default([]).optional(),
 
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -130,8 +130,7 @@ export const GetCourseDetailResSchemaForAdmin = CourseSchema.pick({
   image: true,
   video: true,
   courseType: true,
-  benefits: true,
-  updatedAt: true
+  benefits: true
 }).extend({
   duration: z.number().min(0).default(0),
   chapters: z.array(
@@ -258,7 +257,8 @@ export const ReorderChaptersAndLessonsBodySchema = z
   })
 
 export const ValidateSlugBodySchema = z.object({
-  slug: z.string().min(1)
+  slug: z.string().min(1),
+  courseId: z.coerce.number().int().positive().optional()
 })
 
 export const CanAccessCourseBodySchema = z

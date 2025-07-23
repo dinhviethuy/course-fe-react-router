@@ -23,6 +23,14 @@ export default [
       route('login', 'routes/client/login/index.tsx'),
       route('register', 'routes/client/register/index.tsx'),
       route('forgot-password', 'routes/client/forgot-password/index.tsx')
+    ]),
+    layout('layout/admin/layout-default.tsx', [
+      route('/admin/dashboard', 'routes/admin/dashboard/index.tsx'),
+      ...prefix('/admin/courses', [
+        index('routes/admin/courses/list/index.tsx'),
+        route('/new', 'routes/admin/courses/new/index.tsx'),
+        route('/detail/:courseId', 'routes/admin/courses/detail/index.tsx')
+      ])
     ])
   ])
 ] satisfies RouteConfig
