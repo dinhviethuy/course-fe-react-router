@@ -88,7 +88,7 @@ export default function Course({
       })}
     >
       <Card>
-        <CardHeader className='flex justify-between items-center'>
+        <CardHeader className='flex justify-between items-center flex-wrap-reverse gap-4'>
           <CardTitle className='text-2xl'>{titleHeader}</CardTitle>
           <div
             className={cn('flex justify-end gap-4', {
@@ -235,16 +235,24 @@ export default function Course({
             <CardContent className='space-y-3'>
               <div className='flex gap-2 flex-wrap'>
                 {field.value?.map((b: string, i: number) => (
-                  <Badge key={i} className='flex items-center gap-1 px-2 py-1 pr-1 pointer-events-none'>
-                    <span className='pointer-events-auto'>{b}</span>
-                    <button
-                      type='button'
-                      className='ml-1 p-0.5 hover:bg-background text-accent-foreground rounded-full cursor-pointer pointer-events-auto'
-                      onClick={() => field.onChange(field.value?.filter((_, index) => index !== i))}
-                    >
-                      <X size={12} className='text-muted-foreground' />
-                    </button>
+                  <Badge
+                    key={i}
+                    className='max-w-full px-2 py-1 pr-1 pointer-events-none'
+                  >
+                    <div className='flex items-start gap-1 w-full'>
+                      <span className='whitespace-normal break-words pointer-events-auto'>
+                        {b}
+                      </span>
+                      <button
+                        type='button'
+                        className='flex-shrink-0 w-[16px] h-[16px] hover:bg-background text-accent-foreground rounded-full cursor-pointer pointer-events-auto'
+                        onClick={() => field.onChange(field.value?.filter((_, index) => index !== i))}
+                      >
+                        <X size={12} className='text-muted-foreground' />
+                      </button>
+                    </div>
                   </Badge>
+
                 ))}
               </div>
               <div className='flex gap-2'>

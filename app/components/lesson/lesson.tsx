@@ -1,12 +1,14 @@
 import { Label } from '@radix-ui/react-dropdown-menu'
-import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue } from 'react-hook-form'
+import { Link } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Switch } from '~/components/ui/switch'
 import UploadVideo from '~/components/uploads/upload-video'
-import type { FileMetadata, FileWithPreview } from '~/hooks/use-file-upload'
+import { type FileMetadata } from '~/hooks/use-file-upload'
 import { ClientOnly } from '~/layout/admin/ClientOnly'
 import MarkdownEditor from '~/layout/admin/MarkdownEditor'
 import { type CreateLessonBodyType, type UpdateLessonBodyType } from '~/types/lesson.type'
@@ -19,26 +21,13 @@ interface IProps {
   register: UseFormRegister<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
   errors: FieldErrors<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
   control: Control<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
-  watch: UseFormWatch<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
   setValue: UseFormSetValue<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
   setFile: (file: File | FileMetadata | null) => void,
-  uploadFile: {
-    handleDragEnter: (e: React.DragEvent<HTMLElement>) => void
-    handleDragLeave: (e: React.DragEvent<HTMLElement>) => void
-    handleDragOver: (e: React.DragEvent<HTMLElement>) => void
-    handleDrop: (e: React.DragEvent<HTMLElement>) => void
-    openFileDialog: () => void
-    removeFile: (id: string) => void
-    getInputProps: (
-      props?: React.InputHTMLAttributes<HTMLInputElement>
-    ) => React.InputHTMLAttributes<HTMLInputElement> & { ref: React.Ref<HTMLInputElement> }
-    files: FileWithPreview[]
-    isDragging: boolean
-    errors: string[]
-  }
+  lessonIdPrev?: number
+  lessonIdNext?: number
 }
 
-export default function Lesson({ lesson, onSubmit, handleSubmit, control, register, errors, watch, setValue, setFile, uploadFile }: IProps) {
+export default function Lesson({ lesson, onSubmit, handleSubmit, control, register, errors, setValue, setFile, lessonIdPrev, lessonIdNext }: IProps) {
 
   return (
     <form
@@ -47,8 +36,26 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
     >
       <div className=' space-y-10'>
         <Card className='shadow-lg'>
-          <CardHeader>
+          <CardHeader className='flex justify-between flex-wrap-reverse gap-4'>
             <CardTitle className='text-xl'>📋 Thông tin bài học</CardTitle>
+            <div className='flex gap-2'>
+              {lessonIdPrev && (
+                <Link to={`?lessonId=${lessonIdPrev}`} preventScrollReset>
+                  <Button variant='outline' className='flex items-center gap-1 cursor-pointer w-[120px] h-[40px]'>
+                    <ChevronLeft className='w-8 h-8' />
+                    Bài trước
+                  </Button>
+                </Link>
+              )}
+              {lessonIdNext && (
+                <Link to={`?lessonId=${lessonIdNext}`} preventScrollReset>
+                  <Button variant='outline' className='flex items-center gap-1 cursor-pointer w-[120px] h-[40px]'>
+                    Bài tiếp
+                    <ChevronRight className='w-8 h-8' />
+                  </Button>
+                </Link>
+              )}
+            </div>
           </CardHeader>
           <CardContent className='space-y-6'>
             <div className='space-y-2'>
@@ -79,9 +86,8 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
               <UploadVideo
                 register={register}
                 videoUrl={lesson?.videoUrl}
-                setFile={setFile}
                 setValue={setValue}
-                uploadFile={uploadFile}
+                setFile={setFile}
               />
               {errors.videoUrl && <p className='text-red-500'>{errors.videoUrl.message}</p>}
             </div>
@@ -93,22 +99,22 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
           </CardHeader>
           <CardContent>
             <ScrollArea className='rounded-md'>
-              <div>
-                <ClientOnly>
-                  <MarkdownEditor
-                    value={watch('description')}
-                    onChange={(val) =>
-                      setValue('description', val, {
-                        shouldDirty: true,
-                        shouldValidate: true
-                      })
-                    }
-                  />
-                </ClientOnly>
-                {errors.description && <p className='text-red-500'>{errors.description.message}</p>}
-              </div>
+              <Controller
+                control={control}
+                name="description"
+                render={({ field }) => (
+                  <ClientOnly>
+                    <MarkdownEditor
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </ClientOnly>
+                )}
+              />
+              {errors.description && <p className='text-red-500'>{errors.description.message}</p>}
             </ScrollArea>
           </CardContent>
+
         </Card>
         <CardFooter className='flex justify-center'>
           <Button type='submit' className='cursor-pointer'>

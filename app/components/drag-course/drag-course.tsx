@@ -16,8 +16,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import CreateChapter from '~/components/chapter/create-chapter'
-import SortableLesson from '~/components/drag-course/sort-lesson'
 import SortableChapter from '~/components/drag-course/sortable-chapter'
+import SortableLesson from '~/components/drag-course/sortable-lesson'
 import { Accordion } from '~/components/ui/accordion'
 import { Card, CardContent, CardHeader } from '~/components/ui/card'
 import { CourseType } from '~/constants/course.constant'
@@ -27,7 +27,7 @@ import { getOrder, handleError } from '~/lib/utils'
 import { type UpdateChatperBodyType } from '~/types/chapter.type'
 import type { GetCourseDetailResTypeForAdmin, ReorderChaptersAndLessonsBodyType } from '~/types/course.type'
 
-export default function DragCourse({ course }: { course: GetCourseDetailResTypeForAdmin }) {
+export default function DragCourse({ course, openedLessonId }: { course: GetCourseDetailResTypeForAdmin, openedLessonId?: number }) {
   const [chapters, setChapters] = useState<GetCourseDetailResTypeForAdmin['chapters']>(course.chapters)
   const [activeItem, setActiveItem] = useState<any>(null)
   const [expandedChapters, setExpandedChapters] = useState<string[]>([])
@@ -198,6 +198,12 @@ export default function DragCourse({ course }: { course: GetCourseDetailResTypeF
           body: bodyUpdate,
           params: { courseId: course.id }
         })
+
+        chapters.forEach((chapter) => {
+          chapter.lessons.forEach((lesson) => {
+            queryClient.refetchQueries({ queryKey: ['lesson-detail-admin', { lessonId: lesson.id }] })
+          })
+        })
         queryClient.refetchQueries({ queryKey: ['course-detail-admin', course.id] })
         toast.success('Cập nhật thứ tự chương và bài học thành công')
       } catch (error) {
@@ -237,6 +243,18 @@ export default function DragCourse({ course }: { course: GetCourseDetailResTypeF
       setChapters(course.chapters)
     }
   }
+
+  useEffect(() => {
+    if (openedLessonId) {
+      const chapterWithLesson = course.chapters.find((chapter) =>
+        chapter.lessons.some((lesson) => lesson.id === openedLessonId)
+      )
+
+      if (chapterWithLesson) {
+        setExpandedChapters([`chapter-${chapterWithLesson.id}`])
+      }
+    }
+  }, [openedLessonId, course.chapters])
 
   if (!isClient) return null
 
@@ -283,7 +301,7 @@ export default function DragCourse({ course }: { course: GetCourseDetailResTypeF
                         >
                           <ul className='space-y-2 min-h-[40px] bg-background p-2 rounded-md'>
                             {chapter.lessons.map((lesson: any) => (
-                              <SortableLesson key={lesson.id} lesson={lesson} />
+                              <SortableLesson key={lesson.id} lesson={lesson} courseId={course.id} openedLessonId={openedLessonId} />
                             ))}
                           </ul>
                         </SortableContext>

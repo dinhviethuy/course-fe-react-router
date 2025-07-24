@@ -17,6 +17,7 @@ import {
 import { Button } from '~/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu'
 import { Switch } from '~/components/ui/switch'
+import { formatDuration } from '~/lib/utils'
 import { type UpdateChatperBodyType } from '~/types/chapter.type'
 import type { GetCourseDetailResTypeForAdmin } from '~/types/course.type'
 
@@ -64,17 +65,18 @@ export default function SortableChapter({
         style={chapterStyle}
         className='bg-background border rounded-md px-4 py-1 transition-all duration-300'
       >
-        <div className='flex justify-between items-center gap-4'>
+        <div className='flex justify-between items-center gap-2 md:gap-4'>
           <AccordionTrigger className='py-2 text-[15px] leading-6 flex items-center gap-2 justify-between'>
             <div className='flex gap-2 items-center'>
               <span className='cursor-move' {...attributes} {...listeners}>
                 <GripVertical size={16} />
               </span>
               <span>{chapter.title}</span>
+              <span className='text-sm text-muted-foreground sm:inline hidden'>{formatDuration(chapter.duration)}</span>
             </div>
           </AccordionTrigger>
           <div className='flex gap-1'>
-            <div className='flex items-center gap-2'>
+            <div className='hidden sm:flex items-center gap-2'>
               <span>Nháp</span>
               <Switch
                 className='cursor-pointer'

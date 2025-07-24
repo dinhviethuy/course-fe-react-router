@@ -1,42 +1,39 @@
-import { AlertCircleIcon, ImageIcon, UploadIcon } from 'lucide-react'
-import { memo, useEffect } from 'react'
-import type { UseFormRegister, UseFormSetValue } from 'react-hook-form'
-import ArtPlayer from '~/components/art-player/art-player'
+// ~/components/uploads/upload-video.tsx
+import { AlertCircleIcon, ImageIcon, UploadIcon } from 'lucide-react';
+import { useEffect, useRef } from 'react'; // Import useRef
+import type { UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import ArtPlayer from '~/components/art-player/art-player';
 
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { type FileMetadata, type FileWithPreview } from '~/hooks/use-file-upload'
-import { cn } from '~/lib/utils'
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { useFileUpload, type FileMetadata } from '~/hooks/use-file-upload';
+import { cn } from '~/lib/utils';
 
-export default memo(function UploadVideo({
+export default function UploadVideo({
   register,
   videoUrl,
   setValue,
   setFile,
-  uploadFile
 }: {
   register: UseFormRegister<any>
   videoUrl: string | null | undefined
   setValue: UseFormSetValue<any>
-  setFile: (file: File | FileMetadata) => void
-  uploadFile: {
-    handleDragEnter: (e: React.DragEvent<HTMLElement>) => void
-    handleDragLeave: (e: React.DragEvent<HTMLElement>) => void
-    handleDragOver: (e: React.DragEvent<HTMLElement>) => void
-    handleDrop: (e: React.DragEvent<HTMLElement>) => void
-    openFileDialog: () => void
-    removeFile: (id: string) => void
-    getInputProps: (
-      props?: React.InputHTMLAttributes<HTMLInputElement>
-    ) => React.InputHTMLAttributes<HTMLInputElement> & { ref: React.Ref<HTMLInputElement> }
-    files: FileWithPreview[]
-    isDragging: boolean
-    errors: string[]
-  }
+  setFile: (file: File | FileMetadata | null) => void
 }) {
-  const { errors, files, getInputProps, handleDragEnter, handleDragLeave, handleDragOver, handleDrop, isDragging, openFileDialog, removeFile } = uploadFile
+  const maxSizeGB = 2
+  const maxSize = maxSizeGB * 1024 * 1024 * 1024
 
-  const previewUrl = files[0]?.preview || videoUrl || null
+  const [
+    { files, isDragging, errors },
+    { handleDragEnter, handleDragLeave, handleDragOver, handleDrop, openFileDialog, removeFile, getInputProps }
+  ] = useFileUpload({
+    accept: 'video/mp4,video/mov,video/avi,video/wmv,video/flv,video/mkv,video/webm',
+    maxSize
+  })
+
+  const prevVideoUrlRef = useRef(videoUrl);
+
+  const previewUrl = files[0]?.preview || videoUrl || null;
 
   useEffect(() => {
     if (files[0]?.file) {
@@ -47,6 +44,17 @@ export default memo(function UploadVideo({
       setFile(files[0].file)
     }
   }, [files, setValue, previewUrl, setFile])
+
+  useEffect(() => {
+    if (videoUrl !== prevVideoUrlRef.current) {
+      if (files.length > 0) {
+        removeFile(files[0].id);
+      }
+      prevVideoUrlRef.current = videoUrl;
+    }
+  }, [videoUrl, files, removeFile, setValue]);
+
+  console.log(previewUrl)
 
   return (
     <div className='flex flex-col gap-2'>
@@ -74,7 +82,7 @@ export default memo(function UploadVideo({
                 <Button
                   variant='outline'
                   className={cn('flex gap-2 cursor-pointer h-10', {
-                    hidden: videoUrl === previewUrl
+                    hidden: videoUrl === previewUrl && !files[0]?.file
                   })}
                   onClick={() => {
                     removeFile(files[0]?.id)
@@ -82,6 +90,7 @@ export default memo(function UploadVideo({
                       shouldDirty: true,
                       shouldValidate: true
                     })
+                    setFile(null);
                   }}
                   aria-label='Remove video'
                 >
@@ -119,4 +128,4 @@ export default memo(function UploadVideo({
       )}
     </div>
   )
-})
+}

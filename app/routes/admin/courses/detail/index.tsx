@@ -28,13 +28,13 @@ export default function CourseDetail({ params }: Route.ActionArgs) {
     <div>
       <UpdateCourse data={course} courseId={Number(params.courseId)} refetch={getCourseDetailMutation.refetch} />
       {course.courseType !== CourseType.COMBO && (
-        <div className='grid grid-cols-6 p-4'>
-          <div className='col-span-6 xl:col-span-2 max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-            <DragCourse course={course} />
+        <div className='grid grid-cols-8 py-4 gap-4'>
+          <div className='col-span-8 xl:col-span-3 max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
+            <DragCourse course={course} openedLessonId={lessonIdQuery} />
           </div>
           {lessonIdQuery && chapterIdQuery && (
-            <div className='flex justify-center px-4 col-span-6 xl:col-span-4'>
-              <UpdateLesson lessonIdQuery={lessonIdQuery} lessonIdPrev={lessonIdPrev} lessonIdNext={lessonIdNext} chapterIdQuery={chapterIdQuery} />
+            <div className='flex justify-center col-span-8 xl:col-span-5'>
+              <UpdateLesson courseId={course.id} lessonIdQuery={lessonIdQuery} lessonIdPrev={lessonIdPrev} lessonIdNext={lessonIdNext} chapterIdQuery={chapterIdQuery} />
             </div>
           )}
         </div>
