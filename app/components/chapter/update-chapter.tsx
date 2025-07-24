@@ -5,7 +5,7 @@ import Chapter from '~/components/chapter/chapter'
 import { UpdateChapterBodySchema, type UpdateChatperBodyType } from '~/types/chapter.type'
 import type { GetCourseDetailResTypeForAdmin } from '~/types/course.type'
 
-export default function EditChapter({
+export default function UpdateChapter({
   chapter,
   handleUpdateChapter,
   isPending,

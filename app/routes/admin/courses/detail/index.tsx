@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router'
 import UpdateCourse from '~/components/course/update-course'
 import DragCourse from '~/components/drag-course/drag-course'
 import NotFound from '~/components/error-page/error-page'
+import CreateLesson from '~/components/lesson/create-lesson'
 import UpdateLesson from '~/components/lesson/update-lesson'
 import { CourseType } from '~/constants/course.constant'
 import { useCourseDetailForAdminQuery } from '~/hooks/useCourse'
@@ -13,6 +14,7 @@ export default function CourseDetail({ params }: Route.ActionArgs) {
 
   const [searchParams] = useSearchParams()
   const lessonId = Number(searchParams.get('lessonId'))
+  const chapterId = Number(searchParams.get('chapterId'))
 
   if (getCourseDetailMutation.isLoading) {
     return null
@@ -22,7 +24,7 @@ export default function CourseDetail({ params }: Route.ActionArgs) {
 
   const { data: course } = getCourseDetailMutation.data.data
 
-  const { lessonIdQuery, chapterIdQuery, lessonIdPrev, lessonIdNext } = getLessonIdAndChapterId(course.chapters, lessonId)
+  const { lessonIdQuery, chapterIdQuery, lessonIdPrev, lessonIdNext, chapterIdCreateLesson } = getLessonIdAndChapterId(course.chapters, lessonId, chapterId)
 
   return (
     <div>
@@ -30,11 +32,16 @@ export default function CourseDetail({ params }: Route.ActionArgs) {
       {course.courseType !== CourseType.COMBO && (
         <div className='grid grid-cols-8 py-4 gap-4'>
           <div className='col-span-8 xl:col-span-3 max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-            <DragCourse course={course} openedLessonId={lessonIdQuery} />
+            <DragCourse course={course} openedLessonId={lessonIdQuery} openedChapterId={chapterIdCreateLesson} />
           </div>
-          {lessonIdQuery && chapterIdQuery && (
+          {lessonIdQuery && chapterIdQuery && !chapterIdCreateLesson && (
             <div className='flex justify-center col-span-8 xl:col-span-5'>
               <UpdateLesson courseId={course.id} lessonIdQuery={lessonIdQuery} lessonIdPrev={lessonIdPrev} lessonIdNext={lessonIdNext} chapterIdQuery={chapterIdQuery} />
+            </div>
+          )}
+          {chapterIdCreateLesson && (
+            <div className='flex justify-center col-span-8 xl:col-span-5'>
+              <CreateLesson courseId={course.id} chapterIdQuery={chapterIdCreateLesson} />
             </div>
           )}
         </div>

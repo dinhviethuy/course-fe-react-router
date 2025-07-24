@@ -99,21 +99,27 @@ export const formatDuration = (duration: number): string => {
 
 export const getLessonIdAndChapterId = (
   chapters: GetCourseDetailResType['chapters'] | GetCourseDetailResTypeForAdmin['chapters'],
-  lessonId: number
+  lessonId: number,
+  chapterId?: number
 ) => {
   let lessonIdQuery: number | undefined = undefined
   let chapterIdQuery: number | undefined = undefined
   let lessonIdPrev: number | undefined = undefined
   let lessonIdNext: number | undefined = undefined
+  let chapterIdCreateLesson: number | undefined = undefined
   const lessonIds: number[] = []
   if (chapters.length === 0)
     return {
       lessonIdQuery,
       chapterIdQuery,
       lessonIdPrev,
-      lessonIdNext
+      lessonIdNext,
+      chapterIdCreateLesson
     }
   for (const chapter of chapters) {
+    if (chapter.id === chapterId) {
+      chapterIdCreateLesson = chapter.id
+    }
     for (const lesson of chapter.lessons) {
       if (lesson.id === lessonId) {
         lessonIdQuery = lesson.id
@@ -141,7 +147,8 @@ export const getLessonIdAndChapterId = (
     lessonIdQuery,
     chapterIdQuery,
     lessonIdPrev,
-    lessonIdNext
+    lessonIdNext,
+    chapterIdCreateLesson
   }
 }
 

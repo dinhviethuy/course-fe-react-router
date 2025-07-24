@@ -104,6 +104,7 @@ export default function Component() {
         openFileDialog,
         removeFile
       }}
+      isPending={createCourseMutation.isPending}
     />
   )
 }

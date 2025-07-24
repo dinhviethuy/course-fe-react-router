@@ -1,5 +1,5 @@
 import { Label } from '@radix-ui/react-dropdown-menu'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue } from 'react-hook-form'
 import { Link } from 'react-router'
 import { Button } from '~/components/ui/button'
@@ -15,7 +15,7 @@ import { type CreateLessonBodyType, type UpdateLessonBodyType } from '~/types/le
 
 type LessonType = CreateLessonBodyType | UpdateLessonBodyType
 interface IProps {
-  lesson: LessonType,
+  lesson?: LessonType,
   onSubmit: (data: Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>) => void,
   handleSubmit: UseFormHandleSubmit<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
   register: UseFormRegister<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
@@ -23,11 +23,13 @@ interface IProps {
   control: Control<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
   setValue: UseFormSetValue<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
   setFile: (file: File | FileMetadata | null) => void,
-  lessonIdPrev?: number
-  lessonIdNext?: number
+  lessonIdPrev?: number,
+  lessonIdNext?: number,
+  buttonText: string,
+  isPending: boolean
 }
 
-export default function Lesson({ lesson, onSubmit, handleSubmit, control, register, errors, setValue, setFile, lessonIdPrev, lessonIdNext }: IProps) {
+export default function Lesson({ lesson, onSubmit, handleSubmit, control, register, errors, setValue, setFile, lessonIdPrev, lessonIdNext, buttonText, isPending }: IProps) {
 
   return (
     <form
@@ -117,8 +119,9 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
 
         </Card>
         <CardFooter className='flex justify-center'>
-          <Button type='submit' className='cursor-pointer'>
-            Cập nhật bài học
+          <Button type='submit' className='cursor-pointer' disabled={isPending}>
+            {isPending && <Loader2 className='w-4 h-4 animate-spin' />}
+            {buttonText}
           </Button>
         </CardFooter>
       </div>

@@ -54,8 +54,6 @@ export default function UploadVideo({
     }
   }, [videoUrl, files, removeFile, setValue]);
 
-  console.log(previewUrl)
-
   return (
     <div className='flex flex-col gap-2'>
       <div className='relative'>
@@ -81,6 +79,7 @@ export default function UploadVideo({
               <div className='flex justify-center gap-4'>
                 <Button
                   variant='outline'
+                  type='button'
                   className={cn('flex gap-2 cursor-pointer h-10', {
                     hidden: videoUrl === previewUrl && !files[0]?.file
                   })}
@@ -96,7 +95,7 @@ export default function UploadVideo({
                 >
                   Xóa
                 </Button>
-                <Button variant='secondary' className='flex gap-2 cursor-pointer h-10' onClick={openFileDialog}>
+                <Button variant='secondary' type='button' className='flex gap-2 cursor-pointer h-10' onClick={openFileDialog}>
                   <UploadIcon className='size-4' />
                   Thay video
                 </Button>
@@ -111,7 +110,7 @@ export default function UploadVideo({
                 <ImageIcon className='size-4 opacity-60' />
               </div>
               <p className='mb-1.5 text-sm font-medium'>Drop your video here</p>
-              <Button variant='outline' className='mt-4' onClick={openFileDialog}>
+              <Button variant='outline' type='button' className='mt-4' onClick={openFileDialog}>
                 <UploadIcon className='-ms-1 size-4 opacity-60' aria-hidden='true' />
                 Select video
               </Button>

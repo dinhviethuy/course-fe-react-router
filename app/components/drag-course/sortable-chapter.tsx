@@ -2,7 +2,8 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
-import EditChapter from '~/components/drag-course/edit-chapter'
+import { Link } from 'react-router'
+import UpdateChapter from '~/components/chapter/update-chapter'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 import {
   AlertDialog,
@@ -100,10 +101,17 @@ export default function SortableChapter({
                   <span className='sr-only'>Open menu</span>
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent align='end'>
-                <EditChapter chapter={chapter} isPending={isPending} handleUpdateChapter={handleUpdateChapter}>
+                <DropdownMenuItem>
+                  <Link to={`?chapterId=${chapter.id}`} preventScrollReset>
+                    Tạo bài học mới
+                  </Link>
+                </DropdownMenuItem>
+
+                <UpdateChapter chapter={chapter} isPending={isPending} handleUpdateChapter={handleUpdateChapter}>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Sửa</DropdownMenuItem>
-                </EditChapter>
+                </UpdateChapter>
 
                 <DropdownMenuItem
                   className='text-red-600'

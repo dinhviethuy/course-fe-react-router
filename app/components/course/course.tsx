@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
 import { useState } from 'react'
 import {
   Controller,
@@ -56,6 +56,7 @@ interface IProps {
     errors: string[]
     maxSizeMB: number
   }
+  isPending: boolean
 }
 
 export default function Course({
@@ -73,7 +74,8 @@ export default function Course({
   buttonText,
   isUpdate,
   uploadFile,
-  watch
+  watch,
+  isPending
 }: IProps) {
   const [newBenefit, setNewBenefit] = useState('')
   const { data: getListCourse } = useListCourseAdminQuery({
@@ -98,7 +100,10 @@ export default function Course({
             <Button variant='outline' onClick={() => reset(data)}>
               Hủy
             </Button>
-            <Button type='submit'>{buttonText}</Button>
+            <Button type='submit' disabled={isPending}>
+              {isPending && <Loader2 className='w-4 h-4 animate-spin' />}
+              {buttonText}
+            </Button>
           </div>
         </CardHeader>
         <CardContent className='space-y-4'>

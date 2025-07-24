@@ -118,6 +118,7 @@ export default function Component({ data, courseId, refetch }: IProps) {
         openFileDialog,
         removeFile
       }}
+      isPending={updateCourseMutation.isPending}
     />
   )
 }

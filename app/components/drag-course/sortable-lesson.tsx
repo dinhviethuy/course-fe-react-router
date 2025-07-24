@@ -127,7 +127,6 @@ export default function SortableLesson({
         </DropdownMenu>
       </div>
 
-      {/* Dialog xóa */}
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

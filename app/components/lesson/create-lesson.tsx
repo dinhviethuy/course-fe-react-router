@@ -1,40 +1,41 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
-import Lesson from '~/components/lesson/lesson'
+import { default as Lesson } from '~/components/lesson/lesson'
 import { type FileMetadata } from '~/hooks/use-file-upload'
-import { useGetLessonDetailAdminQuery, useUpdateLessonMutation } from '~/hooks/useLesson'
+import { useCreateLessonMutation } from '~/hooks/useLesson'
 import { useUploadVideoMutation } from '~/hooks/useMedia'
 import { handleError } from '~/lib/utils'
-import { UpdateLessonBodySchema } from '~/types/lesson.type'
+import { CreateLessonBodySchema } from '~/types/lesson.type'
 
 interface Iprops {
-  lessonIdQuery: number
   chapterIdQuery: number
-  lessonIdPrev: number | undefined
-  lessonIdNext: number | undefined
   courseId: number
 }
 
-export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, lessonIdNext }: Iprops) {
+export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
   const [file, setFile] = useState<File | FileMetadata | null>(null)
-  const { data: lessonDetail, isPending } = useGetLessonDetailAdminQuery({
-    lessonId: lessonIdQuery
-  })
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
-    reset,
     setValue,
     getValues
   } = useForm({
+    defaultValues: {
+      description: '',
+      duration: 0,
+      isDraft: true,
+      title: '',
+      videoUrl: null
+    },
     resolver: zodResolver(
-      UpdateLessonBodySchema.pick({
+      CreateLessonBodySchema.pick({
         title: true,
         description: true,
         videoUrl: true,
@@ -45,23 +46,9 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
   })
 
   const uploadVideoMutation = useUploadVideoMutation()
-  const updateLessonMutation = useUpdateLessonMutation()
+  const createLessonMutation = useCreateLessonMutation()
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
-
-  useEffect(() => {
-    reset({
-      title: lessonDetail?.data.data.title,
-      description: lessonDetail?.data.data.description,
-      videoUrl: lessonDetail?.data.data.videoUrl,
-      isDraft: lessonDetail?.data.data.isDraft,
-      duration: lessonDetail?.data.data.duration
-    })
-  }, [lessonDetail, reset])
-
-
-  if (isPending || !lessonDetail) return null
-
-  const lesson = lessonDetail.data.data
 
   const onSubmit = async () => {
     try {
@@ -71,19 +58,17 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
         const res = await uploadVideoMutation.mutateAsync(formData)
         setValue('videoUrl', res.data.data[0].url)
         setValue('duration', res.data.data[0].duration)
-      }
+      } else setValue('videoUrl', null)
       const body = getValues()
-      await updateLessonMutation.mutateAsync({
-        param: {
-          lessonId: lessonIdQuery
-        },
-        body: {
-          ...body,
-          chapterId: lesson.chapterId
-        }
+      const res = await createLessonMutation.mutateAsync({
+        ...body,
+        chapterId: chapterIdQuery
+      })
+      navigate(`/admin/courses/detail/${courseId}?lessonId=${res.data.data.id}`, {
+        preventScrollReset: true
       })
       queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
-      toast.success('Cập nhật bài học thành công')
+      toast.success('Tạo bài học mới thành công')
     } catch (error) {
       handleError({ error })
     }
@@ -93,15 +78,13 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
     <Lesson
       control={control}
       errors={errors}
-      lesson={lesson}
       onSubmit={onSubmit}
       handleSubmit={handleSubmit}
       register={register}
       setValue={setValue}
       setFile={setFile}
-      lessonIdPrev={lessonIdPrev}
-      lessonIdNext={lessonIdNext}
-      buttonText='Cập nhật bài học'
+      buttonText='Tạo ngay'
+      isPending={createLessonMutation.isPending}
     />
   )
 }

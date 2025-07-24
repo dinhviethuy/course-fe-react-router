@@ -13,7 +13,9 @@ import {
 import { restrictToVerticalAxis, restrictToWindowEdges } from '@dnd-kit/modifiers'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useQueryClient } from '@tanstack/react-query'
+import { Plus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router'
 import { toast } from 'sonner'
 import CreateChapter from '~/components/chapter/create-chapter'
 import SortableChapter from '~/components/drag-course/sortable-chapter'
@@ -27,7 +29,7 @@ import { getOrder, handleError } from '~/lib/utils'
 import { type UpdateChatperBodyType } from '~/types/chapter.type'
 import type { GetCourseDetailResTypeForAdmin, ReorderChaptersAndLessonsBodyType } from '~/types/course.type'
 
-export default function DragCourse({ course, openedLessonId }: { course: GetCourseDetailResTypeForAdmin, openedLessonId?: number }) {
+export default function DragCourse({ course, openedLessonId, openedChapterId }: { course: GetCourseDetailResTypeForAdmin, openedLessonId?: number, openedChapterId?: number }) {
   const [chapters, setChapters] = useState<GetCourseDetailResTypeForAdmin['chapters']>(course.chapters)
   const [activeItem, setActiveItem] = useState<any>(null)
   const [expandedChapters, setExpandedChapters] = useState<string[]>([])
@@ -245,16 +247,18 @@ export default function DragCourse({ course, openedLessonId }: { course: GetCour
   }
 
   useEffect(() => {
-    if (openedLessonId) {
+    if (openedLessonId && !openedChapterId) {
       const chapterWithLesson = course.chapters.find((chapter) =>
         chapter.lessons.some((lesson) => lesson.id === openedLessonId)
       )
 
       if (chapterWithLesson) {
-        setExpandedChapters([`chapter-${chapterWithLesson.id}`])
+        setExpandedChapters((prev) => [...prev, `chapter-${chapterWithLesson.id}`])
       }
+    } else if (openedChapterId) {
+      setExpandedChapters((prev) => [...prev, `chapter-${openedChapterId}`])
     }
-  }, [openedLessonId, course.chapters])
+  }, [openedLessonId, openedChapterId, course.chapters])
 
   if (!isClient) return null
 
@@ -301,8 +305,14 @@ export default function DragCourse({ course, openedLessonId }: { course: GetCour
                         >
                           <ul className='space-y-2 min-h-[40px] bg-background p-2 rounded-md'>
                             {chapter.lessons.map((lesson: any) => (
-                              <SortableLesson key={lesson.id} lesson={lesson} courseId={course.id} openedLessonId={openedLessonId} />
+                              <SortableLesson key={lesson.id} lesson={lesson} courseId={course.id} openedLessonId={openedChapterId ? undefined : openedLessonId} />
                             ))}
+                            <li>
+                              <Link to={`?chapterId=${chapter.id}`} className='p-2 border flex items-center hover:underline gap-2 border-gray-200 dark:border-gray-600 rounded-md bg-background transition-all duration-300' preventScrollReset>
+                                <Plus />
+                                <span>Thêm bài học</span>
+                              </Link>
+                            </li>
                           </ul>
                         </SortableContext>
                       </SortableChapter>

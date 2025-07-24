@@ -11,7 +11,6 @@ import { CreateChapterBodySchema, type CreateChapterBodyType } from '~/types/cha
 
 interface IProps {
   courseId: number
-  // setChapters: React.Dispatch<React.SetStateAction<GetCourseDetailResTypeForAdmin['chapters']>>
 }
 export default function CreateChapter({ courseId }: IProps) {
   const [open, setOpen] = useState(false)
@@ -39,14 +38,6 @@ export default function CreateChapter({ courseId }: IProps) {
       })
       reset()
       queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
-      // setChapters((prev) => [
-      //   ...prev,
-      //   {
-      //     ...chapter.data,
-      //     duration: 0,
-      //     lessons: []
-      //   }
-      // ])
       setOpen(false)
       toast.success('Tạo chương mới thành công')
     } catch (error) {
