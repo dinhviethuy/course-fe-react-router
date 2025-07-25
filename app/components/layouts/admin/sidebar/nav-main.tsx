@@ -2,6 +2,7 @@ import { ChevronRight, type LucideIcon } from 'lucide-react'
 import { NavLink } from 'react-router'
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '~/components/ui/collapsible'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu'
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -10,7 +11,8 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem
+  SidebarMenuSubItem,
+  useSidebar
 } from '~/components/ui/sidebar'
 
 export function NavMain({
@@ -27,11 +29,12 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const { open, isMobile } = useSidebar()
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {(open || isMobile) && items.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive} className='group/collapsible'>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -59,6 +62,30 @@ export function NavMain({
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
+        ))}
+        {(!open && !isMobile) && items.map((item) => (
+          <DropdownMenu key={item.title}>
+            <SidebarMenuItem>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton tooltip={item.title}>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className=' rounded-lg'
+                align='start'
+                side='bottom'
+                sideOffset={4}
+              >
+                {item.items?.map((subItem) => (
+                  <DropdownMenuItem key={subItem.title} className='gap-2 p-2'>
+                    {subItem.title}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </SidebarMenuItem>
+          </DropdownMenu>
         ))}
       </SidebarMenu>
     </SidebarGroup>

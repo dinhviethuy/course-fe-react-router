@@ -15,6 +15,7 @@ import { NavUser } from '~/components/layouts/admin/sidebar/nav-user'
 import { TeamSwitcher } from '~/components/layouts/admin/sidebar/team-switcher'
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '~/components/ui/sidebar'
+import { useGetProfileQuery } from '~/hooks/useUser'
 
 // This is sample data.
 const data = {
@@ -89,8 +90,8 @@ const data = {
       icon: Users,
       items: [
         {
-          title: 'Introduction',
-          url: '#'
+          title: 'Danh sách người dùng',
+          url: '/admin/users'
         }
       ]
     },
@@ -120,6 +121,7 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: profile } = useGetProfileQuery()
   return (
     <Sidebar collapsible='icon' {...props}>
       <SidebarHeader>
@@ -129,7 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={profile?.data.data} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
