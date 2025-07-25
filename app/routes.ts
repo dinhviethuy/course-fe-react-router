@@ -30,7 +30,8 @@ export default [
         index('routes/admin/courses/list/index.tsx'),
         route('/new', 'routes/admin/courses/new/index.tsx'),
         route('/detail/:courseId', 'routes/admin/courses/detail/index.tsx')
-      ])
+      ]),
+      ...prefix('/admin/users', [index('routes/admin/users/list/index.tsx')])
     ])
   ])
 ] satisfies RouteConfig

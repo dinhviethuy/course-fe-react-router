@@ -8,9 +8,9 @@ export const UserSchema = z.object({
   id: z.number().int().positive(),
   email: z.email(),
   password: z.string().min(6),
-  fullName: z.string(),
+  fullName: z.string().min(1),
   roleId: z.number().int().positive(),
-  status: z.enum([UserStatus.ACTIVE, UserStatus.BLOCKED]).default(UserStatus.ACTIVE),
+  status: z.enum([UserStatus.ACTIVE, UserStatus.BLOCKED]).default(UserStatus.ACTIVE).optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
   deletedAt: z.date().nullable(),
@@ -112,7 +112,12 @@ export const CreateUserBodySchema = UserSchema.pick({
 }).strict()
 
 export const UpdateUserBodySchema = CreateUserBodySchema.extend({
-  password: z.string().min(6).optional()
+  password: z
+    .string()
+    .optional()
+    .refine((val) => !val || val.length >= 6, {
+      message: 'Mật khẩu phải có ít nhất 6 ký tự'
+    })
 })
 
 export type GetUsersResType = z.infer<typeof GetUsersResSchema>

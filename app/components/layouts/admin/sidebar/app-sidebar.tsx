@@ -101,8 +101,8 @@ const data = {
       icon: ShieldCheck,
       items: [
         {
-          title: 'Introduction',
-          url: '#'
+          title: 'Danh sách vai trò',
+          url: '/admin/roles'
         }
       ]
     },
@@ -112,8 +112,8 @@ const data = {
       icon: Lock,
       items: [
         {
-          title: 'Introduction',
-          url: '#'
+          title: 'Danh sách quyền',
+          url: '/admin/permissions'
         }
       ]
     }

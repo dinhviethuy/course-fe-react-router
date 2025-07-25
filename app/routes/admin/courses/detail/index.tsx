@@ -9,6 +9,16 @@ import { CourseType } from '~/constants/course.constant'
 import { useCourseDetailForAdminQuery } from '~/hooks/useCourse'
 import { getLessonIdAndChapterId } from '~/lib/utils'
 
+export function meta() {
+  return [
+    {
+      title: 'Chi tiết khóa học',
+      description: 'Chi tiết khóa học'
+    }
+  ]
+}
+
+
 export default function CourseDetail({ params }: Route.ActionArgs) {
   const getCourseDetailMutation = useCourseDetailForAdminQuery({ courseId: Number(params.courseId) })
 

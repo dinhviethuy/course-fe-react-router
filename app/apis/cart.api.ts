@@ -16,6 +16,7 @@ const cartApi = {
     if (limit) queryString.set('limit', limit.toString())
     if (orderBy) queryString.set('orderBy', orderBy)
     if (sortBy) queryString.set('sortBy', sortBy)
+    if (query?.getAll) queryString.set('getAll', query.getAll.toString())
     return http.get<SuccessResponse<GetListCartResType>>(`/carts?${queryString.toString()}`)
   },
   addToCart: (body: CreateCartBodyType) => http.post<SuccessResponse<CreateCartResType>>(`/carts`, body),

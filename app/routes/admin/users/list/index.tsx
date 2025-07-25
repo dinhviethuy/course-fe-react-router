@@ -8,9 +8,8 @@ import {
   type Updater,
   useReactTable
 } from '@tanstack/react-table'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PlusCircle, Trash } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router'
 import { toast } from 'sonner'
 import {
   AlertDialog,
@@ -29,11 +28,16 @@ import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
-import { CourseType } from '~/constants/course.constant'
+import CreateUser from '~/components/user/create-user'
+import UpdateUser from '~/components/user/update-user'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
-import { useDeleteCourseMutation, useListCourseAdminQuery } from '~/hooks/useCourse'
-import { cn, formatCurrency, handleError } from '~/lib/utils'
-import type { ListCoursesResType } from '~/types/course.type'
+import { RoleName } from '~/constants/role.constant'
+import { UserStatus, type UserStatusType } from '~/constants/user.constant'
+import { useListRoleQuery } from '~/hooks/useRole'
+import { useDeleteUserMutation, useListUserQuery } from '~/hooks/useUser'
+import { handleError } from '~/lib/utils'
+import type { GetRolesResType } from '~/types/role.type'
+import type { GetUsersResType } from '~/types/user.type'
 interface DataTablePaginationProps<TData> {
   table: TableType<TData>
 }
@@ -41,8 +45,8 @@ interface DataTablePaginationProps<TData> {
 export function meta() {
   return [
     {
-      title: 'Danh sách khóa học',
-      description: 'Danh sách khóa học'
+      title: 'Danh sách người dùng',
+      description: 'Danh sách người dùng'
     }
   ]
 }
@@ -122,50 +126,51 @@ function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) 
 }
 
 function getColumns({
-  handleDelete
+  handleDelete,
+  roles
 }: {
-  handleDelete: (courseId: number) => void
-}): ColumnDef<ListCoursesResType['courses'][number]>[] {
+  handleDelete: (courseId: number) => void,
+  roles: GetRolesResType['roles']
+}): ColumnDef<GetUsersResType['users'][number]>[] {
   return [
     {
-      accessorKey: 'title',
-      header: 'Khóa học',
+      accessorKey: 'fullName',
+      header: 'Tên người dùng',
       cell: ({ row }) => (
         <div className='flex items-center gap-2 flex-wrap'>
-          <img src={row.original.image} alt={row.original.title} className='w-10 h-10 rounded-md' />
-          <span className='wrap-break-word'>{row.original.title}</span>
+          <span className='wrap-break-word'>{row.original.fullName}</span>
         </div>
       )
     },
     {
-      accessorKey: 'courseType',
-      header: 'Loại',
+      accessorKey: 'email',
+      header: 'Email',
       cell: ({ row }) => {
-        const { courseType } = row.original
+        const { email } = row.original
         return (
           <div className='flex items-center gap-2 flex-wrap'>
-            <Badge variant={courseType === CourseType.COMBO ? 'default' : 'secondary'}>{courseType}</Badge>
+            <span className='wrap-break-word'>{email}</span>
           </div>
         )
       }
     },
     {
-      accessorKey: 'price',
-      header: 'Giá',
+      accessorKey: 'role',
+      header: 'Vai trò',
       cell: ({ row }) => (
         <div className='flex flex-col gap-2'>
-          <span className={cn('text-base font-semibold text-primary')}>
-            {row.original.price === 0 ? 'Miễn phí' : formatCurrency(row.original.price!)}
-          </span>
+          <Badge variant={row.original.role.name === RoleName.ADMIN ? 'default' : 'outline'}>
+            {row.original.role.name}
+          </Badge>
         </div>
       )
     },
     {
-      accessorKey: 'discount',
-      header: 'Khuyyến mãi',
+      accessorKey: 'status',
+      header: 'Trạng thái',
       cell: ({ row }) => (
         <div className='flex flex-col gap-2'>
-          <span className={cn('text-base font-semibold text-primary')}>{row.original.discount}%</span>
+          <Badge >{row.original.status}</Badge>
         </div>
       )
     },
@@ -176,13 +181,9 @@ function getColumns({
           <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link to={`/admin/courses/detail/${row.original.id}`}>
-                  <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                    <Eye className='w-6 h-6' />
-                  </Button>
-                </Link>
+                <UpdateUser roles={roles || []} user={row.original} />
               </TooltipTrigger>
-              <TooltipContent className='dark px-2 py-1 text-xs'>Xem chi tiết và sửa khóa học</TooltipContent>
+              <TooltipContent className='dark px-2 py-1 text-xs'>Cập nhật người dùng</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <AlertDialog>
@@ -194,7 +195,9 @@ function getColumns({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>Bạn đang thực hiện xóa khóa học {row.original.title}.</AlertDialogDescription>
+                <AlertDialogDescription>
+                  Bạn đang thực hiện xóa người dùng <span className='font-semibold text-accent-foreground'>{row.original.fullName}</span>.
+                </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
@@ -217,8 +220,8 @@ function BuildTable({
   setPagination,
   total
 }: {
-  columns: ColumnDef<ListCoursesResType['courses'][number]>[]
-  data: ListCoursesResType['courses'][number][]
+  columns: ColumnDef<GetUsersResType['users'][number]>[]
+  data: GetUsersResType['users'][number][]
   pagination: {
     pageIndex: number
     pageSize: number
@@ -266,7 +269,7 @@ function BuildTable({
         ) : (
           <TableRow>
             <TableCell colSpan={columns.length} className='h-24 text-center'>
-              Hiện không có khóa học nào
+              Hiện chưa có người dùng nào
             </TableCell>
           </TableRow>
         )}
@@ -282,9 +285,10 @@ function BuildTable({
   )
 }
 
-export default function Courses() {
+export default function Users() {
   const [search, setSearch] = useState('')
-  const [isDraft, setIsDraft] = useState<string>('all')
+  const [status, setStatus] = useState<UserStatusType | 'all'>('all')
+  const [roleId, setRoleId] = useState<number | string>('all')
   const [sort, setSort] = useState<{
     orderBy: OrderByType
     sortBy: Omit<SortByType, 'fullName' | 'email' | 'name'>
@@ -296,54 +300,66 @@ export default function Courses() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data, refetch } = useListCourseAdminQuery({
+  const { data: listRole } = useListRoleQuery({
+    getAll: true
+  })
+  const { data, refetch } = useListUserQuery({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
     search,
-    isDraft,
     orderBy: sort.orderBy,
-    sortBy: sort.sortBy as 'price' | 'createdAt' | 'sale'
+    sortBy: sort.sortBy as 'email' | 'fullName' | 'createdAt',
+    status: status === 'all' ? undefined : status,
+    roleId: roleId === 'all' ? undefined : Number(roleId)
   })
-  const deleteCourseMutation = useDeleteCourseMutation()
-  const handleDelete = async (courseId: number) => {
+  const deleteUserMutation = useDeleteUserMutation()
+  const handleDelete = async (userId: number) => {
     try {
-      await deleteCourseMutation.mutateAsync({
-        courseId
+      await deleteUserMutation.mutateAsync({
+        userId
       })
       refetch()
-      toast.success('Xóa khóa học thành công')
+      toast.success('Xóa người dùng thành công')
     } catch (error) {
       handleError({ error })
     }
   }
-  const columns = getColumns({ handleDelete })
+  const columns = getColumns({ handleDelete, roles: listRole?.data.data.roles || [] })
 
   return (
     <>
       <div className='flex items-center flex-wrap gap-4 justify-between mb-6'>
-        <h1 className='text-2xl font-semibold'>Danh sách khóa học</h1>
-        <Button asChild>
-          <Link to='/admin/courses/new'>
-            <PlusCircle className='mr-2 h-4 w-4' />
-            Tạo khóa học mới
-          </Link>
-        </Button>
+        <h1 className='text-2xl font-semibold'>Danh sách người dùng</h1>
+        <CreateUser roles={listRole?.data.data.roles || []} />
       </div>
-      <div className='mb-4 flex items-center gap-4'>
+      <div className='mb-4 flex items-center flex-wrap gap-4'>
         <Input
           placeholder='Tìm kiếm theo tên...'
-          className='w-[300px]'
+          className='sm:w-[300px]'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Select value={isDraft} onValueChange={(value) => setIsDraft(value)}>
-          <SelectTrigger className='w-[200px]'>
+        <Select value={status} onValueChange={(value) => setStatus(value as (UserStatusType | 'all'))}>
+          <SelectTrigger className='w-[120px] sm:w-[200px]'>
             <SelectValue placeholder='Lọc theo trạng thái' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='all'>Tất cả</SelectItem>
-            <SelectItem value='false'>Đã xuất bản</SelectItem>
-            <SelectItem value='true'>Bản nháp</SelectItem>
+            <SelectItem value='all'>Trạng thái</SelectItem>
+            <SelectItem value={UserStatus.ACTIVE}>Hoạt động</SelectItem>
+            <SelectItem value={UserStatus.BLOCKED}>Bị chặn</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={roleId?.toString()} onValueChange={(value) => setRoleId(value)}>
+          <SelectTrigger className='w-[120px] sm:w-[200px]'>
+            <SelectValue placeholder='Lọc theo vai trò' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='all'>Vai trò</SelectItem>
+            {listRole?.data.data.roles.map((role) => (
+              <SelectItem key={role.id} value={role.id.toString()}>
+                {role.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select
@@ -353,23 +369,23 @@ export default function Courses() {
             setSort({ sortBy, orderBy })
           }}
         >
-          <SelectTrigger className='w-[200px]'>
+          <SelectTrigger className='w-[120px] sm:w-[200px]'>
             <SelectValue placeholder='Sắp xếp theo' />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Desc}`}>Mới nhất</SelectItem>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Asc}`}>Cũ nhất</SelectItem>
-            <SelectItem value={`${SortBy.Price}-${OrderBy.Asc}`}>Giá tăng dần</SelectItem>
-            <SelectItem value={`${SortBy.Price}-${OrderBy.Desc}`}>Giá giảm dần</SelectItem>
-            <SelectItem value={`${SortBy.Sale}-${OrderBy.Asc}`}>Giảm giá ít</SelectItem>
-            <SelectItem value={`${SortBy.Sale}-${OrderBy.Desc}`}>Giảm giá nhiều</SelectItem>
+            <SelectItem value={`${SortBy.FullName}-${OrderBy.Asc}`}>Tên A-Z</SelectItem>
+            <SelectItem value={`${SortBy.FullName}-${OrderBy.Desc}`}>Tên Z-A</SelectItem>
+            <SelectItem value={`${SortBy.Email}-${OrderBy.Asc}`}>Email A-Z</SelectItem>
+            <SelectItem value={`${SortBy.Email}-${OrderBy.Desc}`}>Email Z-A</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div>
         <BuildTable
           columns={columns}
-          data={data?.data.data.courses || []}
+          data={data?.data.data.users || []}
           pagination={pagination}
           setPagination={setPagination}
           total={data?.data.data.totalPages || 0}

@@ -53,8 +53,8 @@ export const GetRolesQuerySchema = z
       if (typeof value === 'boolean') return value
       return undefined
     }, z.boolean().optional()),
-    orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc),
-    sortBy: z.enum([SortBy.CreatedAt, SortBy.Name]).default(SortBy.CreatedAt),
+    orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc).optional(),
+    sortBy: z.enum([SortBy.CreatedAt, SortBy.Name]).default(SortBy.CreatedAt).optional(),
     search: z.string().optional()
   })
   .strict()

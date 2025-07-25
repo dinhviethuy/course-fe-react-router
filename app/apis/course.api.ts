@@ -37,7 +37,7 @@ const courseApi = {
     return http.get<SuccessResponse<ListCoursesResType>>(`/courses?${params.toString()}`)
   },
   listCourseAdmin: (query?: GetManageCoursesQueryType) => {
-    const { page, limit, orderBy, sortBy, maxPrice, minPrice, search, createdById, isDraft } = query || {}
+    const { page, limit, orderBy, sortBy, maxPrice, minPrice, search, createdById, isDraft, getAll } = query || {}
     const params = new URLSearchParams()
     if (page) params.append('page', page.toString())
     if (limit) params.append('limit', limit.toString())
@@ -48,6 +48,7 @@ const courseApi = {
     if (search) params.append('search', search)
     if (createdById) params.append('createdById', createdById.toString())
     if (isDraft) params.append('isDraft', isDraft.toString())
+    if (getAll) params.append('getAll', getAll.toString())
     return http.get<SuccessResponse<ListCoursesResType>>(`/manage-courses?${params.toString()}`)
   },
   getCourseDetailForAdmin: (params: GetCourseParamsIdType) =>

@@ -11,11 +11,12 @@ import type { SuccessResponse } from '~/types/success.type'
 
 const orderApi = {
   getOrder: (query?: GetOrderListQueryType) => {
-    const { page, limit, status } = query || {}
+    const { page, limit, status, getAll } = query || {}
     const params = new URLSearchParams()
     if (page) params.append('page', page.toString())
     if (limit) params.append('limit', limit.toString())
     if (status) params.append('status', status)
+    if (getAll) params.append('getAll', getAll.toString())
     return http.get<SuccessResponse<GetOrderListResType>>(`/orders?${params.toString()}`)
   },
   getOrderDetail: (params: GetOrderParamType) =>
