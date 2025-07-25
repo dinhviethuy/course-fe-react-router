@@ -102,6 +102,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       lessonIdPrev={lessonIdPrev}
       lessonIdNext={lessonIdNext}
       buttonText='Cập nhật bài học'
+      isPending={updateLessonMutation.isPending}
     />
   )
 }
