@@ -17,11 +17,13 @@ import type { UpdateLessonBodyType } from '~/types/lesson.type'
 export default function SortableLesson({
   lesson,
   courseId,
-  openedLessonId
+  openedLessonId,
+  disabled
 }: {
   lesson: GetCourseDetailResTypeForAdmin['chapters'][number]['lessons'][number],
   courseId: number
   openedLessonId?: number
+  disabled?: boolean
 }) {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const updateLessonMutation = useUpdateLessonMutation()
@@ -33,7 +35,8 @@ export default function SortableLesson({
     data: {
       type: 'lesson',
       lesson: lesson
-    }
+    },
+    disabled: disabled
   })
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -78,7 +81,7 @@ export default function SortableLesson({
       className='p-2 border flex justify-between gap-2 border-gray-200 dark:border-gray-600 rounded-md bg-background transition-all duration-300'
     >
       <div className='flex items-center gap-2'>
-        <span className='cursor-move' {...attributes} {...listeners}>
+        <span className={cn('cursor-move', disabled && 'cursor-not-allowed')} {...attributes} {...listeners}>
           <GripVertical size={16} />
         </span>
         <Link to={`?lessonId=${lesson.id}`} preventScrollReset className={cn('hover:underline', {
@@ -92,7 +95,7 @@ export default function SortableLesson({
       <div className='flex items-center gap-1'>
         <div className='flex items-center gap-2'>
           <span>Nháp</span>
-          <Switch className='cursor-pointer' checked={lesson.isDraft} onCheckedChange={() => handleUpdateLesson({
+          <Switch disabled={disabled} className='cursor-pointer' checked={lesson.isDraft} onCheckedChange={() => handleUpdateLesson({
             chapterId: lesson.chapterId,
             title: lesson.title,
             description: lesson.description,
@@ -101,30 +104,31 @@ export default function SortableLesson({
             isDraft: !lesson.isDraft,
           })} />
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <MoreVertical className='h-4 w-4' />
-              <span className='sr-only'>Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              <Link to={`?lessonId=${lesson.id}`} className='w-full' preventScrollReset>
-                Sửa
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className='text-red-600 cursor-pointer'
-              onSelect={(e) => {
-                e.preventDefault()
-                setOpenDeleteDialog(true)
-              }}
-            >
-              Xóa
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {!disabled &&
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='ghost' className='h-8 w-8 p-0'>
+                <MoreVertical className='h-4 w-4' />
+                <span className='sr-only'>Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <Link to={`?lessonId=${lesson.id}`} className='w-full' preventScrollReset>
+                  Sửa
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className='text-red-600 cursor-pointer'
+                onSelect={(e) => {
+                  e.preventDefault()
+                  setOpenDeleteDialog(true)
+                }}
+              >
+                Xóa
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>}
       </div>
 
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>

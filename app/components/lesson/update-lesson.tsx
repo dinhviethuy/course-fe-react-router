@@ -16,9 +16,10 @@ interface Iprops {
   lessonIdPrev: number | undefined
   lessonIdNext: number | undefined
   courseId: number
+  disabled?: boolean
 }
 
-export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, lessonIdNext }: Iprops) {
+export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, lessonIdNext, disabled }: Iprops) {
   const [file, setFile] = useState<File | FileMetadata | null>(null)
   const { data: lessonDetail, isPending } = useGetLessonDetailAdminQuery({
     lessonId: lessonIdQuery
@@ -103,6 +104,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       lessonIdNext={lessonIdNext}
       buttonText='Cập nhật bài học'
       isPending={updateLessonMutation.isPending}
+      disabled={disabled}
     />
   )
 }

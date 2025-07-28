@@ -1,6 +1,6 @@
-import * as React from 'react'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { ChevronDownIcon } from 'lucide-react'
+import * as React from 'react'
 
 import { cn } from '~/lib/utils'
 
@@ -20,7 +20,7 @@ function AccordionItem({ className, ...props }: React.ComponentProps<typeof Acco
 
 function AccordionTrigger({ className, children, ...props }: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
   return (
-    <AccordionPrimitive.Header className='flex'>
+    <AccordionPrimitive.Header className='flex flex-1'>
       <AccordionPrimitive.Trigger
         data-slot='accordion-trigger'
         className={cn(
@@ -48,4 +48,5 @@ function AccordionContent({ className, children, ...props }: React.ComponentProp
   )
 }
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger }
+

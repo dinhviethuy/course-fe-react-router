@@ -12,10 +12,11 @@ interface IProps {
     title: string
   }[]
   selected: number[]
-  onChange: (value: number[]) => void
+  onChange: (value: number[]) => void,
+  disabled?: boolean
 }
 
-export function MultiSelect({ options, selected, onChange }: IProps) {
+export function MultiSelect({ options, selected, onChange, disabled }: IProps) {
   const [open, setOpen] = useState(false)
 
   const toggleValue = (value: number) => {
@@ -29,7 +30,7 @@ export function MultiSelect({ options, selected, onChange }: IProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant='outline' role='combobox' aria-expanded={open} className='w-full h-auto justify-between'>
+        <Button variant='outline' role='combobox' aria-expanded={open} className='w-full h-auto justify-between' disabled={disabled}>
           {selected.length > 0 ? (
             <div className='flex flex-wrap gap-2'>
               {selected.map((id) => {

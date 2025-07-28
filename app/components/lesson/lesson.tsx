@@ -26,10 +26,11 @@ interface IProps {
   lessonIdPrev?: number,
   lessonIdNext?: number,
   buttonText: string,
-  isPending: boolean
+  isPending: boolean,
+  disabled?: boolean
 }
 
-export default function Lesson({ lesson, onSubmit, handleSubmit, control, register, errors, setValue, setFile, lessonIdPrev, lessonIdNext, buttonText, isPending }: IProps) {
+export default function Lesson({ lesson, onSubmit, handleSubmit, control, register, errors, setValue, setFile, lessonIdPrev, lessonIdNext, buttonText, isPending, disabled }: IProps) {
 
   return (
     <form
@@ -62,7 +63,7 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
           <CardContent className='space-y-6'>
             <div className='space-y-2'>
               <Label className='font-semibold'>Tên bài học</Label>
-              <Input {...register('title')} />
+              <Input {...register('title')} disabled={disabled} />
               {errors.title && <p className='text-sm text-red-500'>{errors.title.message}</p>}
             </div>
             <div className='space-y-2'>
@@ -72,7 +73,7 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
                 <Controller
                   name='isDraft'
                   control={control}
-                  render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+                  render={({ field }) => <Switch disabled={disabled} checked={field.value} onCheckedChange={field.onChange} />}
                 />
               </div>
               {errors.isDraft && <p className='text-sm text-red-500'>{errors.isDraft.message}</p>}
@@ -90,6 +91,7 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
                 videoUrl={lesson?.videoUrl}
                 setValue={setValue}
                 setFile={setFile}
+                disabled={disabled}
               />
               {errors.videoUrl && <p className='text-red-500'>{errors.videoUrl.message}</p>}
             </div>
@@ -109,6 +111,7 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
                     <MarkdownEditor
                       value={field.value}
                       onChange={field.onChange}
+                      disabled={disabled}
                     />
                   </ClientOnly>
                 )}
@@ -118,12 +121,14 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
           </CardContent>
 
         </Card>
-        <CardFooter className='flex justify-center'>
-          <Button type='submit' className='cursor-pointer' disabled={isPending}>
-            {isPending && <Loader2 className='w-4 h-4 animate-spin' />}
-            {buttonText}
-          </Button>
-        </CardFooter>
+        {!disabled &&
+          <CardFooter className='flex justify-center'>
+            <Button type='submit' className='cursor-pointer' disabled={isPending}>
+              {isPending && <Loader2 className='w-4 h-4 animate-spin' />}
+              {buttonText}
+            </Button>
+          </CardFooter>
+        }
       </div>
     </form>
   )

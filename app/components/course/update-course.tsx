@@ -16,7 +16,7 @@ interface IProps {
   refetch: () => void
 }
 
-export default function Component({ data, courseId, refetch }: IProps) {
+export default function UpdateCourse({ data, courseId, refetch }: IProps) {
   const [file, setFile] = useState<File | FileMetadata | null>(null)
   const maxSizeMB = 2
   const maxSize = maxSizeMB * 1024 * 1024

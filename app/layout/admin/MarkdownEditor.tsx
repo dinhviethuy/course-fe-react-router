@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
-import rehypePrism from 'rehype-prism-plus'
-import remarkGfm from 'remark-gfm'
-import { useTheme } from '~/components/theme-provider'
+import { useEffect, useState } from 'react';
+import rehypePrism from 'rehype-prism-plus';
+import remarkGfm from 'remark-gfm';
+import { useTheme } from '~/components/theme-provider';
 
-export default function MarkdownEditor({ value, onChange }: { value?: string; onChange: (val: string) => void }) {
+export default function MarkdownEditor({ value, onChange, disabled }: { value?: string; onChange: (val: string) => void, disabled?: boolean }) {
   const [Editor, setEditor] = useState<any>(null)
   const { theme } = useTheme()
 
@@ -28,6 +28,9 @@ export default function MarkdownEditor({ value, onChange }: { value?: string; on
         previewOptions={{
           rehypePlugins: [[rehypePrism, { ignoreMissing: true }]],
           remarkPlugins: [[remarkGfm]]
+        }}
+        textareaProps={{
+          disabled: disabled,
         }}
       />
     </div>

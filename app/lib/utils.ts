@@ -212,3 +212,11 @@ export const getOrder = (chapters: GetCourseDetailResTypeForAdmin['chapters']): 
     chapters: body
   }
 }
+
+export const groupByModule = (permissions: any[]) => {
+  return permissions.reduce((acc, permission) => {
+    acc[permission.module] = acc[permission.module] || []
+    acc[permission.module].push(permission)
+    return acc
+  }, {})
+}

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { User } from "~/components/user/user";
 import { useUpdateUserMutation } from "~/hooks/useUser";
 import { handleError } from "~/lib/utils";
@@ -79,9 +80,16 @@ export default function UpdateUser({ roles, user }: IProps) {
       reset={reset}
       isPending={updateUserMutation.isPending}
     >
-      <Button className="cursor-pointer" variant='ghost'>
-        <PencilLine />
-      </Button>
-    </User>
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button className="cursor-pointer" variant='ghost'>
+              <PencilLine />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className='dark px-2 py-1 text-xs'>Cập nhật người dùng</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </User >
   )
 }

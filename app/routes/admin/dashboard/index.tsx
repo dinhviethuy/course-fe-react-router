@@ -1,7 +1,7 @@
-export default function Dashboard() {
+import CreateRole from "~/components/role/create-role";
+
+export default function RolePermissionsPage() {
   return (
-    <>
-      <h2>huy</h2>
-    </>
+    <CreateRole />
   )
 }

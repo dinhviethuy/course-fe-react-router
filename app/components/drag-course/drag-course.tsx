@@ -29,7 +29,7 @@ import { getOrder, handleError } from '~/lib/utils'
 import { type UpdateChatperBodyType } from '~/types/chapter.type'
 import type { GetCourseDetailResTypeForAdmin, ReorderChaptersAndLessonsBodyType } from '~/types/course.type'
 
-export default function DragCourse({ course, openedLessonId, openedChapterId }: { course: GetCourseDetailResTypeForAdmin, openedLessonId?: number, openedChapterId?: number }) {
+export default function DragCourse({ course, openedLessonId, openedChapterId, disabled }: { course: GetCourseDetailResTypeForAdmin, openedLessonId?: number, openedChapterId?: number, disabled?: boolean }) {
   const [chapters, setChapters] = useState<GetCourseDetailResTypeForAdmin['chapters']>(course.chapters)
   const [activeItem, setActiveItem] = useState<any>(null)
   const [expandedChapters, setExpandedChapters] = useState<string[]>([])
@@ -266,7 +266,7 @@ export default function DragCourse({ course, openedLessonId, openedChapterId }: 
     <div>
       <Card>
         <CardHeader className='flex justify-end'>
-          <CreateChapter courseId={course.id} />
+          {!disabled && <CreateChapter courseId={course.id} />}
         </CardHeader>
         <CardContent>
           {course.courseType !== CourseType.COMBO && course.chapters.length > 0 && (
@@ -298,6 +298,7 @@ export default function DragCourse({ course, openedLessonId, openedChapterId }: 
                         handleUpdateChapter={handleUpdateChapter}
                         handleDeleteChapter={handleDeleteChapter}
                         isPending={updateChapterMutation.isPending}
+                        disabled={disabled}
                       >
                         <SortableContext
                           items={chapter.lessons.map((lesson: any) => `lesson-${lesson.id}`)}
@@ -305,14 +306,16 @@ export default function DragCourse({ course, openedLessonId, openedChapterId }: 
                         >
                           <ul className='space-y-2 min-h-[40px] bg-background p-2 rounded-md'>
                             {chapter.lessons.map((lesson: any) => (
-                              <SortableLesson key={lesson.id} lesson={lesson} courseId={course.id} openedLessonId={openedChapterId ? undefined : openedLessonId} />
+                              <SortableLesson key={lesson.id} lesson={lesson} courseId={course.id} openedLessonId={openedChapterId ? undefined : openedLessonId} disabled={disabled} />
                             ))}
-                            <li>
-                              <Link to={`?chapterId=${chapter.id}`} className='p-2 border flex items-center hover:underline gap-2 border-gray-200 dark:border-gray-600 rounded-md bg-background transition-all duration-300' preventScrollReset>
-                                <Plus />
-                                <span>Thêm bài học</span>
-                              </Link>
-                            </li>
+                            {!disabled &&
+                              <li>
+                                <Link to={`?chapterId=${chapter.id}`} className='p-2 border flex items-center hover:underline gap-2 border-gray-200 dark:border-gray-600 rounded-md bg-background transition-all duration-300' preventScrollReset>
+                                  <Plus />
+                                  <span>Thêm bài học</span>
+                                </Link>
+                              </li>
+                            }
                           </ul>
                         </SortableContext>
                       </SortableChapter>

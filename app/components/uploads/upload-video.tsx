@@ -14,11 +14,13 @@ export default function UploadVideo({
   videoUrl,
   setValue,
   setFile,
+  disabled
 }: {
   register: UseFormRegister<any>
   videoUrl: string | null | undefined
   setValue: UseFormSetValue<any>
   setFile: (file: File | FileMetadata | null) => void
+  disabled?: boolean
 }) {
   const maxSizeGB = 2
   const maxSize = maxSizeGB * 1024 * 1024 * 1024
@@ -33,9 +35,10 @@ export default function UploadVideo({
 
   const prevVideoUrlRef = useRef(videoUrl);
 
-  const previewUrl = files[0]?.preview || videoUrl || null;
+  const previewUrl = disabled ? null : files[0]?.preview || videoUrl || null;
 
   useEffect(() => {
+    if (disabled) return
     if (files[0]?.file) {
       setValue('videoUrl', previewUrl, {
         shouldDirty: true,
@@ -43,7 +46,7 @@ export default function UploadVideo({
       })
       setFile(files[0].file)
     }
-  }, [files, setValue, previewUrl, setFile])
+  }, [files, setValue, previewUrl, setFile, disabled])
 
   useEffect(() => {
     if (videoUrl !== prevVideoUrlRef.current) {
@@ -76,7 +79,7 @@ export default function UploadVideo({
                 className={cn('w-full max-auto h-[200px] sm:h-[300px] md:h-[400px] xl:h-[500px] 2xl:h-[600px]')}
               />
 
-              <div className='flex justify-center gap-4'>
+              <div className={cn('flex justify-center gap-4', disabled && 'hidden')}>
                 <Button
                   variant='outline'
                   type='button'
@@ -95,7 +98,7 @@ export default function UploadVideo({
                 >
                   Xóa
                 </Button>
-                <Button variant='secondary' type='button' className='flex gap-2 cursor-pointer h-10' onClick={openFileDialog}>
+                <Button variant='secondary' type='button' className='flex gap-2 cursor-pointer h-10' onClick={openFileDialog} disabled={disabled}>
                   <UploadIcon className='size-4' />
                   Thay video
                 </Button>
@@ -110,7 +113,7 @@ export default function UploadVideo({
                 <ImageIcon className='size-4 opacity-60' />
               </div>
               <p className='mb-1.5 text-sm font-medium'>Drop your video here</p>
-              <Button variant='outline' type='button' className='mt-4' onClick={openFileDialog}>
+              <Button variant='outline' type='button' className='mt-4 cursor-pointer' onClick={openFileDialog} disabled={disabled}>
                 <UploadIcon className='-ms-1 size-4 opacity-60' aria-hidden='true' />
                 Select video
               </Button>

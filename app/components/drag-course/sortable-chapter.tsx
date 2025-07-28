@@ -18,7 +18,7 @@ import {
 import { Button } from '~/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu'
 import { Switch } from '~/components/ui/switch'
-import { formatDuration } from '~/lib/utils'
+import { cn, formatDuration } from '~/lib/utils'
 import { type UpdateChatperBodyType } from '~/types/chapter.type'
 import type { GetCourseDetailResTypeForAdmin } from '~/types/course.type'
 
@@ -29,7 +29,8 @@ export default function SortableChapter({
   isAnyChapterDragging,
   handleUpdateChapter,
   handleDeleteChapter,
-  isPending
+  isPending,
+  disabled
 }: {
   chapter: GetCourseDetailResTypeForAdmin['chapters'][number]
   children: React.ReactNode
@@ -37,7 +38,8 @@ export default function SortableChapter({
   isAnyChapterDragging: boolean
   handleUpdateChapter: (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number) => void
   handleDeleteChapter: (chapterId: number) => void
-  isPending: boolean
+  isPending: boolean,
+  disabled?: boolean
 }) {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -45,7 +47,8 @@ export default function SortableChapter({
     data: {
       type: 'chapter',
       chapter: chapter
-    }
+    },
+    disabled: disabled
   })
 
   const chapterStyle = {
@@ -69,7 +72,7 @@ export default function SortableChapter({
         <div className='flex justify-between items-center gap-2 md:gap-4'>
           <AccordionTrigger className='py-2 text-[15px] leading-6 flex items-center gap-2 justify-between'>
             <div className='flex gap-2 items-center'>
-              <span className='cursor-move' {...attributes} {...listeners}>
+              <span className={cn('cursor-move', disabled && 'cursor-not-allowed')}  {...attributes} {...listeners}>
                 <GripVertical size={16} />
               </span>
               <span>{chapter.title}</span>
@@ -92,38 +95,40 @@ export default function SortableChapter({
                     chapter.id
                   )
                 }
+                disabled={disabled}
               />
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant='ghost' className='h-8 w-8 p-0'>
-                  <MoreVertical className='h-4 w-4' />
-                  <span className='sr-only'>Open menu</span>
-                </Button>
-              </DropdownMenuTrigger>
+            {!disabled &&
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='ghost' className='h-8 w-8 p-0'>
+                    <MoreVertical className='h-4 w-4' />
+                    <span className='sr-only'>Open menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
 
-              <DropdownMenuContent align='end'>
-                <DropdownMenuItem>
-                  <Link to={`?chapterId=${chapter.id}`} preventScrollReset>
-                    Tạo bài học mới
-                  </Link>
-                </DropdownMenuItem>
+                <DropdownMenuContent align='end'>
+                  <DropdownMenuItem>
+                    <Link to={`?chapterId=${chapter.id}`} preventScrollReset>
+                      Tạo bài học mới
+                    </Link>
+                  </DropdownMenuItem>
+                  <UpdateChapter chapter={chapter} isPending={isPending} handleUpdateChapter={handleUpdateChapter}>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Sửa</DropdownMenuItem>
+                  </UpdateChapter>
 
-                <UpdateChapter chapter={chapter} isPending={isPending} handleUpdateChapter={handleUpdateChapter}>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Sửa</DropdownMenuItem>
-                </UpdateChapter>
-
-                <DropdownMenuItem
-                  className='text-red-600'
-                  onSelect={(e) => {
-                    e.preventDefault()
-                    setOpenDeleteDialog(true)
-                  }}
-                >
-                  Xóa
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuItem
+                    className='text-red-600'
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      setOpenDeleteDialog(true)
+                    }}
+                  >
+                    Xóa
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            }
           </div>
         </div>
         <AccordionContent className={`pt-2 ${shouldCollapseContent ? 'dnd-kit-chapter-content-collapsed' : ''}`}>

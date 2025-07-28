@@ -8,10 +8,12 @@ import {
   type Updater,
   useReactTable
 } from '@tanstack/react-table'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PencilLine, PlusCircle, Trash } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router'
 import { toast } from 'sonner'
+import CreateRole from '~/components/role/create-role'
+import RoleDetailDrawer from '~/components/role/role-detail'
+import UpdateRole from '~/components/role/update-role'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,11 +31,10 @@ import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
-import { CourseType } from '~/constants/course.constant'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
-import { useDeleteCourseMutation, useListCourseAdminQuery } from '~/hooks/useCourse'
-import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
-import type { ListCoursesResType } from '~/types/course.type'
+import { useDeleteRoleMutation, useListRoleQuery } from '~/hooks/useRole'
+import { formatDate, handleError } from '~/lib/utils'
+import type { GetRolesResType } from '~/types/role.type'
 interface DataTablePaginationProps<TData> {
   table: TableType<TData>
 }
@@ -41,8 +42,8 @@ interface DataTablePaginationProps<TData> {
 export function meta() {
   return [
     {
-      title: 'Danh sách khóa học',
-      description: 'Danh sách khóa học'
+      title: 'Danh sách vai trò',
+      description: 'Danh sách vai trò'
     }
   ]
 }
@@ -122,52 +123,39 @@ function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) 
 }
 
 function getColumns({
-  handleDelete
+  handleDelete,
 }: {
-  handleDelete: (courseId: number) => void
-}): ColumnDef<ListCoursesResType['courses'][number]>[] {
+  handleDelete: (roleId: number) => void,
+}): ColumnDef<GetRolesResType['roles'][number]>[] {
   return [
     {
-      accessorKey: 'title',
-      header: 'Khóa học',
+      accessorKey: 'name',
+      header: 'Tên người dùng',
       cell: ({ row }) => (
         <div className='flex items-center gap-2 flex-wrap'>
-          <img src={row.original.image} alt={row.original.title} className='w-10 h-10 rounded-md' />
-          <span className='wrap-break-word'>{row.original.title}</span>
+          <span className='wrap-break-word'>{row.original.name}</span>
         </div>
       )
     },
     {
-      accessorKey: 'courseType',
-      header: 'Loại',
+      accessorKey: 'description',
+      header: 'Mô tả',
+      cell: ({ row }) => (
+        <div className='flex items-center gap-2 flex-wrap'>
+          <span className='wrap-break-word'>{row.original.description}</span>
+        </div>
+      )
+    },
+    {
+      accessorKey: 'isActive',
+      header: 'Trạng thái',
       cell: ({ row }) => {
-        const { courseType } = row.original
         return (
           <div className='flex items-center gap-2 flex-wrap'>
-            <Badge variant={courseType === CourseType.COMBO ? 'default' : 'secondary'}>{courseType}</Badge>
+            <Badge className='wrap-break-word'>{row.original.isActive ? 'Hoạt động' : 'Không hoạt động'}</Badge>
           </div>
         )
       }
-    },
-    {
-      accessorKey: 'price',
-      header: 'Giá',
-      cell: ({ row }) => (
-        <div className='flex flex-col gap-2'>
-          <span className={cn('text-base font-semibold text-primary')}>
-            {row.original.price === 0 ? 'Miễn phí' : formatCurrency(row.original.price!)}
-          </span>
-        </div>
-      )
-    },
-    {
-      accessorKey: 'discount',
-      header: 'Khuyyến mãi',
-      cell: ({ row }) => (
-        <div className='flex flex-col gap-2'>
-          <span className={cn('text-base font-semibold text-primary')}>{row.original.discount}%</span>
-        </div>
-      )
     },
     {
       accessorKey: 'createdAt',
@@ -195,30 +183,8 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link to={`/admin/courses/detail/${row.original.id}`}>
-                  <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                    <Eye className='w-6 h-6' />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent className='dark px-2 py-1 text-xs'>Xem chi tiết</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link to={`/admin/courses/edit/${row.original.id}`}>
-                  <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                    <PencilLine className='w-6 h-6' />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent className='dark px-2 py-1 text-xs'>Sửa khóa học</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <RoleDetailDrawer roleId={row.original.id} />
+          <UpdateRole roleId={row.original.id} />
           <AlertDialog>
             <TooltipProvider delayDuration={0}>
               <Tooltip>
@@ -229,13 +195,15 @@ function getColumns({
                     </Button>
                   </AlertDialogTrigger>
                 </TooltipTrigger>
-                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa khóa học</TooltipContent>
+                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa vai trò</TooltipContent>
               </Tooltip>
             </TooltipProvider>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>Bạn đang thực hiện xóa khóa học {row.original.title}.</AlertDialogDescription>
+                <AlertDialogDescription>
+                  Bạn đang thực hiện xóa vai trò <span className='font-semibold text-accent-foreground'>{row.original.name}</span>.
+                </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
@@ -258,8 +226,8 @@ function BuildTable({
   setPagination,
   total
 }: {
-  columns: ColumnDef<ListCoursesResType['courses'][number]>[]
-  data: ListCoursesResType['courses'][number][]
+  columns: ColumnDef<GetRolesResType['roles'][number]>[]
+  data: GetRolesResType['roles'][number][]
   pagination: {
     pageIndex: number
     pageSize: number
@@ -307,7 +275,7 @@ function BuildTable({
         ) : (
           <TableRow>
             <TableCell colSpan={columns.length} className='h-24 text-center'>
-              Hiện không có khóa học nào
+              Hiện không có vai trò nào
             </TableCell>
           </TableRow>
         )}
@@ -323,12 +291,12 @@ function BuildTable({
   )
 }
 
-export default function Courses() {
+export default function Roles() {
   const [search, setSearch] = useState('')
-  const [isDraft, setIsDraft] = useState<string>('all')
+  const [isActive, setIsActive] = useState<'all' | 'true' | 'false'>('all')
   const [sort, setSort] = useState<{
     orderBy: OrderByType
-    sortBy: Omit<SortByType, 'fullName' | 'email' | 'name'>
+    sortBy: Omit<SortByType, 'fullName' | 'email' | 'price' | 'sale'>
   }>({
     orderBy: OrderBy.Desc,
     sortBy: SortBy.CreatedAt
@@ -337,56 +305,53 @@ export default function Courses() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data, refetch } = useListCourseAdminQuery({
+  const { data, refetch } = useListRoleQuery({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
     search,
-    isDraft,
     orderBy: sort.orderBy,
-    sortBy: sort.sortBy as 'price' | 'createdAt' | 'sale'
+    sortBy: sort.sortBy as any,
+    isActive
   })
-  const deleteCourseMutation = useDeleteCourseMutation()
-  const handleDelete = async (courseId: number) => {
+  const deleteRoleMutation = useDeleteRoleMutation()
+  const handleDelete = async (roleId: number) => {
     try {
-      await deleteCourseMutation.mutateAsync({
-        courseId
+      await deleteRoleMutation.mutateAsync({
+        roleId
       })
       refetch()
-      toast.success('Xóa khóa học thành công')
+      toast.success('Xóa vai trò thành công')
     } catch (error) {
       handleError({ error })
     }
   }
+  const roles = data?.data.data.roles || []
   const columns = getColumns({ handleDelete })
 
   return (
     <>
-      <div className='flex items-center flex-wrap gap-4 justify-between mb-6'>
-        <h1 className='text-2xl font-semibold'>Danh sách khóa học</h1>
-        <Button asChild>
-          <Link to='/admin/courses/new'>
-            <PlusCircle className='mr-2 h-4 w-4' />
-            Tạo khóa học mới
-          </Link>
-        </Button>
+      <div className='flex justify-between'>
+        <h1 className='text-2xl font-semibold'>Danh sách vai trò</h1>
+        <CreateRole />
       </div>
-      <div className='mb-4 flex items-center gap-4'>
+      <div className='mb-4 flex items-center flex-wrap gap-4'>
         <Input
           placeholder='Tìm kiếm theo tên...'
-          className='w-[300px]'
+          className='sm:w-[300px]'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Select value={isDraft} onValueChange={(value) => setIsDraft(value)}>
-          <SelectTrigger className='w-[200px]'>
+        <Select value={isActive} onValueChange={(value) => setIsActive(value as ('all' | 'true' | 'false'))}>
+          <SelectTrigger className='w-[120px] sm:w-[200px]'>
             <SelectValue placeholder='Lọc theo trạng thái' />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value='all'>Trạng thái</SelectItem>
-            <SelectItem value='false'>Đã xuất bản</SelectItem>
-            <SelectItem value='true'>Bản nháp</SelectItem>
+            <SelectItem value='true'>Hoạt động</SelectItem>
+            <SelectItem value='false'>Không hoạt động</SelectItem>
           </SelectContent>
         </Select>
+
         <Select
           value={`${sort.sortBy}-${sort.orderBy}`}
           onValueChange={(value) => {
@@ -394,23 +359,21 @@ export default function Courses() {
             setSort({ sortBy, orderBy })
           }}
         >
-          <SelectTrigger className='w-[200px]'>
+          <SelectTrigger className='w-[120px] sm:w-[200px]'>
             <SelectValue placeholder='Sắp xếp theo' />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Desc}`}>Mới nhất</SelectItem>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Asc}`}>Cũ nhất</SelectItem>
-            <SelectItem value={`${SortBy.Price}-${OrderBy.Asc}`}>Giá tăng dần</SelectItem>
-            <SelectItem value={`${SortBy.Price}-${OrderBy.Desc}`}>Giá giảm dần</SelectItem>
-            <SelectItem value={`${SortBy.Sale}-${OrderBy.Asc}`}>Giảm giá ít</SelectItem>
-            <SelectItem value={`${SortBy.Sale}-${OrderBy.Desc}`}>Giảm giá nhiều</SelectItem>
+            <SelectItem value={`${SortBy.Name}-${OrderBy.Asc}`}>Tên A-Z</SelectItem>
+            <SelectItem value={`${SortBy.Name}-${OrderBy.Desc}`}>Tên Z-A</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div>
         <BuildTable
           columns={columns}
-          data={data?.data.data.courses || []}
+          data={roles}
           pagination={pagination}
           setPagination={setPagination}
           total={data?.data.data.totalPages || 0}

@@ -29,9 +29,11 @@ export default [
       ...prefix('/admin/courses', [
         index('routes/admin/courses/list/index.tsx'),
         route('/new', 'routes/admin/courses/new/index.tsx'),
+        route('/edit/:courseId', 'routes/admin/courses/edit/index.tsx'),
         route('/detail/:courseId', 'routes/admin/courses/detail/index.tsx')
       ]),
-      ...prefix('/admin/users', [index('routes/admin/users/list/index.tsx')])
+      ...prefix('/admin/users', [index('routes/admin/users/list/index.tsx')]),
+      route('/admin/roles', 'routes/admin/role/list/index.tsx')
     ])
   ])
 ] satisfies RouteConfig

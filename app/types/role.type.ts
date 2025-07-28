@@ -43,16 +43,7 @@ export const GetRolesQuerySchema = z
         return false
       }, z.boolean())
       .optional(),
-    isActive: z.preprocess((value) => {
-      if (typeof value === 'string') {
-        const lowered = value.trim().toLowerCase()
-        if (lowered === 'true') return true
-        if (lowered === 'false') return false
-        return undefined
-      }
-      if (typeof value === 'boolean') return value
-      return undefined
-    }, z.boolean().optional()),
+    isActive: z.string().optional(),
     orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc).optional(),
     sortBy: z.enum([SortBy.CreatedAt, SortBy.Name]).default(SortBy.CreatedAt).optional(),
     search: z.string().optional()
@@ -69,7 +60,11 @@ export const CreateRoleBodySchema = RoleSchema.pick({
   name: true,
   description: true,
   isActive: true
-}).strict()
+})
+  .extend({
+    permissionIds: z.array(z.number())
+  })
+  .strict()
 
 export const CreateRoleResSchema = RoleSchema
 

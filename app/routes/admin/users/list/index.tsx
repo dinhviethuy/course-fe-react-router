@@ -30,12 +30,13 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import CreateUser from '~/components/user/create-user'
 import UpdateUser from '~/components/user/update-user'
+import UserDetail from '~/components/user/user-detail'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
 import { RoleName } from '~/constants/role.constant'
 import { UserStatus, type UserStatusType } from '~/constants/user.constant'
 import { useListRoleQuery } from '~/hooks/useRole'
 import { useDeleteUserMutation, useListUserQuery } from '~/hooks/useUser'
-import { handleError } from '~/lib/utils'
+import { formatDate, handleError } from '~/lib/utils'
 import type { GetRolesResType } from '~/types/role.type'
 import type { GetUsersResType } from '~/types/user.type'
 interface DataTablePaginationProps<TData> {
@@ -175,23 +176,46 @@ function getColumns({
       )
     },
     {
+      accessorKey: 'createdAt',
+      header: 'Ngày tạo',
+      cell: ({ row }) => {
+        return (
+          <div className='flex items-center gap-2 flex-wrap'>
+            <span className='wrap-break-word'>{formatDate(row.original.createdAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+          </div>
+        )
+      }
+    },
+    {
+      accessorKey: 'updatedAt',
+      header: 'Ngày cập nhật',
+      cell: ({ row }) => {
+        return (
+          <div className='flex items-center gap-2 flex-wrap'>
+            <span className='wrap-break-word'>{formatDate(row.original.createdAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+          </div>
+        )
+      }
+    },
+    {
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <UpdateUser roles={roles || []} user={row.original} />
-              </TooltipTrigger>
-              <TooltipContent className='dark px-2 py-1 text-xs'>Cập nhật người dùng</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <UserDetail roles={roles || []} user={row.original} />
+          <UpdateUser roles={roles || []} user={row.original} />
           <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                <Trash className='w-6 h-6' />
-              </Button>
-            </AlertDialogTrigger>
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <AlertDialogTrigger asChild>
+                    <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
+                      <Trash className='w-6 h-6' />
+                    </Button>
+                  </AlertDialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa người dùng</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>

@@ -57,7 +57,7 @@ export default function CreateChapter({ courseId }: IProps) {
       buttonTextSubmit='Tạo chương ngay'
       isPending={createChapterMutation.isPending}
     >
-      <Button>Thêm chương mới</Button>
+      <Button className='cursor-pointer'>Thêm chương mới</Button>
     </Chapter>
   )
 }

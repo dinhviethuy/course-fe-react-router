@@ -38,10 +38,10 @@ interface IProps {
   data: UpdateCourseBodyType | CreateCourseBodyType
   isDirty: boolean
   titleHeader: string
-  buttonText: string
+  buttonText?: string
   isUpdate?: boolean
   watch: UseFormWatch<UpdateCourseBodyType | CreateCourseBodyType>
-  uploadFile: {
+  uploadFile?: {
     handleDragEnter: (e: React.DragEvent<HTMLElement>) => void
     handleDragLeave: (e: React.DragEvent<HTMLElement>) => void
     handleDragOver: (e: React.DragEvent<HTMLElement>) => void
@@ -56,7 +56,8 @@ interface IProps {
     errors: string[]
     maxSizeMB: number
   }
-  isPending: boolean
+  isPending: boolean,
+  disabled?: boolean
 }
 
 export default function Course({
@@ -75,7 +76,8 @@ export default function Course({
   isUpdate,
   uploadFile,
   watch,
-  isPending
+  isPending,
+  disabled
 }: IProps) {
   const [newBenefit, setNewBenefit] = useState('')
   const { data: getListCourse } = useListCourseAdminQuery({
@@ -94,13 +96,13 @@ export default function Course({
           <CardTitle className='text-2xl'>{titleHeader}</CardTitle>
           <div
             className={cn('flex justify-end gap-4', {
-              hidden: !isDirty
+              hidden: !isDirty || disabled
             })}
           >
-            <Button variant='outline' onClick={() => reset(data)}>
+            <Button variant='outline' className='cursor-pointer' onClick={() => reset(data)} disabled={disabled}>
               Hủy
             </Button>
-            <Button type='submit' disabled={isPending}>
+            <Button type='submit' disabled={isPending || disabled} className='cursor-pointer' >
               {isPending && <Loader2 className='w-4 h-4 animate-spin' />}
               {buttonText}
             </Button>
@@ -111,12 +113,12 @@ export default function Course({
             <div className='space-y-4 col-span-2 lg:col-span-1'>
               <div className='space-y-2'>
                 <Label>Tiêu đề</Label>
-                <Input {...register('title')} placeholder='Tiêu đề khóa học' required />
+                <Input {...register('title')} placeholder='Tiêu đề khóa học' required disabled={disabled} />
                 {errors.title && <p className='text-red-500'>{errors.title.message}</p>}
               </div>
               <div className='space-y-2'>
                 <Label>Slug</Label>
-                <Input {...register('slug')} placeholder='nestjs-super' required />
+                <Input {...register('slug')} placeholder='nestjs-super' required disabled={disabled} />
                 {errors.slug && <p className='text-red-500'>{errors.slug.message}</p>}
               </div>
               <div className='space-y-2'>
@@ -127,6 +129,7 @@ export default function Course({
                   placeholder='Nhập giá'
                   required
                   min={0}
+                  disabled={disabled}
                 />
                 {errors.price && <p className='text-red-500'>{errors.price.message}</p>}
               </div>
@@ -140,12 +143,13 @@ export default function Course({
                   required
                   max={100}
                   step={1}
+                  disabled={disabled}
                 />
                 {errors.discount && <p className='text-red-500'>{errors.discount.message}</p>}
               </div>
               <div className='space-y-2'>
                 <Label>Video giới thiệu (YouTube)</Label>
-                <Input {...register('video')} placeholder='https://youtube.com/...' required />
+                <Input {...register('video')} placeholder='https://youtube.com/...' required disabled={disabled} />
                 {errors.video && <p className='text-red-500'>{errors.video.message}</p>}
               </div>
               <div className='grid grid-cols-2'>
@@ -155,7 +159,7 @@ export default function Course({
                     name='isDraft'
                     control={control}
                     defaultValue={data.isDraft}
-                    render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+                    render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} disabled={disabled} />}
                   />
                   {errors.isDraft && <p className='text-red-500'>{errors.isDraft.message}</p>}
                 </div>
@@ -166,7 +170,7 @@ export default function Course({
                     control={control}
                     defaultValue={data.courseType}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange} disabled={isUpdate}>
+                      <Select value={field.value} onValueChange={field.onChange} disabled={isUpdate || disabled}>
                         <SelectTrigger>
                           <SelectValue placeholder='Chọn loại' />
                         </SelectTrigger>
@@ -195,6 +199,7 @@ export default function Course({
                               id: course.id,
                               title: course.title
                             }))}
+                          disabled={disabled}
                         />
                       )}
                     />
@@ -207,6 +212,7 @@ export default function Course({
               <div className='space-y-2'>
                 <Label>Mô tả</Label>
                 <Textarea
+                  disabled={disabled}
                   {...register('description')}
                   rows={10}
                   placeholder='Mô tả khóa học chi tiết...'
@@ -222,6 +228,7 @@ export default function Course({
                   setValue={setValue}
                   setFile={setFile}
                   uploadFile={uploadFile}
+                  disabled={disabled}
                 />
                 {errors.image && <p className='text-red-500'>{errors.image.message}</p>}
               </div>
@@ -248,45 +255,47 @@ export default function Course({
                       <span className='whitespace-normal break-words pointer-events-auto'>
                         {b}
                       </span>
-                      <button
+                      <Button
                         type='button'
-                        className='flex-shrink-0 w-[16px] h-[16px] hover:bg-background text-accent-foreground rounded-full cursor-pointer pointer-events-auto'
+                        className={cn('flex-shrink-0 w-[16px] h-[16px] hover:bg-background text-accent-foreground rounded-full cursor-pointer pointer-events-auto', disabled && 'hidden')}
                         onClick={() => field.onChange(field.value?.filter((_, index) => index !== i))}
                       >
                         <X size={12} className='text-muted-foreground' />
-                      </button>
+                      </Button>
                     </div>
                   </Badge>
-
                 ))}
               </div>
-              <div className='flex gap-2'>
-                <Input
-                  value={newBenefit}
-                  onChange={(e) => setNewBenefit(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault()
+              {!disabled &&
+                <div className='flex gap-2'>
+                  <Input
+                    value={newBenefit}
+                    onChange={(e) => setNewBenefit(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        if (newBenefit.trim() !== '') {
+                          field.onChange([...(field.value || []), newBenefit.trim()])
+                          setNewBenefit('')
+                        }
+                      }
+                    }}
+                    placeholder='Thêm lợi ích mới'
+                  />
+                  <Button
+                    type='button'
+                    className='cursor-pointer'
+                    onClick={() => {
                       if (newBenefit.trim() !== '') {
                         field.onChange([...(field.value || []), newBenefit.trim()])
                         setNewBenefit('')
                       }
-                    }
-                  }}
-                  placeholder='Thêm lợi ích mới'
-                />
-                <Button
-                  type='button'
-                  onClick={() => {
-                    if (newBenefit.trim() !== '') {
-                      field.onChange([...(field.value || []), newBenefit.trim()])
-                      setNewBenefit('')
-                    }
-                  }}
-                >
-                  Thêm
-                </Button>
-              </div>
+                    }}
+                  >
+                    Thêm
+                  </Button>
+                </div>
+              }
               {errors.benefits && <p className='text-sm text-red-500'>{errors.benefits.message}</p>}
             </CardContent>
           </Card>
