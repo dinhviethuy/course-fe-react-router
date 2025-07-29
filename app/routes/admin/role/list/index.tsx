@@ -296,7 +296,7 @@ export default function Roles() {
   const [isActive, setIsActive] = useState<'all' | 'true' | 'false'>('all')
   const [sort, setSort] = useState<{
     orderBy: OrderByType
-    sortBy: Omit<SortByType, 'fullName' | 'email' | 'price' | 'sale'>
+    sortBy: Exclude<SortByType, 'fullName' | 'email' | 'price' | 'sale'>
   }>({
     orderBy: OrderBy.Desc,
     sortBy: SortBy.CreatedAt
@@ -310,7 +310,7 @@ export default function Roles() {
     limit: pagination.pageSize,
     search,
     orderBy: sort.orderBy,
-    sortBy: sort.sortBy as any,
+    sortBy: sort.sortBy,
     isActive
   })
   const deleteRoleMutation = useDeleteRoleMutation()
@@ -330,7 +330,7 @@ export default function Roles() {
 
   return (
     <>
-      <div className='flex justify-between'>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <h1 className='text-2xl font-semibold'>Danh sách vai trò</h1>
         <CreateRole />
       </div>
@@ -355,7 +355,7 @@ export default function Roles() {
         <Select
           value={`${sort.sortBy}-${sort.orderBy}`}
           onValueChange={(value) => {
-            const [sortBy, orderBy] = value.split('-') as [SortByType, OrderByType]
+            const [sortBy, orderBy] = value.split('-') as [Exclude<SortByType, 'fullName' | 'email' | 'price' | 'sale'>, OrderByType]
             setSort({ sortBy, orderBy })
           }}
         >

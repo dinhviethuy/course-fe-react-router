@@ -315,7 +315,7 @@ export default function Users() {
   const [roleId, setRoleId] = useState<number | string>('all')
   const [sort, setSort] = useState<{
     orderBy: OrderByType
-    sortBy: Omit<SortByType, 'fullName' | 'email' | 'name'>
+    sortBy: Extract<SortByType, 'email' | 'fullName' | 'createdAt'>
   }>({
     orderBy: OrderBy.Desc,
     sortBy: SortBy.CreatedAt
@@ -332,7 +332,7 @@ export default function Users() {
     limit: pagination.pageSize,
     search,
     orderBy: sort.orderBy,
-    sortBy: sort.sortBy as 'email' | 'fullName' | 'createdAt',
+    sortBy: sort.sortBy,
     status: status === 'all' ? undefined : status,
     roleId: roleId === 'all' ? undefined : Number(roleId)
   })
@@ -352,7 +352,7 @@ export default function Users() {
 
   return (
     <>
-      <div className='flex items-center flex-wrap gap-4 justify-between mb-6'>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <h1 className='text-2xl font-semibold'>Danh sách người dùng</h1>
         <CreateUser roles={listRole?.data.data.roles || []} />
       </div>
@@ -389,7 +389,7 @@ export default function Users() {
         <Select
           value={`${sort.sortBy}-${sort.orderBy}`}
           onValueChange={(value) => {
-            const [sortBy, orderBy] = value.split('-') as [SortByType, OrderByType]
+            const [sortBy, orderBy] = value.split('-') as [Extract<SortByType, 'email' | 'fullName' | 'createdAt'>, OrderByType]
             setSort({ sortBy, orderBy })
           }}
         >

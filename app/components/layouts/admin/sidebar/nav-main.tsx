@@ -80,7 +80,9 @@ export function NavMain({
               >
                 {item.items?.map((subItem) => (
                   <DropdownMenuItem key={subItem.title} className='gap-2 p-2'>
-                    {subItem.title}
+                    <NavLink to={subItem.url}>
+                      <span>{subItem.title}</span>
+                    </NavLink>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

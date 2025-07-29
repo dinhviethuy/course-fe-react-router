@@ -8,10 +8,11 @@ import {
   type Updater,
   useReactTable
 } from '@tanstack/react-table'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PencilLine, PlusCircle, Trash } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router'
 import { toast } from 'sonner'
+import RequestMethod from '~/components/method/method'
+import CreateRole from '~/components/role/create-role'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,17 +24,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '~/components/ui/alert-dialog'
-import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
-import { CourseType } from '~/constants/course.constant'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
-import { useDeleteCourseMutation, useListCourseAdminQuery } from '~/hooks/useCourse'
-import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
-import type { ListCoursesResType } from '~/types/course.type'
+import { HTTPMethod } from '~/constants/role.constant'
+import { useDeletePermissionMutation, useGetListPermissionQuery, useGetModulesQuery } from '~/hooks/usePermisson'
+import { formatDate, handleError } from '~/lib/utils'
+import type { GetPermissionsResType } from '~/types/permission.type'
+
 interface DataTablePaginationProps<TData> {
   table: TableType<TData>
 }
@@ -41,8 +42,8 @@ interface DataTablePaginationProps<TData> {
 export function meta() {
   return [
     {
-      title: 'Danh sách khóa học',
-      description: 'Danh sách khóa học'
+      title: 'Danh sách vai trò',
+      description: 'Danh sách vai trò'
     }
   ]
 }
@@ -122,50 +123,46 @@ function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) 
 }
 
 function getColumns({
-  handleDelete
+  handleDelete,
 }: {
-  handleDelete: (courseId: number) => void
-}): ColumnDef<ListCoursesResType['courses'][number]>[] {
+  handleDelete: (roleId: number) => void,
+}): ColumnDef<GetPermissionsResType['permissions'][number]>[] {
   return [
     {
-      accessorKey: 'title',
-      header: 'Khóa học',
+      accessorKey: 'name',
+      header: 'Tên quyền',
       cell: ({ row }) => (
         <div className='flex items-center gap-2 flex-wrap'>
-          <img src={row.original.image} alt={row.original.title} className='w-10 h-10 rounded-md' />
-          <span className='wrap-break-word'>{row.original.title}</span>
+          <span className='wrap-break-word'>{row.original.name}</span>
         </div>
       )
     },
     {
-      accessorKey: 'courseType',
-      header: 'Loại',
+      accessorKey: 'method',
+      header: 'Phương thức',
       cell: ({ row }) => {
-        const { courseType } = row.original
         return (
           <div className='flex items-center gap-2 flex-wrap'>
-            <Badge variant={courseType === CourseType.COMBO ? 'default' : 'secondary'}>{courseType}</Badge>
+            <RequestMethod method={row.original.method} />
           </div>
         )
       }
     },
     {
-      accessorKey: 'price',
-      header: 'Giá',
+      accessorKey: 'path',
+      header: 'Đường dẫn',
       cell: ({ row }) => (
-        <div className='flex flex-col gap-2'>
-          <span className={cn('text-base font-semibold text-primary')}>
-            {row.original.price === 0 ? 'Miễn phí' : formatCurrency(row.original.price!)}
-          </span>
+        <div className='flex items-center gap-2 flex-wrap'>
+          <span className='wrap-break-word'>{row.original.path}</span>
         </div>
       )
     },
     {
-      accessorKey: 'discount',
-      header: 'Khuyyến mãi',
+      accessorKey: 'module',
+      header: 'Module',
       cell: ({ row }) => (
-        <div className='flex flex-col gap-2'>
-          <span className={cn('text-base font-semibold text-primary')}>{row.original.discount}%</span>
+        <div className='flex items-center gap-2 flex-wrap'>
+          <span className='wrap-break-word'>{row.original.module}</span>
         </div>
       )
     },
@@ -195,30 +192,6 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link to={`/admin/courses/detail/${row.original.id}`}>
-                  <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                    <Eye className='w-6 h-6' />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent className='dark px-2 py-1 text-xs'>Xem chi tiết</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link to={`/admin/courses/edit/${row.original.id}`}>
-                  <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                    <PencilLine className='w-6 h-6' />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent className='dark px-2 py-1 text-xs'>Sửa khóa học</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
           <AlertDialog>
             <TooltipProvider delayDuration={0}>
               <Tooltip>
@@ -229,13 +202,15 @@ function getColumns({
                     </Button>
                   </AlertDialogTrigger>
                 </TooltipTrigger>
-                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa khóa học</TooltipContent>
+                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa quyền</TooltipContent>
               </Tooltip>
             </TooltipProvider>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>Bạn đang thực hiện xóa khóa học {row.original.title}.</AlertDialogDescription>
+                <AlertDialogDescription>
+                  Bạn đang thực hiện xóa quyền <span className='font-semibold text-accent-foreground'>{row.original.name}</span>.
+                </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
@@ -258,8 +233,8 @@ function BuildTable({
   setPagination,
   total
 }: {
-  columns: ColumnDef<ListCoursesResType['courses'][number]>[]
-  data: ListCoursesResType['courses'][number][]
+  columns: ColumnDef<GetPermissionsResType['permissions'][number]>[]
+  data: GetPermissionsResType['permissions'][number][]
   pagination: {
     pageIndex: number
     pageSize: number
@@ -307,7 +282,7 @@ function BuildTable({
         ) : (
           <TableRow>
             <TableCell colSpan={columns.length} className='h-24 text-center'>
-              Hiện không có khóa học nào
+              Hiện không có quyền nào
             </TableCell>
           </TableRow>
         )}
@@ -323,12 +298,14 @@ function BuildTable({
   )
 }
 
-export default function Courses() {
-  const [search, setSearch] = useState('')
-  const [isDraft, setIsDraft] = useState<string>('all')
+export default function Permissions() {
+  const [name, setName] = useState('')
+  const [module, setModule] = useState<string | 'all'>('all')
+  const [method, setMethod] = useState<typeof HTTPMethod[keyof typeof HTTPMethod] | 'all'>('all')
+  const [path, setPath] = useState('')
   const [sort, setSort] = useState<{
     orderBy: OrderByType
-    sortBy: Extract<SortByType, 'price' | 'createdAt' | 'sale'>
+    sortBy: Extract<SortByType, 'name' | 'createdAt'>
   }>({
     orderBy: OrderBy.Desc,
     sortBy: SortBy.CreatedAt
@@ -337,60 +314,69 @@ export default function Courses() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data, refetch } = useListCourseAdminQuery({
+  const { data, refetch } = useGetListPermissionQuery({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
-    search,
-    isDraft,
+    name,
+    module: module === 'all' ? undefined : module,
+    method: method === 'all' ? undefined : method,
+    path,
     orderBy: sort.orderBy,
     sortBy: sort.sortBy
   })
-  const deleteCourseMutation = useDeleteCourseMutation()
-  const handleDelete = async (courseId: number) => {
+  const { data: modules } = useGetModulesQuery()
+  const deletePermissionMutation = useDeletePermissionMutation()
+  const handleDelete = async (permissionId: number) => {
     try {
-      await deleteCourseMutation.mutateAsync({
-        courseId
+      await deletePermissionMutation.mutateAsync({
+        permissionId
       })
       refetch()
-      toast.success('Xóa khóa học thành công')
+      toast.success('Xóa quyền thành công')
     } catch (error) {
       handleError({ error })
     }
   }
+  const permissions = data?.data.data.permissions || []
   const columns = getColumns({ handleDelete })
 
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <h1 className='text-2xl font-semibold'>Danh sách khóa học</h1>
-        <Button asChild>
-          <Link to='/admin/courses/new'>
-            <PlusCircle className='mr-2 h-4 w-4' />
-            Tạo khóa học mới
-          </Link>
-        </Button>
+        <h1 className="text-2xl font-semibold">Danh sách quyền</h1>
+        <CreateRole />
       </div>
-      <div className='mb-4 flex items-center gap-4'>
+
+      <div className='mb-4 flex items-center flex-wrap gap-4'>
         <Input
           placeholder='Tìm kiếm theo tên...'
-          className='w-[300px]'
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          className='sm:w-[300px]'
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
-        <Select value={isDraft} onValueChange={(value) => setIsDraft(value)}>
-          <SelectTrigger className='w-[200px]'>
-            <SelectValue placeholder='Lọc theo trạng thái' />
+        <Input
+          placeholder='Tìm kiếm theo path...'
+          className='sm:w-[300px]'
+          value={path}
+          onChange={(e) => setPath(e.target.value)}
+        />
+        <Select value={module} onValueChange={(value) => setModule(value as string | 'all')}>
+          <SelectTrigger className='w-[120px] sm:w-[200px]'>
+            <SelectValue placeholder='Lọc theo module' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='all'>Trạng thái</SelectItem>
-            <SelectItem value='false'>Đã xuất bản</SelectItem>
-            <SelectItem value='true'>Bản nháp</SelectItem>
+            <SelectItem value='all'>Tất cả module</SelectItem>
+            {modules?.data.data.modules.map((item, index) => (
+              <SelectItem key={index} value={item.module}>
+                {item.module}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select
           value={`${sort.sortBy}-${sort.orderBy}`}
           onValueChange={(value) => {
-            const [sortBy, orderBy] = value.split('-') as [Extract<SortByType, 'price' | 'createdAt' | 'sale'>, OrderByType]
+            const [sortBy, orderBy] = value.split('-') as [Extract<SortByType, 'name' | 'createdAt'>, OrderByType]
             setSort({ sortBy, orderBy })
           }}
         >
@@ -400,17 +386,33 @@ export default function Courses() {
           <SelectContent>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Desc}`}>Mới nhất</SelectItem>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Asc}`}>Cũ nhất</SelectItem>
-            <SelectItem value={`${SortBy.Price}-${OrderBy.Asc}`}>Giá tăng dần</SelectItem>
-            <SelectItem value={`${SortBy.Price}-${OrderBy.Desc}`}>Giá giảm dần</SelectItem>
-            <SelectItem value={`${SortBy.Sale}-${OrderBy.Asc}`}>Giảm giá ít</SelectItem>
-            <SelectItem value={`${SortBy.Sale}-${OrderBy.Desc}`}>Giảm giá nhiều</SelectItem>
+            <SelectItem value={`${SortBy.Name}-${OrderBy.Asc}`}>Tên A-Z</SelectItem>
+            <SelectItem value={`${SortBy.Name}-${OrderBy.Desc}`}>Tên Z-A</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={method}
+          onValueChange={(value) => {
+            setMethod(value as typeof HTTPMethod[keyof typeof HTTPMethod] | 'all')
+          }}
+        >
+          <SelectTrigger className='w-[120px] sm:w-[200px]'>
+            <SelectValue placeholder='Lọc theo phương thức' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='all'>Tất cả phương thức</SelectItem>
+            {Object.values(HTTPMethod).map((method) => (
+              <SelectItem key={method} value={method}>
+                {method}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
       <div>
         <BuildTable
           columns={columns}
-          data={data?.data.data.courses || []}
+          data={permissions}
           pagination={pagination}
           setPagination={setPagination}
           total={data?.data.data.totalPages || 0}

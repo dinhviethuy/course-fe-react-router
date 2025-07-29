@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { OrderBy, SortBy } from '~/constants/other.constant'
 import { HTTPMethod } from '~/constants/role.constant'
 
 export const PermissionSchema = z.object({
@@ -54,7 +55,9 @@ export const GetPermissionsQuerySchema = z
       ])
       .optional(),
     path: z.string().optional(),
-    name: z.string().optional()
+    name: z.string().optional(),
+    orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc),
+    sortBy: z.enum([SortBy.CreatedAt, SortBy.Name]).default(SortBy.CreatedAt)
   })
   .strict()
 
