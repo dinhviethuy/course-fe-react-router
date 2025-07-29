@@ -23,7 +23,7 @@ export default function PaginationCustom({ currentPage, totalPages, paginationIt
   })
 
   return (
-    <Pagination>
+    <Pagination className='my-4'>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious

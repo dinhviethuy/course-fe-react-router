@@ -2,7 +2,6 @@ import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { User } from "~/components/user/user";
 import type { GetRolesResType } from "~/types/role.type";
 import { type GetUsersResType } from "~/types/user.type";
@@ -46,17 +45,11 @@ export default function UserDetail({ roles, user }: IProps) {
       reset={reset as any}
       isPending={false}
       disabled
+      tooltipText="Xem chi tiết"
     >
-      <TooltipProvider delayDuration={0}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button className="cursor-pointer" variant='ghost'>
-              <Eye />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent className='dark px-2 py-1 text-xs'>Xem chi tiết</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Button className="cursor-pointer" variant='ghost'>
+        <Eye />
+      </Button>
     </User>
   )
 }

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import Role from "~/components/role/role"
 import { Button } from "~/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip"
 import { useGetListPermissionQuery } from "~/hooks/usePermisson"
 import { useGetRoleDetailQuery } from "~/hooks/useRole"
 import type { CreateRoleBodyType } from "~/types/role.type"
@@ -61,17 +60,11 @@ export default function RoleDetailDrawer({ roleId }: IProps) {
         isPending={false}
         reset={reset}
         disabled
+        tooltipText="Xem chi tiết"
       >
-        <TooltipProvider delayDuration={0}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button className="cursor-pointer" variant="ghost">
-                <Eye className="w-4 h-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className='dark px-2 py-1 text-xs'>Xem chi tiết</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Button className="cursor-pointer" variant="ghost">
+          <Eye className="w-4 h-4" />
+        </Button>
       </Role>
     </>
   )

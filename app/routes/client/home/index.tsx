@@ -16,7 +16,7 @@ export default function Home() {
   let page = Number(params.get('page') || 1)
   if (isNaN(page)) page = 1
   const { data: listCourse } = useListCourseQuery({
-    limit: PAGE_LIMIT,
+    limit: PAGE_LIMIT + 2,
     page: page
   })
   const data = listCourse?.data

@@ -14,6 +14,7 @@ import {
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip"
 import { UserStatus, type UserStatusType } from "~/constants/user.constant"
 import { cn } from "~/lib/utils"
 import type { CreateUserBodyType, UpdateUserBodyType } from "~/types/user.type"
@@ -37,16 +38,27 @@ interface IProps {
   setValue: UseFormSetValue<UserType>
   isPending: boolean,
   reset: UseFormReset<UserType>
-  disabled?: boolean
+  disabled?: boolean,
+  tooltipText: string
 }
 
-export function User({ children, boxTitle, roles, handleSubmit, onSubmit, register, errors, setValue, watch, isPending, isOpen, setIsOpen, reset, disabled }: IProps) {
+export function User({ children, boxTitle, roles, handleSubmit, onSubmit, register, errors, setValue, watch, isPending, isOpen, setIsOpen, reset, disabled, tooltipText }: IProps) {
   const [showPassword, setShowPassword] = useState(false)
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) reset()
+      setIsOpen(open)
+    }}>
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DialogTrigger asChild>
+              {children}
+            </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent className='dark px-2 py-1 text-xs'>{tooltipText}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <DialogContent className={cn("sm:max-w-[520px]", disabled && "pointer-events-none")}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>

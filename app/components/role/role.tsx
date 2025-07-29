@@ -7,6 +7,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from '~/components/ui/label';
 import { Switch } from "~/components/ui/switch";
 import { Textarea } from "~/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { cn, groupByModule } from "~/lib/utils";
 import type { GetPermissionsResType } from "~/types/permission.type";
 import { type CreateRoleBodyType, type UpdateRoleBodyType } from "~/types/role.type";
@@ -27,6 +28,7 @@ interface IProps {
   children: React.ReactElement,
   reset: UseFormReset<CreateRoleBodyType | UpdateRoleBodyType>,
   disabled?: boolean
+  tooltipText: string
 }
 
 export default function Role({
@@ -44,15 +46,26 @@ export default function Role({
   titleBox,
   children,
   reset,
-  disabled
+  disabled,
+  tooltipText
 }: IProps) {
   const permissions = groupByModule(permissionsIndb);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) reset()
+      setIsOpen(open)
+    }}>
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DialogTrigger asChild>
+              {children}
+            </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent className='dark px-2 py-1 text-xs'>{tooltipText}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <DialogContent className={cn("flex flex-col gap-0 overflow-y-visible p-0 [&>button:last-child]:top-3.5 sm:max-w-xl md:max-w-3xl", disabled && "pointer-events-none")}>
         <form onSubmit={handleSubmit(onSubmit)} >
           <DialogHeader className="contents space-y-0 text-left">
@@ -120,12 +133,10 @@ export default function Role({
                 Hủy
               </Button>
             </DialogClose>
-            <DialogClose asChild>
-              <Button type="submit" disabled={isPending} className="cursor-pointer">
-                {isPending && <Loader2 className="animate-spin" />}
-                Lưu
-              </Button>
-            </DialogClose>
+            <Button type="submit" disabled={isPending} className="cursor-pointer">
+              {isPending && <Loader2 className="animate-spin" />}
+              Lưu
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

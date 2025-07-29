@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Role from "~/components/role/role";
 import { Button } from "~/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import { useGetListPermissionQuery } from "~/hooks/usePermisson";
 import { useGetRoleDetailQuery, useUpdateRoleMutation } from "~/hooks/useRole";
 import { handleError } from "~/lib/utils";
@@ -39,7 +38,6 @@ export default function UpdateRole({ roleId }: IProps) {
       })
       refetch()
       queryClient.refetchQueries({ queryKey: ['roles'] })
-      reset()
       setIsOpen(false)
       toast.success('Cập nhật vai trò thành công')
     } catch (error) {
@@ -71,17 +69,11 @@ export default function UpdateRole({ roleId }: IProps) {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       reset={reset as any}
+      tooltipText="Cập nhật vai trò"
     >
-      <TooltipProvider delayDuration={0}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button className="cursor-pointer" variant='ghost'>
-              <PencilLine />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent className='dark px-2 py-1 text-xs'>Cập nhật vai trò</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Button className="cursor-pointer" variant='ghost'>
+        <PencilLine />
+      </Button>
     </Role >
   )
 }
