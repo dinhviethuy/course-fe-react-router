@@ -14,7 +14,7 @@ interface IProps {
   modules: string[]
 }
 
-export default function CreateRole({ modules }: IProps) {
+export default function CreatePermission({ modules }: IProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { setValue, handleSubmit, register, formState: { errors }, reset, watch, setError } = useForm({
     defaultValues: {

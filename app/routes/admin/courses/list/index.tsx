@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PencilLine
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
+import Loading from '~/components/loading/loading'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -186,7 +187,7 @@ function getColumns({
       cell: ({ row }) => {
         return (
           <div className='flex items-center gap-2 flex-wrap'>
-            <span className='wrap-break-word'>{formatDate(row.original.createdAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+            <span className='wrap-break-word'>{formatDate(row.original.updatedAt, 'dd/MM/yyyy HH:mm:ss')}</span>
           </div>
         )
       }
@@ -256,7 +257,8 @@ function BuildTable({
   data,
   pagination,
   setPagination,
-  total
+  total,
+  isPending
 }: {
   columns: ColumnDef<ListCoursesResType['courses'][number]>[]
   data: ListCoursesResType['courses'][number][]
@@ -265,7 +267,8 @@ function BuildTable({
     pageSize: number
   }
   setPagination: (updaterOrValue: Updater<PaginationState> | PaginationState) => void
-  total: number
+  total: number,
+  isPending: boolean
 }) {
   const table = useReactTable({
     data,
@@ -305,11 +308,21 @@ function BuildTable({
             </TableRow>
           ))
         ) : (
-          <TableRow>
-            <TableCell colSpan={columns.length} className='h-24 text-center'>
-              Hiện không có khóa học nào
-            </TableCell>
-          </TableRow>
+          isPending ?
+            (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  <Loading />
+                </TableCell>
+              </TableRow>
+            ) :
+            (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  Hiện không có khóa học nào
+                </TableCell>
+              </TableRow>
+            )
         )}
       </TableBody>
       <TableFooter className='bg-background'>
@@ -337,7 +350,7 @@ export default function Courses() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data, refetch } = useListCourseAdminQuery({
+  const { data, refetch, isPending } = useListCourseAdminQuery({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
     search,
@@ -414,6 +427,7 @@ export default function Courses() {
           pagination={pagination}
           setPagination={setPagination}
           total={data?.data.data.totalPages || 0}
+          isPending={isPending}
         />
       </div>
     </>

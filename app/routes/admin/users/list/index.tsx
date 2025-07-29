@@ -11,6 +11,7 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import Loading from '~/components/loading/loading'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -192,7 +193,7 @@ function getColumns({
       cell: ({ row }) => {
         return (
           <div className='flex items-center gap-2 flex-wrap'>
-            <span className='wrap-break-word'>{formatDate(row.original.createdAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+            <span className='wrap-break-word'>{formatDate(row.original.updatedAt, 'dd/MM/yyyy HH:mm:ss')}</span>
           </div>
         )
       }
@@ -242,7 +243,8 @@ function BuildTable({
   data,
   pagination,
   setPagination,
-  total
+  total,
+  isPending
 }: {
   columns: ColumnDef<GetUsersResType['users'][number]>[]
   data: GetUsersResType['users'][number][]
@@ -251,7 +253,8 @@ function BuildTable({
     pageSize: number
   }
   setPagination: (updaterOrValue: Updater<PaginationState> | PaginationState) => void
-  total: number
+  total: number,
+  isPending: boolean
 }) {
   const table = useReactTable({
     data,
@@ -291,12 +294,24 @@ function BuildTable({
             </TableRow>
           ))
         ) : (
-          <TableRow>
-            <TableCell colSpan={columns.length} className='h-24 text-center'>
-              Hiện chưa có người dùng nào
-            </TableCell>
-          </TableRow>
-        )}
+          isPending ?
+            (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  <Loading />
+                </TableCell>
+              </TableRow>
+            )
+            :
+            (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  Hiện chưa có người dùng nào
+                </TableCell>
+              </TableRow>
+            )
+        )
+        }
       </TableBody>
       <TableFooter className='bg-background'>
         <TableRow>
@@ -324,13 +339,13 @@ export default function Users() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data: listRole } = useListRoleQuery({
+  const { data: listRole, isPending } = useListRoleQuery({
     getAll: true
   })
   const { data, refetch } = useListUserQuery({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
-    search,
+    search: search.trim(),
     orderBy: sort.orderBy,
     sortBy: sort.sortBy,
     status: status === 'all' ? undefined : status,
@@ -413,6 +428,7 @@ export default function Users() {
           pagination={pagination}
           setPagination={setPagination}
           total={data?.data.data.totalPages || 0}
+          isPending={isPending}
         />
       </div>
     </>

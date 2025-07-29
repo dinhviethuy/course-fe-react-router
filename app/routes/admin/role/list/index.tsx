@@ -11,6 +11,7 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import Loading from '~/components/loading/loading'
 import CreateRole from '~/components/role/create-role'
 import RoleDetailDrawer from '~/components/role/role-detail'
 import UpdateRole from '~/components/role/update-role'
@@ -174,7 +175,7 @@ function getColumns({
       cell: ({ row }) => {
         return (
           <div className='flex items-center gap-2 flex-wrap'>
-            <span className='wrap-break-word'>{formatDate(row.original.createdAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+            <span className='wrap-break-word'>{formatDate(row.original.updatedAt, 'dd/MM/yyyy HH:mm:ss')}</span>
           </div>
         )
       }
@@ -224,7 +225,8 @@ function BuildTable({
   data,
   pagination,
   setPagination,
-  total
+  total,
+  isPending
 }: {
   columns: ColumnDef<GetRolesResType['roles'][number]>[]
   data: GetRolesResType['roles'][number][]
@@ -234,6 +236,7 @@ function BuildTable({
   }
   setPagination: (updaterOrValue: Updater<PaginationState> | PaginationState) => void
   total: number
+  isPending: boolean
 }) {
   const table = useReactTable({
     data,
@@ -273,11 +276,23 @@ function BuildTable({
             </TableRow>
           ))
         ) : (
-          <TableRow>
-            <TableCell colSpan={columns.length} className='h-24 text-center'>
-              Hiện không có vai trò nào
-            </TableCell>
-          </TableRow>
+          isPending ?
+            (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  <Loading />
+                </TableCell>
+              </TableRow>
+            )
+            :
+            (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  Hiện không có vai trò nào
+                </TableCell>
+              </TableRow>
+            )
+
         )}
       </TableBody>
       <TableFooter className='bg-background'>
@@ -305,10 +320,10 @@ export default function Roles() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data, refetch } = useListRoleQuery({
+  const { data, refetch, isPending } = useListRoleQuery({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
-    search,
+    search: search.trim(),
     orderBy: sort.orderBy,
     sortBy: sort.sortBy,
     isActive
@@ -377,6 +392,7 @@ export default function Roles() {
           pagination={pagination}
           setPagination={setPagination}
           total={data?.data.data.totalPages || 0}
+          isPending={isPending}
         />
       </div>
     </>

@@ -11,8 +11,11 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import Loading from '~/components/loading/loading'
 import RequestMethod from '~/components/method/method'
 import CreatePermission from '~/components/permission/create-permission'
+import PermissionDetail from '~/components/permission/permission-detail'
+import UpdatePermission from '~/components/permission/update-permission'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,8 +45,8 @@ interface DataTablePaginationProps<TData> {
 export function meta() {
   return [
     {
-      title: 'Danh sách vai trò',
-      description: 'Danh sách vai trò'
+      title: 'Danh sách quyền',
+      description: 'Danh sách quyền'
     }
   ]
 }
@@ -124,8 +127,10 @@ function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) 
 
 function getColumns({
   handleDelete,
+  modules
 }: {
   handleDelete: (roleId: number) => void,
+  modules: string[]
 }): ColumnDef<GetPermissionsResType['permissions'][number]>[] {
   return [
     {
@@ -183,7 +188,7 @@ function getColumns({
       cell: ({ row }) => {
         return (
           <div className='flex items-center gap-2 flex-wrap'>
-            <span className='wrap-break-word'>{formatDate(row.original.createdAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+            <span className='wrap-break-word'>{formatDate(row.original.updatedAt, 'dd/MM/yyyy HH:mm:ss')}</span>
           </div>
         )
       }
@@ -192,6 +197,8 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
+          <PermissionDetail permission={row.original} modules={modules} />
+          <UpdatePermission modules={modules} permission={row.original} />
           <AlertDialog>
             <TooltipProvider delayDuration={0}>
               <Tooltip>
@@ -231,7 +238,8 @@ function BuildTable({
   data,
   pagination,
   setPagination,
-  total
+  total,
+  isPending
 }: {
   columns: ColumnDef<GetPermissionsResType['permissions'][number]>[]
   data: GetPermissionsResType['permissions'][number][]
@@ -241,6 +249,7 @@ function BuildTable({
   }
   setPagination: (updaterOrValue: Updater<PaginationState> | PaginationState) => void
   total: number
+  isPending: boolean
 }) {
   const table = useReactTable({
     data,
@@ -280,11 +289,22 @@ function BuildTable({
             </TableRow>
           ))
         ) : (
-          <TableRow>
-            <TableCell colSpan={columns.length} className='h-24 text-center'>
-              Hiện không có quyền nào
-            </TableCell>
-          </TableRow>
+          isPending ?
+            (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  <Loading />
+                </TableCell>
+              </TableRow>
+            )
+            :
+            (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                  Hiện không có quyền nào
+                </TableCell>
+              </TableRow>
+            )
         )}
       </TableBody>
       <TableFooter className='bg-background'>
@@ -314,13 +334,13 @@ export default function Permissions() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data, refetch } = useGetListPermissionQuery({
+  const { data, refetch, isPending } = useGetListPermissionQuery({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
-    name,
+    name: name.trim(),
     module: module === 'all' ? undefined : module,
     method: method === 'all' ? undefined : method,
-    path,
+    path: path.trim(),
     orderBy: sort.orderBy,
     sortBy: sort.sortBy
   })
@@ -338,8 +358,8 @@ export default function Permissions() {
     }
   }
   const permissions = data?.data.data.permissions || []
-  const columns = getColumns({ handleDelete })
   const modules = moduleInDb?.data.data.modules.map((item) => item.module) || []
+  const columns = getColumns({ handleDelete, modules })
 
   return (
     <>
@@ -404,7 +424,7 @@ export default function Permissions() {
             <SelectItem value='all'>Tất cả phương thức</SelectItem>
             {Object.values(HTTPMethod).map((method) => (
               <SelectItem key={method} value={method}>
-                {method}
+                <RequestMethod method={method} />
               </SelectItem>
             ))}
           </SelectContent>
@@ -417,6 +437,7 @@ export default function Permissions() {
           pagination={pagination}
           setPagination={setPagination}
           total={data?.data.data.totalPages || 0}
+          isPending={isPending}
         />
       </div>
     </>

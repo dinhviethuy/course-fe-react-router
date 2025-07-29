@@ -1,5 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormReset, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
+import RequestMethod from "~/components/method/method";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
@@ -96,7 +97,7 @@ export default function Permission({
                   <SelectContent>
                     {Object.values(HTTPMethod).map((method) => (
                       <SelectItem key={method} value={method} className="cursor-pointer">
-                        {method}
+                        <RequestMethod method={method} />
                       </SelectItem>
                     ))}
                   </SelectContent>
