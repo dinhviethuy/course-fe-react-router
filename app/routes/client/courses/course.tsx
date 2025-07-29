@@ -56,7 +56,7 @@ function ShowDialogPay({
   const validateCouponMutation = useValidateCouponMutation()
   const queryClient = useQueryClient()
   const { course } = item || {}
-  const total = course.price * (1 - course.discount / 100)
+  const total = course.price * (1 - (course.discount || 0) / 100)
   const [totalPay, setTotalPay] = useState(total)
   const handleAddVoucher = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -116,7 +116,7 @@ function ShowDialogPay({
                 </div>
                 <div className='flex flex-col gap-2 col-span-1 md:col-span-1'>
                   <span className='text-base font-semibold text-primary'>
-                    {course.price === 0 ? 'Miễn phí' : formatCurrency(course.price * (1 - course.discount / 100))}
+                    {course.price === 0 ? 'Miễn phí' : formatCurrency(course.price * (1 - (course.discount || 0) / 100))}
                   </span>
                   {course.discount > 0 && course.price !== 0 && (
                     <span className={cn('text-sm text-muted-foreground line-through')}>

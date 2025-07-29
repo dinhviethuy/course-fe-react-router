@@ -10,13 +10,13 @@ export const CourseSchema = z.object({
   title: z.string().min(1),
   description: z.string().default('').optional(),
   slug: z.string().min(1),
-  price: z.number().min(0).optional(),
-  isDraft: z.boolean().default(true).optional(),
-  discount: z.number().min(0).max(100).default(0).optional(),
+  price: z.number().min(0).default(0),
+  isDraft: z.boolean().default(true),
+  discount: z.number().min(0).max(100).default(0),
   image: z.string(),
-  video: z.string().nullable().optional(),
-  courseType: z.enum([CourseType.COMBO, CourseType.SINGLE]).default(CourseType.SINGLE).optional(),
-  benefits: z.array(z.string()).default([]).optional(),
+  video: z.string().nullable(),
+  courseType: z.enum([CourseType.COMBO, CourseType.SINGLE]).default(CourseType.SINGLE),
+  benefits: z.array(z.string()).default([]),
 
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -92,7 +92,8 @@ export const GetCourseDetailResSchema = CourseSchema.pick({
     ChapterSchema.pick({
       id: true,
       title: true,
-      order: true
+      order: true,
+      description: true
     }).extend({
       duration: z.number().min(0).default(0),
       lessons: z.array(

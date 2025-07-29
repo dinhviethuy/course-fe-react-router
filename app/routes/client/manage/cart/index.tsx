@@ -38,7 +38,7 @@ import type { GetListCartResType } from '~/types/cart.type'
 import type { GetValidateCouponResType } from '~/types/coupon.type'
 import type { CreateOrderBodyType } from '~/types/order.type'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Giỏ hàng' }, { name: 'description', content: 'Giỏ hàng' }]
 }
 

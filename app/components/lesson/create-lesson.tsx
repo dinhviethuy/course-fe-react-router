@@ -59,12 +59,17 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
         setValue('videoUrl', res.data.data[0].url)
         setValue('duration', res.data.data[0].duration)
       } else setValue('videoUrl', null)
+      // Đảm bảo description luôn là string, không phải undefined
       const body = getValues()
-      const res = await createLessonMutation.mutateAsync({
+      const lessonBody = {
         ...body,
+        description: body.description ?? '',
+        isDraft: body.isDraft ?? true,
+        duration: body.duration ?? 0,
         chapterId: chapterIdQuery
-      })
-      navigate(`/admin/courses/detail/${courseId}?lessonId=${res.data.data.id}`, {
+      }
+      const res = await createLessonMutation.mutateAsync(lessonBody)
+      navigate(`/admin/courses/edit/${courseId}?lessonId=${res.data.data.id}`, {
         preventScrollReset: true
       })
       queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
@@ -76,12 +81,12 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
 
   return (
     <Lesson
-      control={control}
+      control={control as any}
       errors={errors}
       onSubmit={onSubmit}
       handleSubmit={handleSubmit}
-      register={register}
-      setValue={setValue}
+      register={register as any}
+      setValue={setValue as any}
       setFile={setFile}
       buttonText='Tạo ngay'
       isPending={createLessonMutation.isPending}

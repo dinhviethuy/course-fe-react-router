@@ -29,9 +29,9 @@ export default function Component() {
     slug: '',
     price: 0,
     discount: 0,
-    video: undefined,
+    video: null,
     isDraft: true,
-    description: undefined,
+    description: '',
     image: '',
     courseType: 'SINGLE',
     courseIds: undefined
@@ -60,9 +60,18 @@ export default function Component() {
         formData.append('files', file as File)
         const res = await uploadImageMutation.mutateAsync(formData)
         setValue('image', res.data.data[0].url)
-        const course = await createCourseMutation.mutateAsync(getValues())
-        if (getValues().courseType === CourseType.SINGLE) {
-          navigate(`/admin/courses/detail/${course.data.data.id}`)
+        const values = getValues()
+        const course = await createCourseMutation.mutateAsync({
+          ...values,
+          price: values.price || 0,
+          discount: values.discount || 0,
+          courseIds: values.courseIds || undefined,
+          isDraft: values.isDraft ?? true,
+          courseType: values.courseType as 'SINGLE' | 'COMBO',
+          benefits: values.benefits || []
+        })
+        if (values.courseType === CourseType.SINGLE) {
+          navigate(`/admin/courses/edit/${course.data.data.id}`)
         } else {
           navigate(`/admin/courses`)
         }
@@ -78,19 +87,19 @@ export default function Component() {
 
   return (
     <Course
-      control={control}
+      control={control as any}
       errors={errors}
-      reset={reset}
+      reset={reset as any}
       handleSubmit={handleSubmit}
       handleSubmitForm={handleSubmitForm}
-      setValue={setValue}
+      setValue={setValue as any}
       setFile={setFile}
       isDirty={isDirty}
-      register={register}
+      register={register as any}
       data={defaultValues}
       buttonText='Tạo ngay'
       titleHeader='Tạo khóa học mới'
-      watch={watch}
+      watch={watch as any}
       uploadFile={{
         errors: errorsUploadFile,
         files,

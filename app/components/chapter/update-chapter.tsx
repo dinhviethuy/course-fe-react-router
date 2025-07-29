@@ -49,13 +49,13 @@ export default function UpdateChapter({
   return (
     <Chapter
       titleBox='Cập nhật chương'
-      register={register}
+      register={register as any}
       errors={errors}
       open={open}
       setOpen={setOpen}
       handleSubmit={handleSubmit}
       handleSubmitForm={handleSubmitForm}
-      control={control}
+      control={control as any}
       buttonTextSubmit='Cập nhật chương'
       isPending={isPending}
     >

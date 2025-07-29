@@ -47,13 +47,13 @@ export default function CreateChapter({ courseId }: IProps) {
   return (
     <Chapter
       titleBox='Thêm chương mới'
-      register={register}
+      register={register as any}
       errors={errors}
       open={open}
       setOpen={setOpen}
       handleSubmit={handleSubmit}
       handleSubmitForm={handleSubmitForm}
-      control={control}
+      control={control as any}
       buttonTextSubmit='Tạo chương ngay'
       isPending={createChapterMutation.isPending}
     >

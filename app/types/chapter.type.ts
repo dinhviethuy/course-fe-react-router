@@ -2,10 +2,10 @@ import z from 'zod'
 
 export const ChapterSchema = z.object({
   id: z.number().int().positive(),
-  title: z.string().min(1).optional(),
-  description: z.string().default('').optional(),
+  title: z.string().min(1),
+  description: z.string().default(''),
   order: z.number().min(0).default(0),
-  isDraft: z.boolean().default(true).optional(),
+  isDraft: z.boolean().default(true),
   courseId: z.number().int().positive(),
 
   createdAt: z.date(),

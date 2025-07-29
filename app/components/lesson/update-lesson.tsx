@@ -80,6 +80,9 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
         },
         body: {
           ...body,
+          description: body.description ?? '',
+          isDraft: body.isDraft ?? true,
+          duration: body.duration ?? 0,
           chapterId: lesson.chapterId
         }
       })
@@ -92,13 +95,13 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
 
   return (
     <Lesson
-      control={control}
+      control={control as any}
       errors={errors}
       lesson={lesson}
       onSubmit={onSubmit}
       handleSubmit={handleSubmit}
-      register={register}
-      setValue={setValue}
+      register={register as any}
+      setValue={setValue as any}
       setFile={setFile}
       lessonIdPrev={lessonIdPrev}
       lessonIdNext={lessonIdNext}

@@ -62,8 +62,18 @@ export default function UpdateCourse({ data, courseId, refetch }: IProps) {
         formData.append('files', file as File)
         const res = await uploadImageMutation.mutateAsync(formData)
         setValue('image', res.data.data[0].url)
-      } else setValue('image', data.image)
-      const updatedBody = getValues()
+      } else {
+        setValue('image', data.image)
+      }
+      const values = getValues()
+      const updatedBody = {
+        ...values,
+        price: values.price ?? 0,
+        isDraft: values.isDraft ?? false,
+        discount: values.discount ?? 0,
+        courseType: values.courseType ?? data.courseType,
+        benefits: values.benefits ?? [],
+      }
       await updateCourseMutation.mutateAsync({ params: { courseId }, body: updatedBody })
       refetch()
       removeFile(files[0]?.id)
@@ -91,17 +101,17 @@ export default function UpdateCourse({ data, courseId, refetch }: IProps) {
 
   return (
     <Course
-      control={control}
+      control={control as any}
       errors={errors}
-      reset={reset}
+      reset={reset as any}
       handleSubmit={handleSubmit}
       handleSubmitForm={handleSubmitForm}
-      setValue={setValue}
+      setValue={setValue as any}
       setFile={setFile}
       isDirty={isDirty}
-      register={register}
+      register={register as any}
       data={data}
-      watch={watch}
+      watch={watch as any}
       buttonText='Lưu thay đổi'
       titleHeader='Thông tin khóa học'
       isUpdate
