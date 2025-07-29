@@ -40,7 +40,21 @@ export const GetPermissionsQuerySchema = z
         }
         return false
       }, z.boolean())
-      .optional()
+      .optional(),
+    module: z.string().optional(),
+    method: z
+      .enum([
+        HTTPMethod.GET,
+        HTTPMethod.POST,
+        HTTPMethod.PUT,
+        HTTPMethod.DELETE,
+        HTTPMethod.PATCH,
+        HTTPMethod.OPTIONS,
+        HTTPMethod.HEAD
+      ])
+      .optional(),
+    path: z.string().optional(),
+    name: z.string().optional()
   })
   .strict()
 
@@ -57,6 +71,14 @@ export const CreatePermissionBodySchema = PermissionSchema.pick({
   module: true
 }).strict()
 
+export const GetModulesResSchema = z.object({
+  modules: z.array(
+    z.object({
+      module: z.string()
+    })
+  )
+})
+
 export const UpdatePermissionBodySchema = CreatePermissionBodySchema
 export const GetPermissionDetailResSchema = PermissionSchema
 export type PermissionType = z.infer<typeof PermissionSchema>
@@ -66,3 +88,4 @@ export type GetPermissionParamsType = z.infer<typeof GetPermissionParamsSchema>
 export type CreatePermissionBodyType = z.infer<typeof CreatePermissionBodySchema>
 export type UpdatePermissionBodyType = z.infer<typeof UpdatePermissionBodySchema>
 export type GetPermissionDetailResType = z.infer<typeof GetPermissionDetailResSchema>
+export type GetModulesResType = z.infer<typeof GetModulesResSchema>
