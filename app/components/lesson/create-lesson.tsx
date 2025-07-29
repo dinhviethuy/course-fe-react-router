@@ -25,7 +25,8 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
     formState: { errors },
     control,
     setValue,
-    getValues
+    getValues,
+    setError
   } = useForm({
     defaultValues: {
       description: '',
@@ -75,7 +76,7 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
       queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
       toast.success('Tạo bài học mới thành công')
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
     }
   }
 

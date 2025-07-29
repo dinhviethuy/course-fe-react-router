@@ -4,9 +4,9 @@ import { HTTPMethod } from '~/constants/role.constant'
 
 export const PermissionSchema = z.object({
   id: z.number(),
-  name: z.string().max(500),
-  path: z.string().max(1000),
-  module: z.string().max(500),
+  name: z.string().min(1).max(500),
+  path: z.string().min(1).max(1000),
+  module: z.string().min(1).max(500),
   method: z.enum([
     HTTPMethod.GET,
     HTTPMethod.POST,
@@ -56,8 +56,8 @@ export const GetPermissionsQuerySchema = z
       .optional(),
     path: z.string().optional(),
     name: z.string().optional(),
-    orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc),
-    sortBy: z.enum([SortBy.CreatedAt, SortBy.Name]).default(SortBy.CreatedAt)
+    orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc).optional(),
+    sortBy: z.enum([SortBy.CreatedAt, SortBy.Name]).default(SortBy.CreatedAt).optional()
   })
   .strict()
 

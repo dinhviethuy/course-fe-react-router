@@ -23,7 +23,7 @@ export default function UpdateRole({ roleId }: IProps) {
   const { data: permissons, refetch } = useGetListPermissionQuery({
     getAll: true
   })
-  const { setValue, handleSubmit, watch, register, formState: { errors }, control, reset } = useForm({
+  const { setValue, handleSubmit, watch, register, formState: { errors }, control, reset, setError } = useForm({
     resolver: zodResolver(UpdateRoleBodySchema)
   })
   const queryClient = useQueryClient()
@@ -41,7 +41,7 @@ export default function UpdateRole({ roleId }: IProps) {
       setIsOpen(false)
       toast.success('Cập nhật vai trò thành công')
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
     }
   }
   useEffect(() => {

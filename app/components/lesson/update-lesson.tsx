@@ -32,7 +32,8 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
     control,
     reset,
     setValue,
-    getValues
+    getValues,
+    setError
   } = useForm({
     resolver: zodResolver(
       UpdateLessonBodySchema.pick({
@@ -89,7 +90,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
       toast.success('Cập nhật bài học thành công')
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
     }
   }
 

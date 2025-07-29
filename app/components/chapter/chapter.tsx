@@ -55,7 +55,7 @@ export default function Chapter({
               <div className='space-y-4'>
                 <div className='*:not-first:mt-2'>
                   <Label>Tiêu đề chương</Label>
-                  <Input {...register('title')} />
+                  <Input {...register('title')} required />
                   {errors.title && <p className='text-red-500'>{errors.title.message}</p>}
                 </div>
                 <div className='*:not-first:mt-2'>

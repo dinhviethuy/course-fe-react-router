@@ -170,7 +170,7 @@ export default function Course({
                     control={control}
                     defaultValue={data.courseType}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange} disabled={isUpdate || disabled}>
+                      <Select value={field.value} required onValueChange={field.onChange} disabled={isUpdate || disabled}>
                         <SelectTrigger>
                           <SelectValue placeholder='Chọn loại' />
                         </SelectTrigger>

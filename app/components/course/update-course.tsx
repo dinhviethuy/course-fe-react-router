@@ -36,7 +36,8 @@ export default function UpdateCourse({ data, courseId, refetch }: IProps) {
     control,
     setValue,
     getValues,
-    watch
+    watch,
+    setError
   } = useForm({
     defaultValues: {
       benefits: data.benefits,
@@ -79,7 +80,7 @@ export default function UpdateCourse({ data, courseId, refetch }: IProps) {
       removeFile(files[0]?.id)
       toast.success('Cập nhật khóa học thành công')
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
     }
   }
 

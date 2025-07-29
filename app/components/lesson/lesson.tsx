@@ -63,7 +63,7 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
           <CardContent className='space-y-6'>
             <div className='space-y-2'>
               <Label className='font-semibold'>Tên bài học</Label>
-              <Input {...register('title')} disabled={disabled} />
+              <Input {...register('title')} required disabled={disabled} />
               {errors.title && <p className='text-sm text-red-500'>{errors.title.message}</p>}
             </div>
             <div className='space-y-2'>

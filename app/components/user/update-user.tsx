@@ -18,7 +18,7 @@ interface IProps {
 
 export default function UpdateUser({ roles, user }: IProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset, setError } = useForm({
     defaultValues: {
       email: user.email,
       fullName: user.fullName,
@@ -54,7 +54,7 @@ export default function UpdateUser({ roles, user }: IProps) {
       setIsOpen(false)
       toast.success('Cập nhật người dùng thành công')
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
     }
   }
 

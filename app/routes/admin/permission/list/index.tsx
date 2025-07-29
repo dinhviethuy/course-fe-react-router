@@ -12,7 +12,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'l
 import { useState } from 'react'
 import { toast } from 'sonner'
 import RequestMethod from '~/components/method/method'
-import CreateRole from '~/components/role/create-role'
+import CreatePermission from '~/components/permission/create-permission'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -324,7 +324,7 @@ export default function Permissions() {
     orderBy: sort.orderBy,
     sortBy: sort.sortBy
   })
-  const { data: modules } = useGetModulesQuery()
+  const { data: moduleInDb } = useGetModulesQuery()
   const deletePermissionMutation = useDeletePermissionMutation()
   const handleDelete = async (permissionId: number) => {
     try {
@@ -339,12 +339,13 @@ export default function Permissions() {
   }
   const permissions = data?.data.data.permissions || []
   const columns = getColumns({ handleDelete })
+  const modules = moduleInDb?.data.data.modules.map((item) => item.module) || []
 
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <h1 className="text-2xl font-semibold">Danh sách quyền</h1>
-        <CreateRole />
+        <CreatePermission modules={modules} />
       </div>
 
       <div className='mb-4 flex items-center flex-wrap gap-4'>
@@ -366,9 +367,9 @@ export default function Permissions() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value='all'>Tất cả module</SelectItem>
-            {modules?.data.data.modules.map((item, index) => (
-              <SelectItem key={index} value={item.module}>
-                {item.module}
+            {modules.map((module, index) => (
+              <SelectItem key={index} value={module}>
+                {module}
               </SelectItem>
             ))}
           </SelectContent>

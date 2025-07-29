@@ -15,6 +15,7 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-ki
 import { useQueryClient } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import type { UseFormSetError } from 'react-hook-form'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
 import CreateChapter from '~/components/chapter/create-chapter'
@@ -214,7 +215,7 @@ export default function DragCourse({ course, openedLessonId, openedChapterId, di
     }
   }
 
-  const handleUpdateChapter = async (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number) => {
+  const handleUpdateChapter = async (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number, setError?: UseFormSetError<any>) => {
     try {
       await updateChapterMutation.mutateAsync({
         body: {
@@ -228,7 +229,7 @@ export default function DragCourse({ course, openedLessonId, openedChapterId, di
       queryClient.refetchQueries({ queryKey: ['course-detail-admin', course.id] })
       toast.success(`Cập nhật chương thành công`)
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
       setChapters(course.chapters)
     }
   }

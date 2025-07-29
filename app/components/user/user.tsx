@@ -67,12 +67,12 @@ export function User({ children, boxTitle, roles, handleSubmit, onSubmit, regist
           <div className="grid gap-4 mt-8">
             <div className="grid gap-3">
               <Label htmlFor="fullname">Tên người dùng</Label>
-              <Input type="text" id="fullname" {...register('fullName')} disabled={disabled} />
+              <Input type="text" id="fullname" required {...register('fullName')} disabled={disabled} />
               {errors.fullName && <p className="text-red-500">{errors.fullName.message}</p>}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="email">Email</Label>
-              <Input type="email" id="email" {...register('email')} disabled={disabled} />
+              <Input type="email" id="email" required {...register('email')} disabled={disabled} />
               {errors.email && <p className="text-red-500">{errors.email.message}</p>}
             </div>
             <div className={cn('grid gap-3 relative', {
@@ -108,6 +108,7 @@ export function User({ children, boxTitle, roles, handleSubmit, onSubmit, regist
                   onValueChange={(value) => setValue('roleId', Number(value))}
                   value={watch('roleId')?.toString()} // để Select biết giá trị đã chọn
                   disabled={disabled}
+                  required
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Chọn vai trò" />
@@ -124,7 +125,7 @@ export function User({ children, boxTitle, roles, handleSubmit, onSubmit, regist
               </div>
               <div className="col-span-1 space-y-2">
                 <Label htmlFor="status-1">Trạng thái</Label>
-                <Select defaultValue={watch('status')} onValueChange={(value) => setValue('status', value as UserStatusType)} disabled={disabled}>
+                <Select defaultValue={watch('status')} required onValueChange={(value) => setValue('status', value as UserStatusType)} disabled={disabled}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Chọn trạng thái" />
                   </SelectTrigger>

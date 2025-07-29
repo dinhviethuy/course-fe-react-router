@@ -45,7 +45,7 @@ export default function Component() {
     setValue,
     getValues,
     setError,
-    watch
+    watch,
   } = useForm({
     defaultValues,
     resolver: zodResolver(CreateCourseBodySchema)
@@ -81,7 +81,7 @@ export default function Component() {
         setError('image', { message: 'Vui lòng tải lên ảnh bìa khóa học' })
       }
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
     }
   }
 

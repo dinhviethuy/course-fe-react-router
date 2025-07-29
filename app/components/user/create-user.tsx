@@ -17,7 +17,7 @@ interface IProps {
 
 export default function CreateUser({ roles }: IProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, setValue, watch, reset, setError } = useForm({
     resolver: zodResolver(CreateUserBodySchema)
   })
 
@@ -32,7 +32,7 @@ export default function CreateUser({ roles }: IProps) {
       setIsOpen(false)
       toast.success('Tạo người dùng thành công')
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
     }
   }
 
@@ -46,6 +46,7 @@ export default function CreateUser({ roles }: IProps) {
       watch={watch as any}
       isPending={createUserMutation.isPending}
       reset={reset as any}
+      tooltipText="Tạo người dùng mới"
     >
       <Button className="cursor-pointer">
         <PlusCircle className="w-4 h-4" />

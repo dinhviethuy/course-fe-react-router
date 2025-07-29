@@ -16,7 +16,7 @@ export default function CreateRole() {
   const { data: permissons } = useGetListPermissionQuery({
     getAll: true
   })
-  const { setValue, handleSubmit, watch, register, formState: { errors }, control, reset } = useForm({
+  const { setValue, handleSubmit, watch, register, formState: { errors }, control, reset, setError } = useForm({
     defaultValues: {
       description: '',
       isActive: true,
@@ -35,7 +35,7 @@ export default function CreateRole() {
       setIsOpen(false)
       toast.success('Tạo vai trò thành công')
     } catch (error) {
-      handleError({ error })
+      handleError({ error, setError })
     }
   }
   return (
@@ -53,6 +53,7 @@ export default function CreateRole() {
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       reset={reset as any}
+      tooltipText="Tạo vai trò mới"
     >
       <Button className="cursor-pointer">
         <PlusCircle className="w-4 h-4" />

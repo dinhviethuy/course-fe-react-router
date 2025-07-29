@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type UseFormSetError } from 'react-hook-form'
 import Chapter from '~/components/chapter/chapter'
 import { UpdateChapterBodySchema, type UpdateChatperBodyType } from '~/types/chapter.type'
 import type { GetCourseDetailResTypeForAdmin } from '~/types/course.type'
@@ -12,7 +12,7 @@ export default function UpdateChapter({
   children
 }: {
   chapter: GetCourseDetailResTypeForAdmin['chapters'][number]
-  handleUpdateChapter: (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number) => void
+  handleUpdateChapter: (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number, setError?: UseFormSetError<any>) => void
   isPending: boolean
   children: React.ReactElement
 }) {
@@ -22,7 +22,8 @@ export default function UpdateChapter({
     handleSubmit,
     formState: { errors },
     control,
-    reset
+    reset,
+    setError
   } = useForm({
     defaultValues: {
       title: chapter.title,
@@ -32,7 +33,7 @@ export default function UpdateChapter({
     resolver: zodResolver(UpdateChapterBodySchema.omit({ courseId: true }))
   })
   const handleSubmitForm = async (body: Omit<UpdateChatperBodyType, 'courseId'>) => {
-    handleUpdateChapter(body, chapter.id)
+    handleUpdateChapter(body, chapter.id, setError)
     setOpen(false)
   }
 

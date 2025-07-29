@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
+import type { UseFormSetError } from 'react-hook-form'
 import { Link } from 'react-router'
 import UpdateChapter from '~/components/chapter/update-chapter'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
@@ -36,7 +37,7 @@ export default function SortableChapter({
   children: React.ReactNode
   isExpanded: boolean
   isAnyChapterDragging: boolean
-  handleUpdateChapter: (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number) => void
+  handleUpdateChapter: (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number, setError?: UseFormSetError<any>) => void
   handleDeleteChapter: (chapterId: number) => void
   isPending: boolean,
   disabled?: boolean
