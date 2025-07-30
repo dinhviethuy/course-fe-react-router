@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { CouponType as CouponTypeConstant } from '~/constants/counpon.constant'
+import { OrderBy, SortBy } from '~/constants/other.constant'
 
 export const CouponSchema = z.object({
   id: z.number().int().positive(),
@@ -17,6 +18,18 @@ export const CouponSchema = z.object({
   updatedById: z.number().nullable(),
   deletedById: z.number().nullable()
 })
+
+export const GetCouponsQuerySchema = z
+  .object({
+    page: z.coerce.number().int().positive().default(1),
+    limit: z.coerce.number().int().positive().default(10),
+    search: z.string().optional(),
+    couponType: z.enum([CouponTypeConstant.PERCENT, CouponTypeConstant.FIXED]).optional(),
+    isActive: z.string().optional(),
+    orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc),
+    sortBy: z.enum([SortBy.CreatedAt]).default(SortBy.CreatedAt)
+  })
+  .strict()
 
 export const CreateCouponBodySchema = CouponSchema.pick({
   code: true,
@@ -91,7 +104,11 @@ export const GetCouponParamsSchema = z.object({
 export const GetCouponDetailResSchema = CouponSchema
 
 export const GetCouponListResSchema = z.object({
-  coupons: z.array(CouponSchema)
+  coupons: z.array(CouponSchema),
+  totalItems: z.number(),
+  page: z.number(),
+  limit: z.number(),
+  totalPages: z.number()
 })
 
 export const GetValidateCouponBodySchema = z
