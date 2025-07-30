@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import type { DateRange } from "react-day-picker";
-import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormReset, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
+import { Controller, type Control, type FieldErrors, type FormState, type UseFormHandleSubmit, type UseFormRegister, type UseFormReset, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
 import NumberCustom from "~/components/ui-custom/number-custom";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
@@ -32,6 +32,11 @@ interface IProps {
   reset: UseFormReset<CreateCouponBodyType | UpdateCouponBodyType>,
   disabled?: boolean
   tooltipText: string,
+  createdBy?: {
+    fullName: string,
+    email: string
+  } | null,
+  formState?: FormState<CreateCouponBodyType | UpdateCouponBodyType>
 }
 
 export default function Coupon({
@@ -49,9 +54,10 @@ export default function Coupon({
   reset,
   disabled,
   tooltipText,
-  control
+  control,
+  createdBy,
+  formState
 }: IProps) {
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) reset()
@@ -111,8 +117,9 @@ export default function Coupon({
               <div className="space-y-2">
                 <Label htmlFor="startAt">Ngày bắt đầu và kết thúc</Label>
                 <Popover>
-                  <PopoverTrigger asChild>
+                  <PopoverTrigger asChild disabled={disabled}>
                     <Button
+                      disabled={disabled}
                       id="startAt"
                       variant="outline"
                       className="group bg-background hover:bg-background border-input w-full justify-between px-3 font-normal outline-offset-0 outline-none focus-visible:outline-[3px]"
@@ -141,17 +148,20 @@ export default function Coupon({
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-2" align="start">
-                    <Calendar mode="range" selected={
-                      watch('startAt') && watch('endAt') ? {
-                        from: watch('startAt'),
-                        to: watch('endAt')
-                      } : undefined
-                    } onSelect={(range: DateRange | undefined) => {
-                      if (range) {
-                        if (range.from) setValue('startAt', range.from)
-                        if (range.to) setValue('endAt', range.to)
-                      }
-                    }}
+                    <Calendar
+                      disabled={disabled}
+                      mode="range"
+                      selected={
+                        watch('startAt') && watch('endAt') ? {
+                          from: watch('startAt'),
+                          to: watch('endAt')
+                        } : undefined
+                      } onSelect={(range: DateRange | undefined) => {
+                        if (range) {
+                          if (range.from) setValue('startAt', range.from)
+                          if (range.to) setValue('endAt', range.to)
+                        }
+                      }}
                     />
                   </PopoverContent>
                 </Popover>
@@ -165,7 +175,15 @@ export default function Coupon({
               <div className="space-y-2">
                 <Label htmlFor="couponType">Trạng thái</Label>
                 <Select
-                  onValueChange={(value) => setValue('couponType', value as CouponType)}
+                  onValueChange={(value) => {
+                    setValue('couponType', value as CouponType)
+                    if (value === formState?.defaultValues?.couponType) {
+                      console.log(formState?.defaultValues?.discount)
+                      setValue('discount', formState?.defaultValues?.discount ?? 0)
+                    } else {
+                      setValue('discount', 0)
+                    }
+                  }}
                   value={watch('couponType')}
                   disabled={disabled}
                   required
@@ -192,6 +210,7 @@ export default function Coupon({
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        disabled={disabled}
                       />
                     )}
                   />
@@ -203,6 +222,18 @@ export default function Coupon({
               </div>
             </div>
           </div>
+          {createdBy && (
+            <div className="border-t border-border px-6 py-4 text-sm text-muted-foreground space-y-0.5">
+              <div className="flex gap-1">
+                <span>Người tạo:</span>
+                <span className="font-medium text-foreground">{createdBy?.fullName}</span>
+              </div>
+              <div className="flex gap-1">
+                <span>Email:</span>
+                <span className="font-medium text-foreground">{createdBy?.email}</span>
+              </div>
+            </div>
+          )}
           <DialogFooter className={cn("border-t px-6 py-4", {
             "hidden": disabled
           })}>

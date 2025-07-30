@@ -11,7 +11,9 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import CouponDetail from '~/components/coupon/coupon-detail'
 import CreateCoupon from '~/components/coupon/create-coupon'
+import UpdateCoupon from '~/components/coupon/update-coupon'
 import Loading from '~/components/loading/loading'
 import {
   AlertDialog,
@@ -219,9 +221,28 @@ function getColumns({
       }
     },
     {
+      accessorKey: 'createdBy',
+      header: 'Người tạo',
+      cell: ({ row }) => {
+        const { fullName, email } = row.original.createdBy || {}
+        return (
+          <div className='flex flex-col gap-0.5 text-sm leading-tight'>
+            <span className='font-medium text-foreground truncate max-w-[160px]' title={fullName}>
+              {fullName}
+            </span>
+            <span className='text-muted-foreground text-xs truncate max-w-[160px]' title={email}>
+              {email}
+            </span>
+          </div>
+        )
+      }
+    },
+    {
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
+          <CouponDetail coupon={row.original} />
+          <UpdateCoupon coupon={row.original} />
           <AlertDialog>
             <TooltipProvider delayDuration={0}>
               <Tooltip>

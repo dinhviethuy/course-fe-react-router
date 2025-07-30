@@ -1,43 +1,63 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { PencilLine } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Coupon from "~/components/coupon/coupon";
 import { Button } from "~/components/ui/button";
 import { CouponType } from "~/constants/counpon.constant";
-import { useCreateCouponMutation } from "~/hooks/useCoupon";
+import { useUpdateCouponMutation } from "~/hooks/useCoupon";
 import { handleError } from "~/lib/utils";
-import { CreateCouponBodySchema, type CreateCouponBodyType } from "~/types/coupon.type";
+import { UpdateCouponBodySchema, type GetCouponListResType, type UpdateCouponBodyType } from "~/types/coupon.type";
 
 
-export default function CreateCoupon() {
+interface IProps {
+  coupon: GetCouponListResType['coupons'][number]
+}
+
+export default function UpdateCoupon({ coupon }: IProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { setValue, handleSubmit, register, formState, reset, watch, setError, control } = useForm({
     defaultValues: {
       code: undefined,
       couponType: CouponType.PERCENT,
-      discount: 0,
+      discount: undefined,
       endAt: undefined,
       isActive: true,
       startAt: undefined,
     },
-    resolver: zodResolver(CreateCouponBodySchema)
+    resolver: zodResolver(UpdateCouponBodySchema)
   })
   const queryClient = useQueryClient()
-  const createCouponMutation = useCreateCouponMutation()
-  const onSubmit = async (data: CreateCouponBodyType) => {
+  const updateCouponMutation = useUpdateCouponMutation()
+  const onSubmit = async (body: UpdateCouponBodyType) => {
     try {
-      await createCouponMutation.mutateAsync(data)
+      await updateCouponMutation.mutateAsync({
+        param: {
+          couponId: coupon.id
+        },
+        body
+      })
       queryClient.refetchQueries({ queryKey: ['coupons'] })
       reset()
       setIsOpen(false)
-      toast.success('Tạo mã giảm giá thành công')
+      toast.success('Cập nhật mã giảm giá thành công')
     } catch (error) {
       handleError({ error, setError })
     }
   }
+
+  useEffect(() => {
+    reset({
+      code: coupon.code,
+      couponType: coupon.couponType,
+      discount: coupon.discount,
+      endAt: coupon.endAt,
+      isActive: coupon.isActive,
+      startAt: coupon.startAt,
+    })
+  }, [coupon, reset])
   return (
     <Coupon
       handleSubmit={handleSubmit as any}
@@ -45,19 +65,19 @@ export default function CreateCoupon() {
       register={register as any}
       setValue={setValue as any}
       errors={formState.errors as any}
-      isPending={createCouponMutation.isPending}
-      titleBox="Tạo mã giảm giá"
+      isPending={updateCouponMutation.isPending}
+      titleBox="Cập nhật mã giảm giá"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       reset={reset as any}
-      tooltipText="Tạo mã giảm giá"
+      tooltipText="Cập nhật mã giảm giá"
       watch={watch as any}
       control={control as any}
+      createdBy={coupon.createdBy}
       formState={formState as any}
     >
-      <Button className="cursor-pointer">
-        <PlusCircle className="w-4 h-4" />
-        Tạo mã giảm giá
+      <Button className="cursor-pointer" variant='ghost'>
+        <PencilLine />
       </Button>
     </Coupon >
   )
