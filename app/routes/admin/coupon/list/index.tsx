@@ -11,10 +11,8 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import CreateCoupon from '~/components/coupon/create-coupon'
 import Loading from '~/components/loading/loading'
-import CreateRole from '~/components/role/create-role'
-import RoleDetailDrawer from '~/components/role/role-detail'
-import UpdateRole from '~/components/role/update-role'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,10 +30,12 @@ import { Input } from '~/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
+import { CouponType } from '~/constants/counpon.constant'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
-import { useDeleteRoleMutation, useListRoleQuery } from '~/hooks/useRole'
-import { cn, formatDate, handleError } from '~/lib/utils'
-import type { GetRolesResType } from '~/types/role.type'
+import { useDeleteCouponMutation, useGetCouponsQuery } from '~/hooks/useCoupon'
+import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
+import type { GetCouponListResType } from '~/types/coupon.type'
+
 interface DataTablePaginationProps<TData> {
   table: TableType<TData>
 }
@@ -43,8 +43,8 @@ interface DataTablePaginationProps<TData> {
 export function meta() {
   return [
     {
-      title: 'Danh sách vai trò',
-      description: 'Danh sách vai trò'
+      title: 'Danh sách mã giảm giá',
+      description: 'Danh sách mã giảm giá'
     }
   ]
 }
@@ -126,26 +126,29 @@ function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) 
 function getColumns({
   handleDelete,
 }: {
-  handleDelete: (roleId: number) => void,
-}): ColumnDef<GetRolesResType['roles'][number]>[] {
+  handleDelete: (couponId: number) => void
+}): ColumnDef<GetCouponListResType['coupons'][number]>[] {
   return [
     {
-      accessorKey: 'name',
-      header: 'Tên người dùng',
+      accessorKey: 'code',
+      header: 'Mã giảm giá',
       cell: ({ row }) => (
         <div className='flex items-center gap-2 flex-wrap'>
-          <span className='wrap-break-word'>{row.original.name}</span>
+          <span className='wrap-break-word'>{row.original.code}</span>
         </div>
       )
     },
     {
-      accessorKey: 'description',
-      header: 'Mô tả',
-      cell: ({ row }) => (
-        <div className='flex items-center gap-2 flex-wrap'>
-          <span className='wrap-break-word'>{row.original.description}</span>
-        </div>
-      )
+      accessorKey: 'couponType',
+      header: 'Loại giảm giá',
+      cell: ({ row }) => {
+        const { couponType } = row.original
+        return (
+          <div className='flex items-center gap-2 flex-wrap'>
+            <Badge variant={couponType === CouponType.FIXED ? 'default' : 'secondary'} className='wrap-break-word'>{couponType}</Badge>
+          </div>
+        )
+      }
     },
     {
       accessorKey: 'isActive',
@@ -165,15 +168,44 @@ function getColumns({
       }
     },
     {
-      accessorKey: 'createdAt',
-      header: 'Ngày tạo',
+      accessorKey: 'discount',
+      header: 'Giảm giá',
+      cell: ({ row }) => (
+        <div className='flex items-center gap-2 flex-wrap'>
+          <Badge className='wrap-break-word font-bold'>
+            {row.original.couponType === CouponType.PERCENT ? `${row.original.discount}%` : formatCurrency(row.original.discount)}
+          </Badge>
+        </div>
+      )
+    },
+    {
+      accessorKey: 'startAt',
+      header: 'Ngày bắt đầu',
+      cell: ({ row }) => (
+        <div className='flex items-center gap-2 flex-wrap'>
+          <span className='wrap-break-word'>{formatDate(row.original.startAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+        </div>
+      )
+    },
+    {
+      accessorKey: 'endAt',
+      header: 'Ngày kết thúc',
       cell: ({ row }) => {
         return (
           <div className='flex items-center gap-2 flex-wrap'>
-            <span className='wrap-break-word'>{formatDate(row.original.createdAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+            <span className='wrap-break-word'>{formatDate(row.original.endAt, 'dd/MM/yyyy HH:mm:ss')}</span>
           </div>
         )
       }
+    },
+    {
+      accessorKey: 'createdAt',
+      header: 'Ngày tạo',
+      cell: ({ row }) => (
+        <div className='flex items-center gap-2 flex-wrap'>
+          <span className='wrap-break-word'>{formatDate(row.original.createdAt, 'dd/MM/yyyy HH:mm:ss')}</span>
+        </div>
+      )
     },
     {
       accessorKey: 'updatedAt',
@@ -190,8 +222,6 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <RoleDetailDrawer roleId={row.original.id} />
-          <UpdateRole roleId={row.original.id} />
           <AlertDialog>
             <TooltipProvider delayDuration={0}>
               <Tooltip>
@@ -202,14 +232,14 @@ function getColumns({
                     </Button>
                   </AlertDialogTrigger>
                 </TooltipTrigger>
-                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa vai trò</TooltipContent>
+                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa mã giảm giá</TooltipContent>
               </Tooltip>
             </TooltipProvider>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Bạn đang thực hiện xóa vai trò <span className='font-semibold text-accent-foreground'>{row.original.name}</span>.
+                  Bạn đang thực hiện xóa mã giảm giá <span className='font-semibold text-accent-foreground'>{row.original.code}</span>.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -234,8 +264,8 @@ function BuildTable({
   total,
   isPending
 }: {
-  columns: ColumnDef<GetRolesResType['roles'][number]>[]
-  data: GetRolesResType['roles'][number][]
+  columns: ColumnDef<GetCouponListResType['coupons'][number]>[]
+  data: GetCouponListResType['coupons'][number][]
   pagination: {
     pageIndex: number
     pageSize: number
@@ -294,11 +324,10 @@ function BuildTable({
             (
               <TableRow>
                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  Hiện không có vai trò nào
+                  Hiện không có mã giảm giá nào
                 </TableCell>
               </TableRow>
             )
-
         )}
       </TableBody>
       <TableFooter className='bg-background'>
@@ -312,12 +341,13 @@ function BuildTable({
   )
 }
 
-export default function Roles() {
+export default function Coupons() {
   const [search, setSearch] = useState('')
-  const [isActive, setIsActive] = useState<'all' | 'true' | 'false'>('all')
+  const [couponType, setCouponType] = useState<CouponType | 'all'>('all')
+  const [isActive, setIsActive] = useState<string | 'all'>('all')
   const [sort, setSort] = useState<{
     orderBy: OrderByType
-    sortBy: Exclude<SortByType, 'fullName' | 'email' | 'price' | 'sale'>
+    sortBy: Extract<SortByType, 'createdAt'>
   }>({
     orderBy: OrderBy.Desc,
     sortBy: SortBy.CreatedAt
@@ -326,75 +356,92 @@ export default function Roles() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data, refetch, isPending } = useListRoleQuery({
+  const { data, refetch, isPending } = useGetCouponsQuery({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
     search: search.trim(),
+    couponType: couponType === 'all' ? undefined : couponType,
+    isActive: isActive === 'all' ? undefined : isActive,
     orderBy: sort.orderBy,
     sortBy: sort.sortBy,
-    isActive
   })
-  const deleteRoleMutation = useDeleteRoleMutation()
-  const handleDelete = async (roleId: number) => {
+  const deleteCouponMutation = useDeleteCouponMutation()
+  const handleDelete = async (couponId: number) => {
     try {
-      await deleteRoleMutation.mutateAsync({
-        roleId
+      await deleteCouponMutation.mutateAsync({
+        couponId
       })
       refetch()
-      toast.success('Xóa vai trò thành công')
+      toast.success('Xóa mã giảm giá thành công')
     } catch (error) {
       handleError({ error })
     }
   }
-  const roles = data?.data.data.roles || []
+  const coupons = data?.data.data.coupons || []
   const columns = getColumns({ handleDelete })
 
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <h1 className='text-2xl font-semibold'>Danh sách vai trò</h1>
-        <CreateRole />
+        <h1 className="text-2xl font-semibold">Danh sách mã giảm giá</h1>
+        <CreateCoupon />
       </div>
+
       <div className='mb-4 flex items-center flex-wrap gap-4'>
         <Input
-          placeholder='Tìm kiếm theo tên...'
+          placeholder='Tìm kiếm theo mã...'
           className='sm:w-[300px]'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Select value={isActive} onValueChange={(value) => setIsActive(value as ('all' | 'true' | 'false'))}>
+        <Select value={couponType} onValueChange={(value) => setCouponType(value as CouponType | 'all')}>
           <SelectTrigger className='w-[120px] sm:w-[200px]'>
-            <SelectValue placeholder='Lọc theo trạng thái' />
+            <SelectValue placeholder='Lọc theo loại' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='all'>Trạng thái</SelectItem>
-            <SelectItem value='true'>Hoạt động</SelectItem>
-            <SelectItem value='false'>Không hoạt động</SelectItem>
+            <SelectItem value='all'>Tất cả loại</SelectItem>
+            {Object.values(CouponType).map((item) => (
+              <SelectItem key={item} value={item}>
+                {item}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
-
         <Select
           value={`${sort.sortBy}-${sort.orderBy}`}
           onValueChange={(value) => {
-            const [sortBy, orderBy] = value.split('-') as [Exclude<SortByType, 'fullName' | 'email' | 'price' | 'sale'>, OrderByType]
+            const [sortBy, orderBy] = value.split('-') as [Extract<SortByType, 'createdAt'>, OrderByType]
             setSort({ sortBy, orderBy })
           }}
         >
-          <SelectTrigger className='w-[120px] sm:w-[200px]'>
+          <SelectTrigger className='w-[200px]'>
             <SelectValue placeholder='Sắp xếp theo' />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Desc}`}>Mới nhất</SelectItem>
             <SelectItem value={`${SortBy.CreatedAt}-${OrderBy.Asc}`}>Cũ nhất</SelectItem>
-            <SelectItem value={`${SortBy.Name}-${OrderBy.Asc}`}>Tên A-Z</SelectItem>
-            <SelectItem value={`${SortBy.Name}-${OrderBy.Desc}`}>Tên Z-A</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={isActive}
+          onValueChange={(value) => {
+            setIsActive(value as string | 'all')
+          }}
+        >
+          <SelectTrigger className='w-[120px] sm:w-[200px]'>
+            <SelectValue placeholder='Lọc theo trạng thái' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='all'>Tất cả trạng thái</SelectItem>
+            <SelectItem value='true'>Hoạt động</SelectItem>
+            <SelectItem value='false'>Không hoạt động</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div>
         <BuildTable
           columns={columns}
-          data={roles}
+          data={coupons}
           pagination={pagination}
           setPagination={setPagination}
           total={data?.data.data.totalPages || 0}

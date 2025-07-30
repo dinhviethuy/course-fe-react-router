@@ -4,6 +4,7 @@ import {
   Controller,
   type Control,
   type FieldErrors,
+  type UseFormGetValues,
   type UseFormHandleSubmit,
   type UseFormRegister,
   type UseFormReset,
@@ -11,6 +12,7 @@ import {
   type UseFormWatch
 } from 'react-hook-form'
 import { MultiSelect } from '~/components/ui-custom/multi-select'
+import NumberCustom from '~/components/ui-custom/number-custom'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
@@ -41,6 +43,7 @@ interface IProps {
   buttonText?: string
   isUpdate?: boolean
   watch: UseFormWatch<UpdateCourseBodyType | CreateCourseBodyType>
+  getValues: UseFormGetValues<UpdateCourseBodyType | CreateCourseBodyType>
   uploadFile?: {
     handleDragEnter: (e: React.DragEvent<HTMLElement>) => void
     handleDragLeave: (e: React.DragEvent<HTMLElement>) => void
@@ -99,7 +102,19 @@ export default function Course({
               hidden: !isDirty || disabled
             })}
           >
-            <Button variant='outline' className='cursor-pointer' onClick={() => reset(data)} disabled={disabled}>
+            <Button variant='outline' className='cursor-pointer' onClick={() => reset({
+              benefits: data.benefits,
+              courseIds: data.courseType === CourseType.COMBO ? data.courseIds : undefined,
+              courseType: data.courseType,
+              description: data.description,
+              discount: data.discount,
+              image: data.image,
+              isDraft: data.isDraft,
+              price: data.price,
+              slug: data.slug,
+              title: data.title,
+              video: data.video
+            })} disabled={disabled}>
               Hủy
             </Button>
             <Button type='submit' disabled={isPending || disabled} className='cursor-pointer' >
@@ -122,28 +137,44 @@ export default function Course({
                 {errors.slug && <p className='text-red-500'>{errors.slug.message}</p>}
               </div>
               <div className='space-y-2'>
-                <Label>Giá</Label>
-                <Input
-                  type='number'
-                  {...register('price', { valueAsNumber: true })}
-                  placeholder='Nhập giá'
-                  required
-                  min={0}
+                <NumberCustom
+                  minValue={0}
+                  label='Giá'
+                  control={control}
+                  name='price'
                   disabled={disabled}
+                  custom={{
+                    name: 'price',
+                    groupSeparator: ',',
+                    allowDecimals: false,
+                    allowNegativeValue: false,
+                    intlConfig: {
+                      locale: 'vi-VN',
+                      currency: 'VND'
+                    },
+                    min: 0,
+                    step: 1000,
+                  }}
                 />
                 {errors.price && <p className='text-red-500'>{errors.price.message}</p>}
               </div>
               <div className='space-y-2'>
-                <Label>Giảm giá (%)</Label>
-                <Input
-                  type='number'
-                  {...register('discount', { valueAsNumber: true })}
-                  placeholder='0'
-                  min={0}
-                  required
-                  max={100}
-                  step={1}
+                <NumberCustom
+                  minValue={0}
+                  maxValue={100}
+                  label='Giảm giá (%)'
+                  control={control}
+                  name='discount'
                   disabled={disabled}
+                  custom={{
+                    name: 'discount',
+                    suffix: '%',
+                    allowDecimals: false,
+                    allowNegativeValue: false,
+                    step: 1,
+                    min: 0,
+                    max: 100
+                  }}
                 />
                 {errors.discount && <p className='text-red-500'>{errors.discount.message}</p>}
               </div>

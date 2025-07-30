@@ -28,6 +28,19 @@ export default function UpdateCourse({ data, courseId, refetch }: IProps) {
     accept: 'image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,image/webp',
     maxSize
   })
+  const defaultValues = {
+    benefits: data.benefits,
+    courseIds: data.courseType === CourseType.COMBO ? data.comboChildren.map((item) => item.id) : undefined,
+    courseType: data.courseType,
+    description: data.description,
+    discount: data.discount,
+    image: data.image,
+    isDraft: data.isDraft,
+    price: data.price,
+    slug: data.slug,
+    title: data.title,
+    video: data.video
+  }
   const {
     register,
     handleSubmit,
@@ -39,19 +52,7 @@ export default function UpdateCourse({ data, courseId, refetch }: IProps) {
     watch,
     setError
   } = useForm({
-    defaultValues: {
-      benefits: data.benefits,
-      courseIds: data.courseType === CourseType.COMBO ? data.comboChildren.map((item) => item.id) : undefined,
-      courseType: data.courseType,
-      description: data.description,
-      discount: data.discount,
-      image: data.image,
-      isDraft: data.isDraft,
-      price: data.price,
-      slug: data.slug,
-      title: data.title,
-      video: data.video
-    },
+    defaultValues,
     resolver: zodResolver(UpdateCourseBodySchema)
   })
   const uploadImageMutation = useUploadImageMutation()
@@ -102,6 +103,7 @@ export default function UpdateCourse({ data, courseId, refetch }: IProps) {
 
   return (
     <Course
+      getValues={getValues as any}
       control={control as any}
       errors={errors}
       reset={reset as any}
@@ -111,7 +113,7 @@ export default function UpdateCourse({ data, courseId, refetch }: IProps) {
       setFile={setFile}
       isDirty={isDirty}
       register={register as any}
-      data={data}
+      data={defaultValues}
       watch={watch as any}
       buttonText='Lưu thay đổi'
       titleHeader='Thông tin khóa học'

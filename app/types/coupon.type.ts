@@ -41,27 +41,6 @@ export const CreateCouponBodySchema = CouponSchema.pick({
 })
   .strict()
   .superRefine((data, ctx) => {
-    if (data.startAt >= data.endAt) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc',
-        path: ['startAt']
-      })
-    }
-    if (data.startAt < new Date()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Ngày bắt đầu phải lớn hơn ngày hiện tại',
-        path: ['startAt']
-      })
-    }
-    if (data.endAt < new Date()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Ngày kết thúc phải lớn hơn ngày hiện tại',
-        path: ['endAt']
-      })
-    }
     if (data.couponType === CouponTypeConstant.PERCENT) {
       if (data.discount > 100) {
         ctx.addIssue({
@@ -135,3 +114,4 @@ export type GetCouponDetailResType = z.infer<typeof GetCouponDetailResSchema>
 export type GetCouponListResType = z.infer<typeof GetCouponListResSchema>
 export type GetValidateCouponResType = z.infer<typeof GetValidateCouponResSchema>
 export type GetValidateCouponBodyType = z.infer<typeof GetValidateCouponBodySchema>
+export type GetCouponsQueryType = z.infer<typeof GetCouponsQuerySchema>

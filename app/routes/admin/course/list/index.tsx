@@ -166,7 +166,22 @@ function getColumns({
       header: 'Khuyyến mãi',
       cell: ({ row }) => (
         <div className='flex flex-col gap-2'>
-          <span className={cn('text-base font-semibold text-primary')}>{row.original.discount}%</span>
+          <Badge className={cn('font-semibold')}>{row.original.discount}%</Badge>
+        </div>
+      )
+    },
+    {
+      accessorKey: 'isDraft',
+      header: 'Trạng thái',
+      cell: ({ row }) => (
+        <div className='flex flex-col gap-2'>
+          <Badge variant="outline" className="gap-1.5">
+            <span
+              className={cn("size-1.5 rounded-full", row.original.isDraft ? 'bg-amber-500' : 'bg-emerald-500')}
+              aria-hidden="true"
+            ></span>
+            {row.original.isDraft ? 'Bản nháp' : 'Đã xuất bản'}
+          </Badge>
         </div>
       )
     },

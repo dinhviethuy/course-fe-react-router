@@ -39,15 +39,14 @@ export function MultiSelect({ options, selected, onChange, disabled }: IProps) {
                 return (
                   <Badge key={id} variant='default' className='flex items-center gap-1 pr-1'>
                     {item.title}
-                    <button
-                      type='button'
+                    <div
                       onClick={() => {
                         onChange(selected.filter((i) => i !== id))
                       }}
                       className='ml-1 rounded-full group hover:bg-muted p-0.5 cursor-pointer'
                     >
                       <X className='h-3 w-3 text-background group-hover:text-accent-foreground' />
-                    </button>
+                    </div>
                   </Badge>
                 )
               })}

@@ -31,7 +31,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { PAGE_LIMIT } from '~/constants/other.constant'
 import { useDeleteCartMutation, useGetListCart } from '~/hooks/useCart'
-import { useValidateCouponMutation } from '~/hooks/useCounpon'
+import { useValidateCouponMutation } from '~/hooks/useCoupon'
 import { useCreateOrderMutation } from '~/hooks/useOrder'
 import { cn, formatCurrency, handleError } from '~/lib/utils'
 import type { GetListCartResType } from '~/types/cart.type'

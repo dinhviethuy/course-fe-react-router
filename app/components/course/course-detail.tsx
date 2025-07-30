@@ -19,7 +19,8 @@ export default function CourseDetail({ data }: IProps) {
     reset,
     control,
     setValue,
-    watch
+    watch,
+    getValues
   } = useForm({
     defaultValues: {
       benefits: data.benefits,
@@ -55,6 +56,7 @@ export default function CourseDetail({ data }: IProps) {
   return (
     <Course
       control={control as any}
+      getValues={getValues as any}
       errors={errors}
       reset={reset as any}
       handleSubmit={handleSubmit}

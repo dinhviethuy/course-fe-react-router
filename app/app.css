@@ -162,10 +162,11 @@
   height: 48px;
   border-radius: 50%;
   display: inline-block;
-  border-top: 4px solid #fff;
+  border-top: 4px solid;
   border-right: 4px solid transparent;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
+  @apply border-t-accent-foreground;
 }
 .loader::after {
   content: '';

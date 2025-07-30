@@ -27,14 +27,15 @@ export default [
     layout('layout/admin/layout-default.tsx', [
       route('/admin/dashboard', 'routes/admin/dashboard/index.tsx'),
       ...prefix('/admin/courses', [
-        index('routes/admin/courses/list/index.tsx'),
-        route('/new', 'routes/admin/courses/new/index.tsx'),
-        route('/edit/:courseId', 'routes/admin/courses/edit/index.tsx'),
-        route('/detail/:courseId', 'routes/admin/courses/detail/index.tsx')
+        index('routes/admin/course/list/index.tsx'),
+        route('/new', 'routes/admin/course/new/index.tsx'),
+        route('/edit/:courseId', 'routes/admin/course/edit/index.tsx'),
+        route('/detail/:courseId', 'routes/admin/course/detail/index.tsx')
       ]),
       ...prefix('/admin/users', [index('routes/admin/users/list/index.tsx')]),
       route('/admin/roles', 'routes/admin/role/list/index.tsx'),
-      route('/admin/permissions', 'routes/admin/permission/list/index.tsx')
+      route('/admin/permissions', 'routes/admin/permission/list/index.tsx'),
+      route('/admin/coupons', 'routes/admin/coupon/list/index.tsx')
     ])
   ])
 ] satisfies RouteConfig

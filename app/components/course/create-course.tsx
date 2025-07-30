@@ -100,6 +100,7 @@ export default function Component() {
       buttonText='Tạo ngay'
       titleHeader='Tạo khóa học mới'
       watch={watch as any}
+      getValues={getValues as any}
       uploadFile={{
         errors: errorsUploadFile,
         files,

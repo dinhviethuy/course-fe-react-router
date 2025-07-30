@@ -75,12 +75,8 @@ const data = {
       icon: Ticket,
       items: [
         {
-          title: 'Danh sách khóa học',
-          url: '/admin/courses'
-        },
-        {
-          title: 'Tạo khóa học mới',
-          url: '/courses/new'
+          title: 'Danh sách khuyến mãi',
+          url: '/admin/coupons'
         }
       ]
     },

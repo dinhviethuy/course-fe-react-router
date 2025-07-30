@@ -37,7 +37,7 @@ import { RoleName } from '~/constants/role.constant'
 import { UserStatus, type UserStatusType } from '~/constants/user.constant'
 import { useListRoleQuery } from '~/hooks/useRole'
 import { useDeleteUserMutation, useListUserQuery } from '~/hooks/useUser'
-import { formatDate, handleError } from '~/lib/utils'
+import { cn, formatDate, handleError } from '~/lib/utils'
 import type { GetRolesResType } from '~/types/role.type'
 import type { GetUsersResType } from '~/types/user.type'
 interface DataTablePaginationProps<TData> {
@@ -171,8 +171,14 @@ function getColumns({
       accessorKey: 'status',
       header: 'Trạng thái',
       cell: ({ row }) => (
-        <div className='flex flex-col gap-2'>
-          <Badge >{row.original.status}</Badge>
+        <div className='flex items-center gap-2 flex-wrap'>
+          <Badge variant="outline" className="gap-1.5">
+            <span
+              className={cn("size-1.5 rounded-full", row.original.status === UserStatus.ACTIVE ? 'bg-emerald-500' : 'bg-red-500')}
+              aria-hidden="true"
+            ></span>
+            {row.original.status === UserStatus.ACTIVE ? 'Hoạt động' : 'Bị chặn'}
+          </Badge>
         </div>
       )
     },
