@@ -15,15 +15,15 @@ interface IProps {
   name: string,
   disabled?: boolean,
   custom?: CurrencyInputProps
+  step?: number
 }
 
-export default function NumberCustom({ minValue, maxValue, label, control, name, disabled, custom }: IProps) {
+export default function NumberCustom({ minValue, maxValue, label, control, name, disabled, custom, step = 1 }: IProps) {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field: { value = 0, onChange } }) => {
-        const step = 1
 
         const handleIncrement = () => {
           const next = Math.min((value ?? 0) + step, maxValue ?? Infinity)

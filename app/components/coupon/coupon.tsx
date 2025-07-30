@@ -95,6 +95,7 @@ export default function Coupon({
                   control={control}
                   name='discount'
                   disabled={disabled}
+                  step={watch('couponType') === CouponType.PERCENT ? 1 : 1000}
                   custom={{
                     name: 'discount',
                     suffix: watch('couponType') === CouponType.PERCENT ? '%' : undefined,
@@ -178,7 +179,6 @@ export default function Coupon({
                   onValueChange={(value) => {
                     setValue('couponType', value as CouponType)
                     if (value === formState?.defaultValues?.couponType) {
-                      console.log(formState?.defaultValues?.discount)
                       setValue('discount', formState?.defaultValues?.discount ?? 0)
                     } else {
                       setValue('discount', 0)

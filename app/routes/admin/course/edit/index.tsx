@@ -1,4 +1,4 @@
-import type { Route } from '.react-router/types/app/routes/admin/courses/edit/+types'
+import type { Route } from '.react-router/types/app/routes/admin/course/edit/+types'
 import { useSearchParams } from 'react-router'
 import UpdateCourse from '~/components/course/update-course'
 import DragCourse from '~/components/drag-course/drag-course'

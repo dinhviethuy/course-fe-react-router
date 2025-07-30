@@ -141,6 +141,7 @@ export default function Course({
                   minValue={0}
                   label='Giá'
                   control={control}
+                  step={1000}
                   name='price'
                   disabled={disabled}
                   custom={{
