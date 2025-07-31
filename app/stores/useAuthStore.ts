@@ -1,5 +1,13 @@
 import { create } from 'zustand'
 
+interface PermissionStoreType {
+  id: number
+  name: string
+  method: string
+  path: string
+  module: string
+}
+
 type AuthStoreType = {
   isAuthenticated: boolean
   setIsAuthenticated: (isAuthenticated: boolean) => void
@@ -7,6 +15,8 @@ type AuthStoreType = {
   setIsLoading: (isLoading: boolean) => void
   isLogout: boolean
   setIsLogout: (isLogout: boolean) => void
+  permissions: PermissionStoreType[]
+  setPermissions: (permissions: PermissionStoreType[]) => void
 }
 
 export const useAuthStore = create<AuthStoreType>((set) => ({
@@ -15,5 +25,7 @@ export const useAuthStore = create<AuthStoreType>((set) => ({
   isLoading: true,
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   isLogout: false,
-  setIsLogout: (isLogout: boolean) => set({ isLogout })
+  setIsLogout: (isLogout: boolean) => set({ isLogout }),
+  permissions: [],
+  setPermissions: (permissions: PermissionStoreType[]) => set({ permissions })
 }))

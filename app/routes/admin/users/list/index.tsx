@@ -11,6 +11,7 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import AdminGuard from '~/components/guard/admin-guard'
 import Loading from '~/components/loading/loading'
 import {
   AlertDialog,
@@ -33,6 +34,7 @@ import CreateUser from '~/components/user/create-user'
 import UpdateUser from '~/components/user/update-user'
 import UserDetail from '~/components/user/user-detail'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { RoleName } from '~/constants/role.constant'
 import { UserStatus, type UserStatusType } from '~/constants/user.constant'
 import { useListRoleQuery } from '~/hooks/useRole'
@@ -208,36 +210,43 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <UserDetail roles={roles || []} user={row.original} />
-          <UpdateUser roles={roles || []} user={row.original} />
-          <AlertDialog>
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <AlertDialogTrigger asChild>
-                    <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                      <Trash className='w-6 h-6' />
-                    </Button>
-                  </AlertDialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa người dùng</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Bạn đang thực hiện xóa người dùng <span className='font-semibold text-accent-foreground'>{row.original.fullName}</span>.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
-                <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
-                  Xóa
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <AdminGuard path={ADMIN_PERMISSIONS.USERS.GET_USERS_USERID.path} method={ADMIN_PERMISSIONS.USERS.GET_USERS_USERID.method}>
+            <UserDetail roles={roles || []} user={row.original} />
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.USERS.PUT_USERS_USERID.path} method={ADMIN_PERMISSIONS.USERS.PUT_USERS_USERID.method}>
+            <UpdateUser roles={roles || []} user={row.original} />
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.USERS.DELETE_USERS_USERID.path} method={ADMIN_PERMISSIONS.USERS.DELETE_USERS_USERID.method}>
+            <AlertDialog>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
+                        <Trash className='w-6 h-6' />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className='dark px-2 py-1 text-xs'>Xóa người dùng</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Bạn đang thực hiện xóa người dùng <span className='font-semibold text-accent-foreground'>{row.original.fullName}</span>.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
+                  <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
+                    Xóa
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </AdminGuard>
         </div>
       )
     }
@@ -330,7 +339,7 @@ function BuildTable({
   )
 }
 
-export default function Users() {
+function Users() {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<UserStatusType | 'all'>('all')
   const [roleId, setRoleId] = useState<number | string>('all')
@@ -375,7 +384,9 @@ export default function Users() {
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <h1 className='text-2xl font-semibold'>Danh sách người dùng</h1>
-        <CreateUser roles={listRole?.data.data.roles || []} />
+        <AdminGuard path={ADMIN_PERMISSIONS.USERS.POST_USERS.path} method={ADMIN_PERMISSIONS.USERS.POST_USERS.method}>
+          <CreateUser roles={listRole?.data.data.roles || []} />
+        </AdminGuard>
       </div>
       <div className='mb-4 flex items-center flex-wrap gap-4'>
         <Input
@@ -438,5 +449,13 @@ export default function Users() {
         />
       </div>
     </>
+  )
+}
+
+export default function UsersPage() {
+  return (
+    <AdminGuard path={ADMIN_PERMISSIONS.USERS.GET_USERS.path} method={ADMIN_PERMISSIONS.USERS.GET_USERS.method} isPage>
+      <Users />
+    </AdminGuard>
   )
 }

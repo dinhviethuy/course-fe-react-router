@@ -11,6 +11,7 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import AdminGuard from '~/components/guard/admin-guard'
 import Loading from '~/components/loading/loading'
 import CreateRole from '~/components/role/create-role'
 import RoleDetailDrawer from '~/components/role/role-detail'
@@ -33,6 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useDeleteRoleMutation, useListRoleQuery } from '~/hooks/useRole'
 import { cn, formatDate, handleError } from '~/lib/utils'
 import type { GetRolesResType } from '~/types/role.type'
@@ -190,36 +192,42 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <RoleDetailDrawer roleId={row.original.id} />
-          <UpdateRole roleId={row.original.id} />
-          <AlertDialog>
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <AlertDialogTrigger asChild>
-                    <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                      <Trash className='w-6 h-6' />
-                    </Button>
-                  </AlertDialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa vai trò</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Bạn đang thực hiện xóa vai trò <span className='font-semibold text-accent-foreground'>{row.original.name}</span>.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
-                <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
-                  Xóa
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <AdminGuard path={ADMIN_PERMISSIONS.ROLES.GET_ROLES_ROLEID.path} method={ADMIN_PERMISSIONS.ROLES.GET_ROLES_ROLEID.method}>
+            <RoleDetailDrawer roleId={row.original.id} />
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.ROLES.PUT_ROLES_ROLEID.path} method={ADMIN_PERMISSIONS.ROLES.PUT_ROLES_ROLEID.method}>
+            <UpdateRole roleId={row.original.id} />
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.ROLES.DELETE_ROLES_ROLEID.path} method={ADMIN_PERMISSIONS.ROLES.DELETE_ROLES_ROLEID.method}>
+            <AlertDialog>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
+                        <Trash className='w-6 h-6' />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className='dark px-2 py-1 text-xs'>Xóa vai trò</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Bạn đang thực hiện xóa vai trò <span className='font-semibold text-accent-foreground'>{row.original.name}</span>.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
+                  <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
+                    Xóa
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </AdminGuard>
         </div>
       )
     }
@@ -312,7 +320,7 @@ function BuildTable({
   )
 }
 
-export default function Roles() {
+function Roles() {
   const [search, setSearch] = useState('')
   const [isActive, setIsActive] = useState<'all' | 'true' | 'false'>('all')
   const [sort, setSort] = useState<{
@@ -353,7 +361,9 @@ export default function Roles() {
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <h1 className='text-2xl font-semibold'>Danh sách vai trò</h1>
-        <CreateRole />
+        <AdminGuard path={ADMIN_PERMISSIONS.ROLES.POST_ROLES.path} method={ADMIN_PERMISSIONS.ROLES.POST_ROLES.method}>
+          <CreateRole />
+        </AdminGuard>
       </div>
       <div className='mb-4 flex items-center flex-wrap gap-4'>
         <Input
@@ -404,3 +414,13 @@ export default function Roles() {
     </>
   )
 }
+
+
+export default function RolePage() {
+  return (
+    <AdminGuard path={ADMIN_PERMISSIONS.ROLES.GET_ROLES.path} method={ADMIN_PERMISSIONS.ROLES.GET_ROLES.method} isPage>
+      <Roles />
+    </AdminGuard>
+  )
+}
+

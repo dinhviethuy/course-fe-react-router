@@ -1,4 +1,6 @@
 import CreateCourse from '~/components/course/create-course'
+import AdminGuard from '~/components/guard/admin-guard'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 
 export function meta() {
   return [
@@ -11,5 +13,9 @@ export function meta() {
 
 
 export default function NewCourse() {
-  return <CreateCourse />
+  return (
+    <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.POST_MANAGE_COURSES.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.POST_MANAGE_COURSES.method} isPage>
+      <CreateCourse />
+    </AdminGuard>
+  )
 }

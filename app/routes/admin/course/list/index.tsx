@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, PencilLine
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
+import AdminGuard from '~/components/guard/admin-guard'
 import Loading from '~/components/loading/loading'
 import {
   AlertDialog,
@@ -32,6 +33,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { CourseType } from '~/constants/course.constant'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useDeleteCourseMutation, useListCourseAdminQuery } from '~/hooks/useCourse'
 import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
 import type { ListCoursesResType } from '~/types/course.type'
@@ -211,56 +213,62 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link to={`/admin/courses/detail/${row.original.id}`}>
-                  <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                    <Eye className='w-6 h-6' />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent className='dark px-2 py-1 text-xs'>Xem chi tiết</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link to={`/admin/courses/edit/${row.original.id}`}>
-                  <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                    <PencilLine className='w-6 h-6' />
-                  </Button>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent className='dark px-2 py-1 text-xs'>Sửa khóa học</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <AlertDialog>
+          <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES_COURSEID.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES_COURSEID.method}>
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <AlertDialogTrigger asChild>
+                  <Link to={`/admin/courses/detail/${row.original.id}`}>
                     <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                      <Trash className='w-6 h-6' />
+                      <Eye className='w-6 h-6' />
                     </Button>
-                  </AlertDialogTrigger>
+                  </Link>
                 </TooltipTrigger>
-                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa khóa học</TooltipContent>
+                <TooltipContent className='dark px-2 py-1 text-xs'>Xem chi tiết</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>Bạn đang thực hiện xóa khóa học {row.original.title}.</AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
-                <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
-                  Xóa
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.PUT_MANAGE_COURSES_COURSEID.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.PUT_MANAGE_COURSES_COURSEID.method}>
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link to={`/admin/courses/edit/${row.original.id}`}>
+                    <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
+                      <PencilLine className='w-6 h-6' />
+                    </Button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent className='dark px-2 py-1 text-xs'>Sửa khóa học</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.DELETE_MANAGE_COURSES_COURSEID.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.DELETE_MANAGE_COURSES_COURSEID.method}>
+            <AlertDialog>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
+                        <Trash className='w-6 h-6' />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className='dark px-2 py-1 text-xs'>Xóa khóa học</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
+                  <AlertDialogDescription>Bạn đang thực hiện xóa khóa học {row.original.title}.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
+                  <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
+                    Xóa
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </AdminGuard>
         </div>
       )
     }
@@ -351,7 +359,7 @@ function BuildTable({
   )
 }
 
-export default function Courses() {
+function Courses() {
   const [search, setSearch] = useState('')
   const [isDraft, setIsDraft] = useState<string>('all')
   const [sort, setSort] = useState<{
@@ -446,5 +454,13 @@ export default function Courses() {
         />
       </div>
     </>
+  )
+}
+
+export default function CoursesPage() {
+  return (
+    <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method} isPage>
+      <Courses />
+    </AdminGuard>
   )
 }

@@ -14,6 +14,7 @@ import { toast } from 'sonner'
 import CouponDetail from '~/components/coupon/coupon-detail'
 import CreateCoupon from '~/components/coupon/create-coupon'
 import UpdateCoupon from '~/components/coupon/update-coupon'
+import AdminGuard from '~/components/guard/admin-guard'
 import Loading from '~/components/loading/loading'
 import {
   AlertDialog,
@@ -34,6 +35,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { CouponType } from '~/constants/counpon.constant'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useDeleteCouponMutation, useGetCouponsQuery } from '~/hooks/useCoupon'
 import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
 import type { GetCouponListResType } from '~/types/coupon.type'
@@ -241,36 +243,42 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <CouponDetail coupon={row.original} />
-          <UpdateCoupon coupon={row.original} />
-          <AlertDialog>
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <AlertDialogTrigger asChild>
-                    <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                      <Trash className='w-6 h-6' />
-                    </Button>
-                  </AlertDialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa mã giảm giá</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Bạn đang thực hiện xóa mã giảm giá <span className='font-semibold text-accent-foreground'>{row.original.code}</span>.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
-                <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
-                  Xóa
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <AdminGuard path={ADMIN_PERMISSIONS.COUPONS.GET_COUPONS_COUPONID.path} method={ADMIN_PERMISSIONS.COUPONS.GET_COUPONS_COUPONID.method}>
+            <CouponDetail coupon={row.original} />
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.COUPONS.PUT_COUPONS_COUPONID.path} method={ADMIN_PERMISSIONS.COUPONS.PUT_COUPONS_COUPONID.method}>
+            <UpdateCoupon coupon={row.original} />
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.COUPONS.DELETE_COUPONS_COUPONID.path} method={ADMIN_PERMISSIONS.COUPONS.DELETE_COUPONS_COUPONID.method}>
+            <AlertDialog>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
+                        <Trash className='w-6 h-6' />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className='dark px-2 py-1 text-xs'>Xóa mã giảm giá</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Bạn đang thực hiện xóa mã giảm giá <span className='font-semibold text-accent-foreground'>{row.original.code}</span>.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
+                  <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
+                    Xóa
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </AdminGuard>
         </div>
       )
     }
@@ -362,7 +370,7 @@ function BuildTable({
   )
 }
 
-export default function Coupons() {
+function Coupons() {
   const [search, setSearch] = useState('')
   const [couponType, setCouponType] = useState<CouponType | 'all'>('all')
   const [isActive, setIsActive] = useState<string | 'all'>('all')
@@ -405,7 +413,9 @@ export default function Coupons() {
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <h1 className="text-2xl font-semibold">Danh sách mã giảm giá</h1>
-        <CreateCoupon />
+        <AdminGuard path={ADMIN_PERMISSIONS.COUPONS.POST_COUPONS.path} method={ADMIN_PERMISSIONS.COUPONS.POST_COUPONS.method}>
+          <CreateCoupon />
+        </AdminGuard>
       </div>
 
       <div className='mb-4 flex items-center flex-wrap gap-4'>
@@ -470,5 +480,13 @@ export default function Coupons() {
         />
       </div>
     </>
+  )
+}
+
+export default function CouponsPage() {
+  return (
+    <AdminGuard path={ADMIN_PERMISSIONS.COUPONS.GET_COUPONS.path} method={ADMIN_PERMISSIONS.COUPONS.GET_COUPONS.method} isPage>
+      <Coupons />
+    </AdminGuard>
   )
 }

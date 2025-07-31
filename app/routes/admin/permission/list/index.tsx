@@ -11,6 +11,7 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Trash } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import AdminGuard from '~/components/guard/admin-guard'
 import Loading from '~/components/loading/loading'
 import RequestMethod from '~/components/method/method'
 import CreatePermission from '~/components/permission/create-permission'
@@ -33,6 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '~/components/ui/table'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { HTTPMethod } from '~/constants/role.constant'
 import { useDeletePermissionMutation, useGetListPermissionQuery, useGetModulesQuery } from '~/hooks/usePermisson'
 import { formatDate, handleError } from '~/lib/utils'
@@ -197,36 +199,42 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
-          <PermissionDetail permission={row.original} modules={modules} />
-          <UpdatePermission modules={modules} permission={row.original} />
-          <AlertDialog>
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <AlertDialogTrigger asChild>
-                    <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
-                      <Trash className='w-6 h-6' />
-                    </Button>
-                  </AlertDialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent className='dark px-2 py-1 text-xs'>Xóa quyền</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Bạn đang thực hiện xóa quyền <span className='font-semibold text-accent-foreground'>{row.original.name}</span>.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
-                <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
-                  Xóa
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <AdminGuard path={ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS_PERMISSIONID.path} method={ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS_PERMISSIONID.method}>
+            <PermissionDetail permission={row.original} modules={modules} />
+          </AdminGuard >
+          <AdminGuard path={ADMIN_PERMISSIONS.PERMISSIONS.PUT_PERMISSIONS_PERMISSIONID.path} method={ADMIN_PERMISSIONS.PERMISSIONS.PUT_PERMISSIONS_PERMISSIONID.method}>
+            <UpdatePermission modules={modules} permission={row.original} />
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.PERMISSIONS.DELETE_PERMISSIONS_PERMISSIONID.path} method={ADMIN_PERMISSIONS.PERMISSIONS.DELETE_PERMISSIONS_PERMISSIONID.method}>
+            <AlertDialog>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertDialogTrigger asChild>
+                      <Button variant='ghost' className='cursor-pointer p-0 h-10 w-10'>
+                        <Trash className='w-6 h-6' />
+                      </Button>
+                    </AlertDialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className='dark px-2 py-1 text-xs'>Xóa quyền</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn thực hiện hành động này?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Bạn đang thực hiện xóa quyền <span className='font-semibold text-accent-foreground'>{row.original.name}</span>.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className='cursor-pointer h-10 w-auto'>Thoát</AlertDialogCancel>
+                  <AlertDialogAction className='cursor-pointer h-10 w-auto' onClick={() => handleDelete(row.original.id)}>
+                    Xóa
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </AdminGuard>
         </div>
       )
     }
@@ -318,7 +326,7 @@ function BuildTable({
   )
 }
 
-export default function Permissions() {
+function Permissions() {
   const [name, setName] = useState('')
   const [module, setModule] = useState<string | 'all'>('all')
   const [method, setMethod] = useState<typeof HTTPMethod[keyof typeof HTTPMethod] | 'all'>('all')
@@ -365,7 +373,9 @@ export default function Permissions() {
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <h1 className="text-2xl font-semibold">Danh sách quyền</h1>
-        <CreatePermission modules={modules} />
+        <AdminGuard path={ADMIN_PERMISSIONS.PERMISSIONS.POST_PERMISSIONS.path} method={ADMIN_PERMISSIONS.PERMISSIONS.POST_PERMISSIONS.method}>
+          <CreatePermission modules={modules} />
+        </AdminGuard>
       </div>
 
       <div className='mb-4 flex items-center flex-wrap gap-4'>
@@ -441,5 +451,15 @@ export default function Permissions() {
         />
       </div>
     </>
+  )
+}
+
+export default function PermissionPage() {
+  return (
+    <AdminGuard path={ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS.path} method={ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS.method} isPage>
+      <AdminGuard path={ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS_MODULES.path} method={ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS_MODULES.method} isPage>
+        <Permissions />
+      </AdminGuard>
+    </AdminGuard>
   )
 }

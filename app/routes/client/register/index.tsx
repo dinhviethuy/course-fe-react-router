@@ -13,14 +13,14 @@ import { handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { RegisterBodySchema, type RegisterBodyType } from '~/types/auth.type'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Đăng ký' }, { name: 'description', content: 'Đăng ký' }]
 }
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
-  const { setIsLogout, setIsAuthenticated } = useAuthStore()
+  const { setIsLogout, setIsAuthenticated, setPermissions } = useAuthStore()
   const navigate = useNavigate()
   const {
     register,
@@ -43,7 +43,8 @@ export default function Register() {
   const handleRegister = async (data: RegisterBodyType) => {
     if (registerMutation.isPending) return
     try {
-      await registerMutation.mutateAsync(data)
+      const res = await registerMutation.mutateAsync(data)
+      setPermissions(res.data.data.role.permissions)
       toast.success('Tạo tài khoản thành công')
       setIsLogout(false)
       setIsAuthenticated(true)

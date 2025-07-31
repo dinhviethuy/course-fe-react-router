@@ -11,7 +11,7 @@ import { handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { LoginBodySchema, type LoginBodyType } from '~/types/auth.type'
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [{ title: 'Đăng nhập' }, { name: 'description', content: 'Đăng nhập' }]
 }
 
@@ -19,6 +19,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const setIsAuthenticated = useAuthStore((s) => s.setIsAuthenticated)
   const setIsLogout = useAuthStore((s) => s.setIsLogout)
+  const setPermissions = useAuthStore((s) => s.setPermissions)
   const {
     register,
     handleSubmit,
@@ -36,10 +37,11 @@ export default function Login() {
   const handleLogin = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return
     try {
-      await loginMutation.mutateAsync({
+      const res = await loginMutation.mutateAsync({
         email: data.email,
         password: data.password
       })
+      setPermissions(res.data.data.role.permissions)
       setIsAuthenticated(true)
       setIsLogout(false)
       navigate('/')

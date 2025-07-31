@@ -3,9 +3,11 @@ import { useSearchParams } from 'react-router'
 import UpdateCourse from '~/components/course/update-course'
 import DragCourse from '~/components/drag-course/drag-course'
 import NotFound from '~/components/error-page/error-page'
+import AdminGuard from '~/components/guard/admin-guard'
 import CreateLesson from '~/components/lesson/create-lesson'
 import UpdateLesson from '~/components/lesson/update-lesson'
 import { CourseType } from '~/constants/course.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useCourseDetailForAdminQuery } from '~/hooks/useCourse'
 import { getLessonIdAndChapterId } from '~/lib/utils'
 
@@ -19,7 +21,11 @@ export function meta() {
 }
 
 
-export default function UpdateCoursePage({ params }: Route.ActionArgs) {
+function UpdateCourseComponent({ params }: {
+  params: {
+    courseId: string
+  }
+}) {
   const getCourseDetailMutation = useCourseDetailForAdminQuery({ courseId: Number(params.courseId) })
 
   const [searchParams] = useSearchParams()
@@ -59,3 +65,11 @@ export default function UpdateCoursePage({ params }: Route.ActionArgs) {
     </div>
   )
 }
+
+export default function UpdateCoursePage({ params }: Route.ActionArgs) {
+  return (
+    <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.PUT_MANAGE_COURSES_COURSEID.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.PUT_MANAGE_COURSES_COURSEID.method} isPage>
+      <UpdateCourseComponent params={params} />
+    </AdminGuard>
+  )
+} 

@@ -3,8 +3,10 @@ import { useSearchParams } from 'react-router'
 import CourseDetail from '~/components/course/course-detail'
 import DragCourse from '~/components/drag-course/drag-course'
 import NotFound from '~/components/error-page/error-page'
+import AdminGuard from '~/components/guard/admin-guard'
 import UpdateLesson from '~/components/lesson/update-lesson'
 import { CourseType } from '~/constants/course.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useCourseDetailForAdminQuery } from '~/hooks/useCourse'
 import { getLessonIdAndChapterId } from '~/lib/utils'
 
@@ -18,7 +20,7 @@ export function meta() {
 }
 
 
-export default function CourseDetailPage({ params }: Route.ActionArgs) {
+function CourseDetailComponent({ params }: { params: { courseId: string } }) {
   const getCourseDetailMutation = useCourseDetailForAdminQuery({ courseId: Number(params.courseId) })
 
   const [searchParams] = useSearchParams()
@@ -51,5 +53,13 @@ export default function CourseDetailPage({ params }: Route.ActionArgs) {
         </div>
       )}
     </div>
+  )
+}
+
+export default function CourseDetailPage({ params }: Route.ActionArgs) {
+  return (
+    <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES_COURSEID.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES_COURSEID.method} isPage>
+      <CourseDetailComponent params={params} />
+    </AdminGuard>
   )
 }

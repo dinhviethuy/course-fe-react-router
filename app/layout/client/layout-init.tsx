@@ -5,26 +5,29 @@ import { useAuthStore } from '~/stores/useAuthStore'
 
 export async function clientLoader() {
   try {
-    await userApi.getProfile()
+    const res = await userApi.getProfile()
     return {
       isAuthenticated: true,
-      isLoading: false
+      isLoading: false,
+      permissions: res.data.data.role.permissions
     }
   } catch {
     return {
       isAuthenticated: false,
-      isLoading: false
+      isLoading: false,
+      permissions: []
     }
   }
 }
 
 export default function LayoutInit() {
-  const { isAuthenticated, isLoading } = useLoaderData<typeof clientLoader>()
-  const { setIsAuthenticated, setIsLoading, isLoading: isLoadingAuthStore } = useAuthStore()
+  const { isAuthenticated, isLoading, permissions } = useLoaderData<typeof clientLoader>()
+  const { setIsAuthenticated, setIsLoading, isLoading: isLoadingAuthStore, setPermissions } = useAuthStore()
   useEffect(() => {
     setIsAuthenticated(isAuthenticated)
     setIsLoading(isLoading)
-  }, [isAuthenticated, isLoading, setIsAuthenticated, setIsLoading])
+    setPermissions(permissions)
+  }, [isAuthenticated, isLoading, setIsAuthenticated, setIsLoading, permissions, setPermissions])
   if (isLoadingAuthStore)
     return (
       <div className='flex justify-center items-center min-h-screen bg-accent-foreground dark:bg-background'>

@@ -92,3 +92,12 @@ export type CreatePermissionBodyType = z.infer<typeof CreatePermissionBodySchema
 export type UpdatePermissionBodyType = z.infer<typeof UpdatePermissionBodySchema>
 export type GetPermissionDetailResType = z.infer<typeof GetPermissionDetailResSchema>
 export type GetModulesResType = z.infer<typeof GetModulesResSchema>
+export type PermissionsStoreType = {
+  [key: string]: {
+    [key: string]: {
+      method: string
+      path: string
+      module: string
+    }
+  }
+}
