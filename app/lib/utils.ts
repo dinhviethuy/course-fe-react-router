@@ -6,6 +6,8 @@ import { toast } from 'sonner'
 import { twMerge } from 'tailwind-merge'
 import { CouponType } from '~/constants/counpon.constant'
 import { OrderStatus, type OrderStatusType } from '~/constants/order.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
+import type { PermissionStoreType } from '~/stores/useAuthStore'
 import type {
   GetCourseDetailResType,
   GetCourseDetailResTypeForAdmin,
@@ -219,4 +221,40 @@ export const groupByModule = (permissions: any[]) => {
     acc[permission.module].push(permission)
     return acc
   }, {})
+}
+
+export function CheckAccess({
+  path,
+  method,
+  permissions
+}: {
+  permissions: PermissionStoreType[]
+  method: string
+  path: string
+}) {
+  return permissions.some((permission) => permission.method === method && permission.path === path)
+}
+
+export function CheckAdmin(permissions: PermissionStoreType[]) {
+  const randomName = ({ path, method }: { path: string; method: string }) => {
+    return method + '-' + path
+  }
+  const adminPermissions = new Set(
+    Object.values(ADMIN_PERMISSIONS).flatMap((permission) => {
+      return Object.values(permission).map((item) =>
+        randomName({
+          method: item.method,
+          path: item.path
+        })
+      )
+    })
+  )
+  return permissions.some((permission) =>
+    adminPermissions.has(
+      randomName({
+        method: permission.method,
+        path: permission.path
+      })
+    )
+  )
 }

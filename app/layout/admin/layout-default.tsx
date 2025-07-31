@@ -1,10 +1,18 @@
 import { Outlet } from 'react-router'
+import Forbiden from '~/components/error-page/error-page'
 import { AppSidebar } from '~/components/layouts/admin/sidebar/app-sidebar'
 import { ModeToggle } from '~/components/mode-toggle'
 import { Separator } from '~/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export default function LayoutDefault() {
+  const { isAdmin } = useAuthStore()
+  if (!isAdmin) return (
+    <div className='flex justify-center items-center min-h-screen'>
+      <Forbiden statusCode={403} message='Bạn không có quyền truy cập trang này' />
+    </div>
+  )
   return (
     <SidebarProvider>
       <AppSidebar />

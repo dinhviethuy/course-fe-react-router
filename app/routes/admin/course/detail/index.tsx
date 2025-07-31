@@ -4,7 +4,7 @@ import CourseDetail from '~/components/course/course-detail'
 import DragCourse from '~/components/drag-course/drag-course'
 import NotFound from '~/components/error-page/error-page'
 import AdminGuard from '~/components/guard/admin-guard'
-import UpdateLesson from '~/components/lesson/update-lesson'
+import DetailLesson from '~/components/lesson/update-lesson'
 import { CourseType } from '~/constants/course.constant'
 import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useCourseDetailForAdminQuery } from '~/hooks/useCourse'
@@ -45,11 +45,13 @@ function CourseDetailComponent({ params }: { params: { courseId: string } }) {
           <div className='col-span-8 xl:col-span-3 max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
             <DragCourse course={course} openedLessonId={lessonIdQuery} disabled={true} />
           </div>
-          {lessonIdQuery && chapterIdQuery && (
-            <div className='flex justify-center col-span-8 xl:col-span-5'>
-              <UpdateLesson disabled={true} courseId={course.id} lessonIdQuery={lessonIdQuery} lessonIdPrev={lessonIdPrev} lessonIdNext={lessonIdNext} chapterIdQuery={chapterIdQuery} />
-            </div>
-          )}
+          <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.GET_MANAGE_LESSONS_LESSONID.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.GET_MANAGE_LESSONS_LESSONID.method}>
+            {lessonIdQuery && chapterIdQuery && (
+              <div className='flex justify-center col-span-8 xl:col-span-5'>
+                <DetailLesson disabled={true} courseId={course.id} lessonIdQuery={lessonIdQuery} lessonIdPrev={lessonIdPrev} lessonIdNext={lessonIdNext} chapterIdQuery={chapterIdQuery} />
+              </div>
+            )}
+          </AdminGuard>
         </div>
       )}
     </div>

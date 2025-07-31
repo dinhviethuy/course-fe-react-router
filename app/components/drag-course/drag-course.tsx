@@ -21,9 +21,11 @@ import { toast } from 'sonner'
 import CreateChapter from '~/components/chapter/create-chapter'
 import SortableChapter from '~/components/drag-course/sortable-chapter'
 import SortableLesson from '~/components/drag-course/sortable-lesson'
+import AdminGuard from '~/components/guard/admin-guard'
 import { Accordion } from '~/components/ui/accordion'
 import { Card, CardContent, CardHeader } from '~/components/ui/card'
 import { CourseType } from '~/constants/course.constant'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useDeleteChapterMutation, useUpdateChapterMutation } from '~/hooks/useChapter'
 import { useReorderChaptersAndLessonsMutation } from '~/hooks/useCourse'
 import { getOrder, handleError } from '~/lib/utils'
@@ -267,7 +269,9 @@ export default function DragCourse({ course, openedLessonId, openedChapterId, di
     <div>
       <Card>
         <CardHeader className='flex justify-end'>
-          {!disabled && <CreateChapter courseId={course.id} />}
+          <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.path} method={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.method}>
+            {!disabled && <CreateChapter courseId={course.id} />}
+          </AdminGuard>
         </CardHeader>
         <CardContent>
           {course.courseType !== CourseType.COMBO && course.chapters.length > 0 && (
@@ -309,14 +313,16 @@ export default function DragCourse({ course, openedLessonId, openedChapterId, di
                             {chapter.lessons.map((lesson: any) => (
                               <SortableLesson key={lesson.id} lesson={lesson} courseId={course.id} openedLessonId={openedChapterId ? undefined : openedLessonId} disabled={disabled} />
                             ))}
-                            {!disabled &&
-                              <li>
-                                <Link to={`?chapterId=${chapter.id}`} className='p-2 border flex items-center hover:underline gap-2 border-gray-200 dark:border-gray-600 rounded-md bg-background transition-all duration-300' preventScrollReset>
-                                  <Plus />
-                                  <span>Thêm bài học</span>
-                                </Link>
-                              </li>
-                            }
+                            <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.POST_MANAGE_LESSONS.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.POST_MANAGE_LESSONS.method}>
+                              {!disabled &&
+                                <li>
+                                  <Link to={`?chapterId=${chapter.id}`} className='p-2 border flex items-center hover:underline gap-2 border-gray-200 dark:border-gray-600 rounded-md bg-background transition-all duration-300' preventScrollReset>
+                                    <Plus />
+                                    <span>Thêm bài học</span>
+                                  </Link>
+                                </li>
+                              }
+                            </AdminGuard>
                           </ul>
                         </SortableContext>
                       </SortableChapter>

@@ -5,12 +5,15 @@ import { GripVertical, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
+import AdminGuard from '~/components/guard/admin-guard'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '~/components/ui/alert-dialog'
 import { Button } from '~/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu'
 import { Switch } from '~/components/ui/switch'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useDeleteLessonMutation, useUpdateLessonMutation } from '~/hooks/useLesson'
-import { cn, formatDuration, handleError } from '~/lib/utils'
+import { CheckAccess, cn, formatDuration, handleError } from '~/lib/utils'
+import { useAuthStore } from '~/stores/useAuthStore'
 import type { GetCourseDetailResTypeForAdmin } from '~/types/course.type'
 import type { UpdateLessonBodyType } from '~/types/lesson.type'
 
@@ -25,10 +28,28 @@ export default function SortableLesson({
   openedLessonId?: number
   disabled?: boolean
 }) {
+  const { permissions } = useAuthStore()
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const updateLessonMutation = useUpdateLessonMutation()
   const deleteLessonMutaion = useDeleteLessonMutation()
   const queryClient = useQueryClient()
+
+  const isReorder = CheckAccess({
+    method: ADMIN_PERMISSIONS.MANAGE_COURSES.PATCH_MANAGE_COURSES_COURSEID_REORDER_FULL.method,
+    path: ADMIN_PERMISSIONS.MANAGE_COURSES.PATCH_MANAGE_COURSES_COURSEID_REORDER_FULL.path,
+    permissions
+  })
+
+
+  const isShowMenu = CheckAccess({
+    method: ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.method,
+    path: ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.path,
+    permissions
+  }) || CheckAccess({
+    method: ADMIN_PERMISSIONS.MANAGE_LESSONS.DELETE_MANAGE_LESSONS_LESSONID.method,
+    path: ADMIN_PERMISSIONS.MANAGE_LESSONS.DELETE_MANAGE_LESSONS_LESSONID.path,
+    permissions
+  })
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `lesson-${lesson.id}`,
@@ -36,7 +57,7 @@ export default function SortableLesson({
       type: 'lesson',
       lesson: lesson
     },
-    disabled: disabled
+    disabled: disabled || !isReorder
   })
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -74,6 +95,7 @@ export default function SortableLesson({
     }
   }
 
+
   return (
     <li
       ref={setNodeRef}
@@ -81,7 +103,7 @@ export default function SortableLesson({
       className='p-2 border flex justify-between gap-2 border-gray-200 dark:border-gray-600 rounded-md bg-background transition-all duration-300'
     >
       <div className='flex items-center gap-2'>
-        <span className={cn('cursor-move', disabled && 'cursor-not-allowed')} {...attributes} {...listeners}>
+        <span className={cn('cursor-move', (disabled || !isReorder) && 'cursor-not-allowed opacity-50')} {...attributes} {...listeners}>
           <GripVertical size={16} />
         </span>
         <Link to={`?lessonId=${lesson.id}`} preventScrollReset className={cn('hover:underline', {
@@ -93,18 +115,20 @@ export default function SortableLesson({
       </div>
 
       <div className='flex items-center gap-1'>
-        <div className='flex items-center gap-2'>
-          <span>Nháp</span>
-          <Switch disabled={disabled} className='cursor-pointer' checked={lesson.isDraft} onCheckedChange={() => handleUpdateLesson({
-            chapterId: lesson.chapterId,
-            title: lesson.title,
-            description: lesson.description,
-            duration: lesson.duration,
-            videoUrl: lesson.videoUrl,
-            isDraft: !lesson.isDraft,
-          })} />
-        </div>
-        {!disabled &&
+        <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.method}>
+          <div className='flex items-center gap-2'>
+            <span>Nháp</span>
+            <Switch disabled={disabled} className='cursor-pointer' checked={lesson.isDraft} onCheckedChange={() => handleUpdateLesson({
+              chapterId: lesson.chapterId,
+              title: lesson.title,
+              description: lesson.description,
+              duration: lesson.duration,
+              videoUrl: lesson.videoUrl,
+              isDraft: !lesson.isDraft,
+            })} />
+          </div>
+        </AdminGuard>
+        {!disabled && isShowMenu &&
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' className='h-8 w-8 p-0'>
@@ -113,20 +137,24 @@ export default function SortableLesson({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <Link to={`?lessonId=${lesson.id}`} className='w-full' preventScrollReset>
-                  Sửa
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className='text-red-600 cursor-pointer'
-                onSelect={(e) => {
-                  e.preventDefault()
-                  setOpenDeleteDialog(true)
-                }}
-              >
-                Xóa
-              </DropdownMenuItem>
+              <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.method}>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <Link to={`?lessonId=${lesson.id}`} className='w-full' preventScrollReset>
+                    Sửa
+                  </Link>
+                </DropdownMenuItem>
+              </AdminGuard>
+              <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.DELETE_MANAGE_LESSONS_LESSONID.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.DELETE_MANAGE_LESSONS_LESSONID.method}>
+                <DropdownMenuItem
+                  className='text-red-600 cursor-pointer'
+                  onSelect={(e) => {
+                    e.preventDefault()
+                    setOpenDeleteDialog(true)
+                  }}
+                >
+                  Xóa
+                </DropdownMenuItem>
+              </AdminGuard>
             </DropdownMenuContent>
           </DropdownMenu>}
       </div>

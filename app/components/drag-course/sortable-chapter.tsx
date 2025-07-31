@@ -5,6 +5,7 @@ import { useState } from 'react'
 import type { UseFormSetError } from 'react-hook-form'
 import { Link } from 'react-router'
 import UpdateChapter from '~/components/chapter/update-chapter'
+import AdminGuard from '~/components/guard/admin-guard'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
 import {
   AlertDialog,
@@ -19,7 +20,9 @@ import {
 import { Button } from '~/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu'
 import { Switch } from '~/components/ui/switch'
-import { cn, formatDuration } from '~/lib/utils'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
+import { CheckAccess, cn, formatDuration } from '~/lib/utils'
+import { useAuthStore } from '~/stores/useAuthStore'
 import { type UpdateChatperBodyType } from '~/types/chapter.type'
 import type { GetCourseDetailResTypeForAdmin } from '~/types/course.type'
 
@@ -42,14 +45,36 @@ export default function SortableChapter({
   isPending: boolean,
   disabled?: boolean
 }) {
+
+  const { permissions } = useAuthStore()
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+  const isReorder = CheckAccess({
+    method: ADMIN_PERMISSIONS.MANAGE_COURSES.PATCH_MANAGE_COURSES_COURSEID_REORDER_FULL.method,
+    path: ADMIN_PERMISSIONS.MANAGE_COURSES.PATCH_MANAGE_COURSES_COURSEID_REORDER_FULL.path,
+    permissions
+  })
+
+  const isShowMenu = CheckAccess({
+    method: ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method,
+    path: ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path,
+    permissions
+  }) || CheckAccess({
+    method: ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.method,
+    path: ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.path,
+    permissions
+  }) || CheckAccess({
+    method: ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.method,
+    path: ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.path,
+    permissions
+  })
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `chapter-${chapter.id}`,
     data: {
       type: 'chapter',
       chapter: chapter
     },
-    disabled: disabled
+    disabled: disabled || !isReorder
   })
 
   const chapterStyle = {
@@ -73,7 +98,7 @@ export default function SortableChapter({
         <div className='flex justify-between items-center gap-2 md:gap-4'>
           <AccordionTrigger className='py-2 text-[15px] leading-6 flex items-center gap-2 justify-between'>
             <div className='flex gap-2 items-center'>
-              <span className={cn('cursor-move', disabled && 'cursor-not-allowed')}  {...attributes} {...listeners}>
+              <span className={cn('cursor-move', (disabled || !isReorder) && 'cursor-not-allowed opacity-50')}  {...attributes} {...listeners}>
                 <GripVertical size={16} />
               </span>
               <span>{chapter.title}</span>
@@ -81,25 +106,27 @@ export default function SortableChapter({
             </div>
           </AccordionTrigger>
           <div className='flex gap-1'>
-            <div className='hidden sm:flex items-center gap-2'>
-              <span>Nháp</span>
-              <Switch
-                className='cursor-pointer'
-                checked={chapter.isDraft}
-                onCheckedChange={() =>
-                  handleUpdateChapter(
-                    {
-                      description: chapter.description,
-                      isDraft: !chapter.isDraft,
-                      title: chapter.title
-                    },
-                    chapter.id
-                  )
-                }
-                disabled={disabled}
-              />
-            </div>
-            {!disabled &&
+            <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path} method={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method}>
+              <div className='hidden sm:flex items-center gap-2'>
+                <span>Nháp</span>
+                <Switch
+                  className='cursor-pointer'
+                  checked={chapter.isDraft}
+                  onCheckedChange={() =>
+                    handleUpdateChapter(
+                      {
+                        description: chapter.description,
+                        isDraft: !chapter.isDraft,
+                        title: chapter.title
+                      },
+                      chapter.id
+                    )
+                  }
+                  disabled={disabled}
+                />
+              </div>
+            </AdminGuard>
+            {!disabled && isShowMenu &&
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant='ghost' className='h-8 w-8 p-0'>
@@ -109,24 +136,30 @@ export default function SortableChapter({
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align='end'>
-                  <DropdownMenuItem>
-                    <Link to={`?chapterId=${chapter.id}`} preventScrollReset>
-                      Tạo bài học mới
-                    </Link>
-                  </DropdownMenuItem>
-                  <UpdateChapter chapter={chapter} isPending={isPending} handleUpdateChapter={handleUpdateChapter}>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Sửa</DropdownMenuItem>
-                  </UpdateChapter>
+                  <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.path} method={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.method}>
+                    <DropdownMenuItem>
+                      <Link to={`?chapterId=${chapter.id}`} preventScrollReset>
+                        Tạo bài học mới
+                      </Link>
+                    </DropdownMenuItem>
+                  </AdminGuard>
+                  <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path} method={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method}>
+                    <UpdateChapter chapter={chapter} isPending={isPending} handleUpdateChapter={handleUpdateChapter}>
+                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Sửa</DropdownMenuItem>
+                    </UpdateChapter>
+                  </AdminGuard>
+                  <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.path} method={ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.method}>
+                    <DropdownMenuItem
+                      className='text-red-600'
+                      onSelect={(e) => {
+                        e.preventDefault()
+                        setOpenDeleteDialog(true)
+                      }}
+                    >
+                      Xóa
+                    </DropdownMenuItem>
+                  </AdminGuard>
 
-                  <DropdownMenuItem
-                    className='text-red-600'
-                    onSelect={(e) => {
-                      e.preventDefault()
-                      setOpenDeleteDialog(true)
-                    }}
-                  >
-                    Xóa
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             }

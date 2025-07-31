@@ -14,6 +14,8 @@ import {
   SidebarMenuSubItem,
   useSidebar
 } from '~/components/ui/sidebar'
+import { CheckAccess } from '~/lib/utils'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export function NavMain({
   items
@@ -25,16 +27,36 @@ export function NavMain({
     isActive?: boolean
     items?: {
       title: string
-      url: string
+      url: string,
+      path: string,
+      method: string
     }[]
   }[]
 }) {
   const { open, isMobile } = useSidebar()
+  const { permissions } = useAuthStore()
+  const filteredItems = items
+    .filter(item => item.items?.some(sub => CheckAccess(
+      {
+        permissions,
+        method: sub.method,
+        path: sub.path
+      }
+    )))
+    .map(item => ({
+      ...item,
+      items: item.items!.filter(sub => CheckAccess({
+        permissions,
+        method: sub.method,
+        path: sub.path
+      }))
+    }))
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
-        {(open || isMobile) && items.map((item) => (
+        {(open || isMobile) && filteredItems.map((item) => (
           <Collapsible key={item.title} asChild defaultOpen={item.isActive} className='group/collapsible'>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -47,7 +69,7 @@ export function NavMain({
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
+                    <SidebarMenuSubItem>
                       <SidebarMenuSubButton asChild>
                         <NavLink
                           to={subItem.url}
@@ -63,7 +85,7 @@ export function NavMain({
             </SidebarMenuItem>
           </Collapsible>
         ))}
-        {(!open && !isMobile) && items.map((item) => (
+        {(!open && !isMobile) && filteredItems.map((item) => (
           <DropdownMenu key={item.title}>
             <SidebarMenuItem>
               <DropdownMenuTrigger asChild>
@@ -79,7 +101,7 @@ export function NavMain({
                 sideOffset={4}
               >
                 {item.items?.map((subItem) => (
-                  <DropdownMenuItem key={subItem.title} className='gap-2 p-2'>
+                  <DropdownMenuItem className='gap-2 p-2'>
                     <NavLink to={subItem.url}>
                       <span>{subItem.title}</span>
                     </NavLink>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet, useLoaderData } from 'react-router'
 import userApi from '~/apis/user.api'
+import { CheckAdmin } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 
 export async function clientLoader() {
@@ -22,12 +23,13 @@ export async function clientLoader() {
 
 export default function LayoutInit() {
   const { isAuthenticated, isLoading, permissions } = useLoaderData<typeof clientLoader>()
-  const { setIsAuthenticated, setIsLoading, isLoading: isLoadingAuthStore, setPermissions } = useAuthStore()
+  const { setIsAuthenticated, setIsLoading, isLoading: isLoadingAuthStore, setPermissions, setIsAdmin } = useAuthStore()
   useEffect(() => {
     setIsAuthenticated(isAuthenticated)
     setIsLoading(isLoading)
     setPermissions(permissions)
-  }, [isAuthenticated, isLoading, setIsAuthenticated, setIsLoading, permissions, setPermissions])
+    setIsAdmin(CheckAdmin(permissions))
+  }, [isAuthenticated, isLoading, setIsAuthenticated, setIsLoading, permissions, setPermissions, setIsAdmin])
   if (isLoadingAuthStore)
     return (
       <div className='flex justify-center items-center min-h-screen bg-accent-foreground dark:bg-background'>

@@ -9,7 +9,8 @@ import UpdateLesson from '~/components/lesson/update-lesson'
 import { CourseType } from '~/constants/course.constant'
 import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useCourseDetailForAdminQuery } from '~/hooks/useCourse'
-import { getLessonIdAndChapterId } from '~/lib/utils'
+import { CheckAccess, getLessonIdAndChapterId } from '~/lib/utils'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export function meta() {
   return [
@@ -27,10 +28,16 @@ function UpdateCourseComponent({ params }: {
   }
 }) {
   const getCourseDetailMutation = useCourseDetailForAdminQuery({ courseId: Number(params.courseId) })
-
+  const { permissions } = useAuthStore()
   const [searchParams] = useSearchParams()
   const lessonId = Number(searchParams.get('lessonId'))
   const chapterId = Number(searchParams.get('chapterId'))
+
+  const isUpdateLesson = CheckAccess({
+    method: ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.method,
+    path: ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.path,
+    permissions
+  })
 
   if (getCourseDetailMutation.isLoading) {
     return null
@@ -50,16 +57,20 @@ function UpdateCourseComponent({ params }: {
           <div className='col-span-8 xl:col-span-3 max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
             <DragCourse course={course} openedLessonId={lessonIdQuery} openedChapterId={chapterIdCreateLesson} />
           </div>
-          {lessonIdQuery && chapterIdQuery && !chapterIdCreateLesson && (
-            <div className='flex justify-center col-span-8 xl:col-span-5'>
-              <UpdateLesson courseId={course.id} lessonIdQuery={lessonIdQuery} lessonIdPrev={lessonIdPrev} lessonIdNext={lessonIdNext} chapterIdQuery={chapterIdQuery} />
-            </div>
-          )}
-          {chapterIdCreateLesson && (
-            <div className='flex justify-center col-span-8 xl:col-span-5'>
-              <CreateLesson courseId={course.id} chapterIdQuery={chapterIdCreateLesson} />
-            </div>
-          )}
+          <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.GET_MANAGE_LESSONS_LESSONID.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.GET_MANAGE_LESSONS_LESSONID.method}>
+            {lessonIdQuery && chapterIdQuery && !chapterIdCreateLesson && (
+              <div className='flex justify-center col-span-8 xl:col-span-5'>
+                <UpdateLesson courseId={course.id} lessonIdQuery={lessonIdQuery} lessonIdPrev={lessonIdPrev} lessonIdNext={lessonIdNext} chapterIdQuery={chapterIdQuery} disabled={!isUpdateLesson} />
+              </div>
+            )}
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.POST_MANAGE_LESSONS.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.POST_MANAGE_LESSONS.method}>
+            {chapterIdCreateLesson && (
+              <div className='flex justify-center col-span-8 xl:col-span-5'>
+                <CreateLesson courseId={course.id} chapterIdQuery={chapterIdCreateLesson} />
+              </div>
+            )}
+          </AdminGuard>
         </div>
       )}
     </div>
@@ -68,8 +79,10 @@ function UpdateCourseComponent({ params }: {
 
 export default function UpdateCoursePage({ params }: Route.ActionArgs) {
   return (
-    <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.PUT_MANAGE_COURSES_COURSEID.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.PUT_MANAGE_COURSES_COURSEID.method} isPage>
-      <UpdateCourseComponent params={params} />
+    <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES_COURSEID.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES_COURSEID.method} isPage>
+      <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_COURSES.PUT_MANAGE_COURSES_COURSEID.path} method={ADMIN_PERMISSIONS.MANAGE_COURSES.PUT_MANAGE_COURSES_COURSEID.method} isPage>
+        <UpdateCourseComponent params={params} />
+      </AdminGuard>
     </AdminGuard>
   )
 } 

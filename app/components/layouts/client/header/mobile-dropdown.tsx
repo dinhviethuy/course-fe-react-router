@@ -15,7 +15,7 @@ import { cn, handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 
 export default function MobileDropdown({ totalCart }: { totalCart: number }) {
-  const { isAuthenticated, setIsAuthenticated, setIsLogout } = useAuthStore()
+  const { isAuthenticated, setIsAuthenticated, setIsLogout, isAdmin } = useAuthStore()
   const navigate = useNavigate()
   const { data: profile } = useGetProfileQuery()
   const user = profile?.data?.data
@@ -29,7 +29,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
     } catch (error) {
       handleError({
         error,
-        setError: () => {}
+        setError: () => { }
       })
     }
   }
@@ -79,7 +79,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
         </DropdownMenuItem>
         <DropdownMenuItem
           className={cn({
-            hidden: !isAuthenticated || !user
+            hidden: !isAuthenticated || !user || !isAdmin
           })}
         >
           <Link to='/manage/profile' className='w-full'>

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-interface PermissionStoreType {
+export interface PermissionStoreType {
   id: number
   name: string
   method: string
@@ -17,6 +17,8 @@ type AuthStoreType = {
   setIsLogout: (isLogout: boolean) => void
   permissions: PermissionStoreType[]
   setPermissions: (permissions: PermissionStoreType[]) => void
+  isAdmin: boolean
+  setIsAdmin: (isAdmin: boolean) => void
 }
 
 export const useAuthStore = create<AuthStoreType>((set) => ({
@@ -27,5 +29,7 @@ export const useAuthStore = create<AuthStoreType>((set) => ({
   isLogout: false,
   setIsLogout: (isLogout: boolean) => set({ isLogout }),
   permissions: [],
-  setPermissions: (permissions: PermissionStoreType[]) => set({ permissions })
+  setPermissions: (permissions: PermissionStoreType[]) => set({ permissions }),
+  isAdmin: false,
+  setIsAdmin: (isAdmin: boolean) => set({ isAdmin })
 }))

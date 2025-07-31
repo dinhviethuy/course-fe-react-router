@@ -4,8 +4,10 @@ import type { UseFormRegister, UseFormSetValue } from 'react-hook-form'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { type FileMetadata, type FileWithPreview } from '~/hooks/use-file-upload'
-import { cn } from '~/lib/utils'
+import { CheckAccess, cn } from '~/lib/utils'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export default function UploadImage({
   register,
@@ -51,6 +53,12 @@ export default function UploadImage({
   } = uploadFile || {}
 
   const previewUrl = disabled ? null : files?.[0]?.preview || image || null
+  const { permissions } = useAuthStore()
+  const isShowUpload = CheckAccess({
+    method: ADMIN_PERMISSIONS.MEDIA.POST_MEDIA_IMAGES_UPLOAD.method,
+    path: ADMIN_PERMISSIONS.MEDIA.POST_MEDIA_IMAGES_UPLOAD.path,
+    permissions
+  })
 
   useEffect(() => {
     if (disabled) return
@@ -82,11 +90,11 @@ export default function UploadImage({
                 src={previewUrl}
                 alt={files?.[0]?.file?.name || 'Uploaded image'}
                 className={cn('w-full h-full object-contain transition-opacity duration-300', {
-                  'group-hover:opacity-40': !disabled
+                  'group-hover:opacity-40': !disabled && isShowUpload
                 })}
               />
               {!disabled &&
-                <div className={cn('absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40', disabled && 'hidden')}>
+                <div className={cn('absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40', (disabled || !isShowUpload) && 'hidden')}>
                   <Button
                     type='button'
                     variant='secondary'
@@ -100,7 +108,7 @@ export default function UploadImage({
               }
             </div>
           ) : (
-            <div className={cn('flex flex-col items-center justify-center px-4 py-3 text-center', disabled && 'hidden')}>
+            <div className={cn('flex flex-col items-center justify-center px-4 py-3 text-center', (disabled || !isShowUpload) && 'hidden')}>
               <div
                 className='bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border'
                 aria-hidden='true'
@@ -109,7 +117,7 @@ export default function UploadImage({
               </div>
               <p className='mb-1.5 text-sm font-medium'>Drop your image here</p>
               <p className='text-muted-foreground text-xs'>SVG, PNG, JPG or GIF (max. {maxSizeMB}MB)</p>
-              <Button variant='outline' type='button' className='mt-4 cursor-pointer' onClick={openFileDialog} disabled={disabled}>
+              <Button variant='outline' type='button' className='mt-4 cursor-pointer' onClick={openFileDialog} disabled={disabled || !isShowUpload}>
                 <UploadIcon className='-ms-1 size-4 opacity-60' aria-hidden='true' />
                 Select image
               </Button>

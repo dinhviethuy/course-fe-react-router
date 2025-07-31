@@ -38,7 +38,6 @@ export default function UpdateRole({ roleId }: IProps) {
       })
       refetch()
       queryClient.refetchQueries({ queryKey: ['roles'] })
-      setIsOpen(false)
       toast.success('Cập nhật vai trò thành công')
     } catch (error) {
       handleError({ error, setError })

@@ -124,6 +124,25 @@ export const CLIENT_PERMISSIONS: PermissionsStoreType = {
       path: '/auth/otp',
       module: 'AUTH'
     }
+  },
+  COUPONS: {
+    POST_COUPONS_VALIDATE: {
+      method: 'POST',
+      path: '/coupons/validate',
+      module: 'COUPONS'
+    }
+  },
+  MEDIA: {
+    GET_MEDIA_STATIC_IMAGES_FILENAME: {
+      method: 'GET',
+      path: '/media/static/images/:filename',
+      module: 'MEDIA'
+    },
+    GET_MEDIA_STATIC_VIDEOS_FILENAME: {
+      method: 'GET',
+      path: '/media/static/videos/:filename',
+      module: 'MEDIA'
+    }
   }
 }
 
@@ -211,11 +230,6 @@ export const ADMIN_PERMISSIONS = {
     PUT_COUPONS_COUPONID: {
       method: 'PUT',
       path: '/coupons/:couponId',
-      module: 'COUPONS'
-    },
-    POST_COUPONS_VALIDATE: {
-      method: 'POST',
-      path: '/coupons/validate',
       module: 'COUPONS'
     },
     GET_COUPONS: {
@@ -326,16 +340,6 @@ export const ADMIN_PERMISSIONS = {
     POST_MEDIA_VIDEOS_UPLOAD: {
       method: 'POST',
       path: '/media/videos/upload',
-      module: 'MEDIA'
-    },
-    GET_MEDIA_STATIC_IMAGES_FILENAME: {
-      method: 'GET',
-      path: '/media/static/images/:filename',
-      module: 'MEDIA'
-    },
-    GET_MEDIA_STATIC_VIDEOS_FILENAME: {
-      method: 'GET',
-      path: '/media/static/videos/:filename',
       module: 'MEDIA'
     },
     POST_MEDIA_IMAGES_UPLOAD: {

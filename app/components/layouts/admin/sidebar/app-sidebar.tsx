@@ -15,6 +15,7 @@ import { NavUser } from '~/components/layouts/admin/sidebar/nav-user'
 import { TeamSwitcher } from '~/components/layouts/admin/sidebar/team-switcher'
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '~/components/ui/sidebar'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
 import { useGetProfileQuery } from '~/hooks/useUser'
 
 // This is sample data.
@@ -43,14 +44,16 @@ const data = {
   ],
   navMain: [
     {
-      title: 'Ttổng quan',
+      title: 'Tổng quan',
       url: '#',
       icon: LayoutDashboard,
       isActive: true,
       items: [
         {
-          title: 'Danh sách học viên',
-          url: '#'
+          title: 'Tổng quan',
+          url: '/admin/dashboard',
+          path: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path,
+          method: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method
         }
       ]
     },
@@ -61,11 +64,15 @@ const data = {
       items: [
         {
           title: 'Danh sách khóa học',
-          url: '/admin/courses'
+          url: '/admin/courses',
+          path: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path,
+          method: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method
         },
         {
           title: 'Tạo khóa học mới',
-          url: '/admin/courses/new'
+          url: '/admin/courses/new',
+          path: ADMIN_PERMISSIONS.MANAGE_COURSES.POST_MANAGE_COURSES.path,
+          method: ADMIN_PERMISSIONS.MANAGE_COURSES.POST_MANAGE_COURSES.method
         }
       ]
     },
@@ -76,7 +83,9 @@ const data = {
       items: [
         {
           title: 'Danh sách khuyến mãi',
-          url: '/admin/coupons'
+          url: '/admin/coupons',
+          path: ADMIN_PERMISSIONS.COUPONS.GET_COUPONS.path,
+          method: ADMIN_PERMISSIONS.COUPONS.GET_COUPONS.method
         }
       ]
     },
@@ -87,7 +96,9 @@ const data = {
       items: [
         {
           title: 'Danh sách người dùng',
-          url: '/admin/users'
+          url: '/admin/users',
+          path: ADMIN_PERMISSIONS.USERS.GET_USERS.path,
+          method: ADMIN_PERMISSIONS.USERS.GET_USERS.method
         }
       ]
     },
@@ -98,7 +109,9 @@ const data = {
       items: [
         {
           title: 'Danh sách vai trò',
-          url: '/admin/roles'
+          url: '/admin/roles',
+          path: ADMIN_PERMISSIONS.ROLES.GET_ROLES.path,
+          method: ADMIN_PERMISSIONS.ROLES.GET_ROLES.method
         }
       ]
     },
@@ -109,7 +122,9 @@ const data = {
       items: [
         {
           title: 'Danh sách quyền',
-          url: '/admin/permissions'
+          url: '/admin/permissions',
+          path: ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS.path,
+          method: ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS.method
         }
       ]
     }
