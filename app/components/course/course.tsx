@@ -90,9 +90,7 @@ export default function Course({
   return (
     <form
       className='space-y-6'
-      onSubmit={handleSubmit(handleSubmitForm, (e) => {
-        console.log(e)
-      })}
+      onSubmit={handleSubmit(handleSubmitForm)}
     >
       <Card>
         <CardHeader className='flex justify-between items-center flex-wrap-reverse gap-4'>

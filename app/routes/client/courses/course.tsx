@@ -89,7 +89,6 @@ function ShowDialogPay({
       }
     }
     try {
-      console.log(body)
       handleCreateOrder(body)
       setOpen(false)
     } catch (error) {
