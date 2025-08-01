@@ -77,7 +77,7 @@ export default function Role({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Tên</Label>
-                <Input id="name" {...register('name')} required disabled={disabled} />
+                <Input id="name" {...register('name')} required disabled={disabled} placeholder="Tên quyền" />
                 {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
               <div className="space-y-2">

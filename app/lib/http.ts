@@ -1,11 +1,12 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import axios from 'axios'
+import envConfig from '~/lib/config'
 
 class Http {
   instance: AxiosInstance
   constructor() {
     this.instance = axios.create({
-      baseURL: 'http://localhost:3000',
+      baseURL: envConfig.VITE_API_URL,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json'

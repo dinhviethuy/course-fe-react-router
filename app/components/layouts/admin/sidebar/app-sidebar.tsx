@@ -1,12 +1,15 @@
 import {
-  AudioWaveform,
   BookOpen,
-  Command,
+  CircleDollarSign,
   GalleryVerticalEnd,
+  GraduationCap,
   LayoutDashboard,
+  ListChecks,
   Lock,
   ShieldCheck,
   Ticket,
+  UserPlus,
+  UserRoundCheck,
   Users
 } from 'lucide-react'
 import * as React from 'react'
@@ -30,18 +33,109 @@ const data = {
       name: 'Acme Inc',
       logo: GalleryVerticalEnd,
       plan: 'Enterprise'
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup'
-    },
-    {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free'
     }
   ],
+  // navMain: [
+  //   {
+  //     title: 'Tổng quan',
+  //     url: '#',
+  //     icon: LayoutDashboard,
+  //     isActive: true,
+  //     items: [
+  //       {
+  //         title: 'Tổng quan',
+  //         url: '/admin/dashboard',
+  //         path: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path,
+  //         method: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     title: 'Khóa học',
+  //     url: '#',
+  //     icon: BookOpen,
+  //     items: [
+  //       {
+  //         title: 'Danh sách khóa học',
+  //         url: '/admin/courses',
+  //         path: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path,
+  //         method: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method
+  //       },
+  //       {
+  //         title: 'Tạo khóa học mới',
+  //         url: '/admin/courses/new',
+  //         path: ADMIN_PERMISSIONS.MANAGE_COURSES.POST_MANAGE_COURSES.path,
+  //         method: ADMIN_PERMISSIONS.MANAGE_COURSES.POST_MANAGE_COURSES.method
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     title: 'Học viên',
+  //     url: '#',
+  //     icon: GraduationCap,
+  //     items: [
+  //       {
+  //         title: 'Danh sách học viên',
+  //         url: '/admin/students',
+  //         path: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path,
+  //         method: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method
+  //       },
+  //     ]
+  //   },
+  //   {
+  //     title: 'Khuyến mãi',
+  //     url: '#',
+  //     icon: Ticket,
+  //     items: [
+  //       {
+  //         title: 'Danh sách khuyến mãi',
+  //         url: '/admin/coupons',
+  //         path: ADMIN_PERMISSIONS.COUPONS.GET_COUPONS.path,
+  //         method: ADMIN_PERMISSIONS.COUPONS.GET_COUPONS.method
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     title: 'Người dùng',
+  //     url: '#',
+  //     icon: Users,
+  //     items: [
+  //       {
+  //         title: 'Danh sách người dùng',
+  //         url: '/admin/users',
+  //         path: ADMIN_PERMISSIONS.USERS.GET_USERS.path,
+  //         method: ADMIN_PERMISSIONS.USERS.GET_USERS.method
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     title: 'Vai trò',
+  //     url: '#',
+  //     icon: ShieldCheck,
+  //     items: [
+  //       {
+  //         title: 'Danh sách vai trò',
+  //         url: '/admin/roles',
+  //         path: ADMIN_PERMISSIONS.ROLES.GET_ROLES.path,
+  //         method: ADMIN_PERMISSIONS.ROLES.GET_ROLES.method
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     title: 'Quyền',
+  //     url: '#',
+  //     icon: Lock,
+  //     items: [
+  //       {
+  //         title: 'Danh sách quyền',
+  //         url: '/admin/permissions',
+  //         icon: Lock,
+  //         path: ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS.path,
+  //         method: ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS.method
+  //       }
+  //     ]
+  //   }
+  // ]
   navMain: [
     {
       title: 'Tổng quan',
@@ -50,7 +144,7 @@ const data = {
       isActive: true,
       items: [
         {
-          title: 'Tổng quan',
+          title: 'Bảng điều khiển',
           url: '/admin/dashboard',
           path: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path,
           method: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method
@@ -65,14 +159,30 @@ const data = {
         {
           title: 'Danh sách khóa học',
           url: '/admin/courses',
+          icon: ListChecks,
           path: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path,
           method: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method
         },
         {
-          title: 'Tạo khóa học mới',
+          title: 'Tạo khóa học',
           url: '/admin/courses/new',
+          icon: BookOpen,
           path: ADMIN_PERMISSIONS.MANAGE_COURSES.POST_MANAGE_COURSES.path,
           method: ADMIN_PERMISSIONS.MANAGE_COURSES.POST_MANAGE_COURSES.method
+        }
+      ]
+    },
+    {
+      title: 'Học viên',
+      url: '#',
+      icon: GraduationCap,
+      items: [
+        {
+          title: 'Danh sách học viên',
+          url: '/admin/students',
+          icon: UserRoundCheck,
+          path: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.path,
+          method: ADMIN_PERMISSIONS.MANAGE_COURSES.GET_MANAGE_COURSES.method
         }
       ]
     },
@@ -82,8 +192,9 @@ const data = {
       icon: Ticket,
       items: [
         {
-          title: 'Danh sách khuyến mãi',
+          title: 'Mã khuyến mãi',
           url: '/admin/coupons',
+          icon: CircleDollarSign,
           path: ADMIN_PERMISSIONS.COUPONS.GET_COUPONS.path,
           method: ADMIN_PERMISSIONS.COUPONS.GET_COUPONS.method
         }
@@ -95,8 +206,9 @@ const data = {
       icon: Users,
       items: [
         {
-          title: 'Danh sách người dùng',
+          title: 'Tài khoản người dùng',
           url: '/admin/users',
+          icon: UserPlus,
           path: ADMIN_PERMISSIONS.USERS.GET_USERS.path,
           method: ADMIN_PERMISSIONS.USERS.GET_USERS.method
         }
@@ -110,19 +222,21 @@ const data = {
         {
           title: 'Danh sách vai trò',
           url: '/admin/roles',
+          icon: ShieldCheck,
           path: ADMIN_PERMISSIONS.ROLES.GET_ROLES.path,
           method: ADMIN_PERMISSIONS.ROLES.GET_ROLES.method
         }
       ]
     },
     {
-      title: 'Quyền',
+      title: 'Quyền hạn',
       url: '#',
       icon: Lock,
       items: [
         {
           title: 'Danh sách quyền',
           url: '/admin/permissions',
+          icon: Lock,
           path: ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS.path,
           method: ADMIN_PERMISSIONS.PERMISSIONS.GET_PERMISSIONS.method
         }

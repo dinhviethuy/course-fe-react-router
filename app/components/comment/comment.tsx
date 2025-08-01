@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useTheme } from '~/components/theme-provider'
+import envConfig from '~/lib/config'
 
 export default function Comment({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -12,7 +13,7 @@ export default function Comment({ className }: { className?: string }) {
     }
     const script = document.createElement('script')
     script.src = 'https://utteranc.es/client.js'
-    script.setAttribute('repo', 'dinhviethuy/comment')
+    script.setAttribute('repo', envConfig.VITE_GITHUB_REPO)
     script.setAttribute('issue-term', 'pathname')
     script.setAttribute('label', '💬 Bình luận')
     script.setAttribute('theme', theme === 'dark' ? 'github-dark' : 'github-light')

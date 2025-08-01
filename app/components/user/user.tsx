@@ -67,12 +67,12 @@ export function User({ children, boxTitle, roles, handleSubmit, onSubmit, regist
           <div className="grid gap-4 mt-8">
             <div className="grid gap-3">
               <Label htmlFor="fullname">Tên người dùng</Label>
-              <Input type="text" id="fullname" required {...register('fullName')} disabled={disabled} />
+              <Input type="text" id="fullname" required {...register('fullName')} disabled={disabled} placeholder="Nguyễn Văn A" />
               {errors.fullName && <p className="text-red-500">{errors.fullName.message}</p>}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="email">Email</Label>
-              <Input type="email" id="email" required {...register('email')} disabled={disabled} />
+              <Input type="email" id="email" required {...register('email')} disabled={disabled} placeholder="name@example.com" />
               {errors.email && <p className="text-red-500">{errors.email.message}</p>}
             </div>
             <div className={cn('grid gap-3 relative', {

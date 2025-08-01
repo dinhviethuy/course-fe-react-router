@@ -7,6 +7,7 @@ import NotFound from '~/components/error-page/error-page'
 import { Badge } from '~/components/ui/badge'
 import { OrderStatus } from '~/constants/order.constant'
 import { useGetOrderDetail } from '~/hooks/useOrder'
+import envConfig from '~/lib/config'
 import { paymentSocket } from '~/lib/socket'
 import { cn, formatCurrency, formatDate, getOrderStatus, getTotalPrice } from '~/lib/utils'
 
@@ -80,17 +81,17 @@ export default function OrderDetail() {
               <ul className='flex flex-col gap-4 py-4'>
                 <li className='grid grid-cols-2 gap-4'>
                   <span className='grid-cols-1 text-base '>Ngân hàng</span>
-                  <span className='grid-cols-1 text-base'>TPB- Ngân hàng Thương mại Cổ phần Tiên Phong</span>
+                  <span className='grid-cols-1 text-base'>{envConfig.VITE_BANK_NAME}</span>
                 </li>
                 <li className='grid grid-cols-2 gap-4'>
                   <span className='grid-cols-1 text-base '>
                     Số tài khoản (đây là STK dạng chữ, hoặc các bạn có thể quét QR dưới)
                   </span>
-                  <Badge className='h-8 font-bold'>DINHVETHUY</Badge>
+                  <Badge className='h-8 font-bold'>{envConfig.VITE_BANK_ACCOUNT}</Badge>
                 </li>
                 <li className='grid grid-cols-2 gap-4'>
                   <span className='grid-cols-1 text-base '>Chủ tài khoản</span>
-                  <Badge className='h-8 font-bold'>DINH VIET HUY</Badge>
+                  <Badge className='h-8 font-bold'>{envConfig.VITE_BANK_ACCOUNT_NAME}</Badge>
                 </li>
                 <li className='grid grid-cols-2 gap-4'>
                   <span className='grid-cols-1 text-base '>Nội dung</span>
@@ -109,7 +110,7 @@ export default function OrderDetail() {
               </p>
               <div>
                 <img
-                  src={`https://qr.sepay.vn/img?acc=08062479789&bank=TPBank&amount=${totalPrice}&des=DH${order.id}`}
+                  src={`${envConfig.VITE_BANK_QR_BASE_URL}?acc=${envConfig.VITE_BANK_ACCOUNT_NUMBER}&bank=${envConfig.VITE_BANK_CODE}&amount=${totalPrice}&des=DH${order.id}`}
                   alt='QR Code'
                   width={320}
                   height={320}

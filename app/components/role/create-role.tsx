@@ -49,7 +49,7 @@ export default function CreateRole() {
       errors={errors}
       control={control as any}
       isPending={createRoleMutation.isPending}
-      titleBox="Tạo quyền mới"
+      titleBox="Tạo vai trò mới"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       reset={reset as any}
