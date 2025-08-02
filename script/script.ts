@@ -1,5 +1,60 @@
 const permissions = [
   {
+    id: 109,
+    name: 'PUT /students/:courseEnrollmentId',
+    path: '/students/:courseEnrollmentId',
+    module: 'STUDENTS',
+    method: 'PUT',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-08-01T03:41:51.297Z',
+    updatedAt: '2025-08-01T03:41:51.297Z'
+  },
+  {
+    id: 108,
+    name: 'POST /students',
+    path: '/students',
+    module: 'STUDENTS',
+    method: 'POST',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-08-01T03:41:51.297Z',
+    updatedAt: '2025-08-01T03:41:51.297Z'
+  },
+  {
+    id: 107,
+    name: 'GET /students/:courseEnrollmentId',
+    path: '/students/:courseEnrollmentId',
+    module: 'STUDENTS',
+    method: 'GET',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-08-01T03:41:51.297Z',
+    updatedAt: '2025-08-01T03:41:51.297Z'
+  },
+  {
+    id: 106,
+    name: 'GET /students',
+    path: '/students',
+    module: 'STUDENTS',
+    method: 'GET',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-08-01T03:41:51.297Z',
+    updatedAt: '2025-08-01T03:41:51.297Z'
+  },
+  {
+    id: 110,
+    name: 'DELETE /students/:courseEnrollmentId',
+    path: '/students/:courseEnrollmentId',
+    module: 'STUDENTS',
+    method: 'DELETE',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-08-01T03:41:51.297Z',
+    updatedAt: '2025-08-01T03:41:51.297Z'
+  },
+  {
     id: 95,
     name: 'GET /permissions/modules',
     path: '/permissions/modules',
@@ -143,17 +198,6 @@ const permissions = [
     updatedAt: '2025-07-13T09:15:55.278Z'
   },
   {
-    id: 72,
-    name: 'GET /coupons/:couponId',
-    path: '/coupons/:couponId',
-    module: 'COUPONS',
-    method: 'GET',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-13T03:56:02.133Z',
-    updatedAt: '2025-07-13T03:56:02.133Z'
-  },
-  {
     id: 74,
     name: 'DELETE /coupons/:couponId',
     path: '/coupons/:couponId',
@@ -170,6 +214,17 @@ const permissions = [
     path: '/coupons/:couponId',
     module: 'COUPONS',
     method: 'PUT',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-13T03:56:02.133Z',
+    updatedAt: '2025-07-13T03:56:02.133Z'
+  },
+  {
+    id: 72,
+    name: 'GET /coupons/:couponId',
+    path: '/coupons/:couponId',
+    module: 'COUPONS',
+    method: 'GET',
     createdById: null,
     updatedById: null,
     createdAt: '2025-07-13T03:56:02.133Z',
@@ -207,6 +262,17 @@ const permissions = [
     updatedById: null,
     createdAt: '2025-07-13T03:09:07.880Z',
     updatedAt: '2025-07-13T03:09:07.880Z'
+  },
+  {
+    id: 60,
+    name: 'GET /lessons/:lessonId',
+    path: '/lessons/:lessonId',
+    module: 'LESSONS',
+    method: 'GET',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-11T11:38:44.778Z',
+    updatedAt: '2025-07-11T11:38:44.778Z'
   },
   {
     id: 64,
@@ -253,17 +319,6 @@ const permissions = [
     updatedAt: '2025-07-11T11:38:44.778Z'
   },
   {
-    id: 60,
-    name: 'GET /lessons/:lessonId',
-    path: '/lessons/:lessonId',
-    module: 'LESSONS',
-    method: 'GET',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-11T11:38:44.778Z',
-    updatedAt: '2025-07-11T11:38:44.778Z'
-  },
-  {
     id: 59,
     name: 'PATCH /manage-courses/:courseId/reorder-full',
     path: '/manage-courses/:courseId/reorder-full',
@@ -275,10 +330,10 @@ const permissions = [
     updatedAt: '2025-07-10T15:07:08.177Z'
   },
   {
-    id: 52,
-    name: 'PUT /permissions/:permissionId',
-    path: '/permissions/:permissionId',
-    module: 'PERMISSIONS',
+    id: 54,
+    name: 'PUT /users/:userId',
+    path: '/users/:userId',
+    module: 'USERS',
     method: 'PUT',
     createdById: null,
     updatedById: null,
@@ -308,10 +363,10 @@ const permissions = [
     updatedAt: '2025-07-10T13:33:10.374Z'
   },
   {
-    id: 53,
-    name: 'PUT /roles/:roleId',
-    path: '/roles/:roleId',
-    module: 'ROLES',
+    id: 52,
+    name: 'PUT /permissions/:permissionId',
+    path: '/permissions/:permissionId',
+    module: 'PERMISSIONS',
     method: 'PUT',
     createdById: null,
     updatedById: null,
@@ -319,10 +374,10 @@ const permissions = [
     updatedAt: '2025-07-10T13:33:10.374Z'
   },
   {
-    id: 54,
-    name: 'PUT /users/:userId',
-    path: '/users/:userId',
-    module: 'USERS',
+    id: 53,
+    name: 'PUT /roles/:roleId',
+    path: '/roles/:roleId',
+    module: 'ROLES',
     method: 'PUT',
     createdById: null,
     updatedById: null,
@@ -374,6 +429,17 @@ const permissions = [
     updatedAt: '2025-07-10T13:33:10.374Z'
   },
   {
+    id: 49,
+    name: 'GET /manage-courses',
+    path: '/manage-courses',
+    module: 'MANAGE-COURSES',
+    method: 'GET',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-10T11:49:40.858Z',
+    updatedAt: '2025-07-10T11:49:40.858Z'
+  },
+  {
     id: 48,
     name: 'GET /courses',
     path: '/courses',
@@ -385,15 +451,15 @@ const permissions = [
     updatedAt: '2025-07-10T11:49:40.858Z'
   },
   {
-    id: 49,
-    name: 'GET /manage-courses',
-    path: '/manage-courses',
+    id: 47,
+    name: 'DELETE /manage-courses/:courseId',
+    path: '/manage-courses/:courseId',
     module: 'MANAGE-COURSES',
-    method: 'GET',
+    method: 'DELETE',
     createdById: null,
     updatedById: null,
-    createdAt: '2025-07-10T11:49:40.858Z',
-    updatedAt: '2025-07-10T11:49:40.858Z'
+    createdAt: '2025-07-10T11:40:53.802Z',
+    updatedAt: '2025-07-10T11:40:53.802Z'
   },
   {
     id: 45,
@@ -418,17 +484,6 @@ const permissions = [
     updatedAt: '2025-07-10T11:40:53.802Z'
   },
   {
-    id: 47,
-    name: 'DELETE /manage-courses/:courseId',
-    path: '/manage-courses/:courseId',
-    module: 'MANAGE-COURSES',
-    method: 'DELETE',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-10T11:40:53.802Z',
-    updatedAt: '2025-07-10T11:40:53.802Z'
-  },
-  {
     id: 39,
     name: 'GET /courses/:courseId',
     path: '/courses/:courseId',
@@ -440,11 +495,11 @@ const permissions = [
     updatedAt: '2025-07-10T11:39:24.040Z'
   },
   {
-    id: 36,
-    name: 'POST /media/videos/upload',
-    path: '/media/videos/upload',
+    id: 38,
+    name: 'GET /media/static/videos/:filename',
+    path: '/media/static/videos/:filename',
     module: 'MEDIA',
-    method: 'POST',
+    method: 'GET',
     createdById: null,
     updatedById: null,
     createdAt: '2025-07-10T09:15:09.936Z',
@@ -462,11 +517,11 @@ const permissions = [
     updatedAt: '2025-07-10T09:15:09.936Z'
   },
   {
-    id: 38,
-    name: 'GET /media/static/videos/:filename',
-    path: '/media/static/videos/:filename',
+    id: 36,
+    name: 'POST /media/videos/upload',
+    path: '/media/videos/upload',
     module: 'MEDIA',
-    method: 'GET',
+    method: 'POST',
     createdById: null,
     updatedById: null,
     createdAt: '2025-07-10T09:15:09.936Z',
@@ -482,6 +537,72 @@ const permissions = [
     updatedById: null,
     createdAt: '2025-07-10T08:47:15.607Z',
     updatedAt: '2025-07-10T08:47:15.607Z'
+  },
+  {
+    id: 33,
+    name: 'DELETE /users/:userId',
+    path: '/users/:userId',
+    module: 'USERS',
+    method: 'DELETE',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-10T04:53:23.056Z',
+    updatedAt: '2025-07-10T04:53:23.056Z'
+  },
+  {
+    id: 31,
+    name: 'POST /users',
+    path: '/users',
+    module: 'USERS',
+    method: 'POST',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-10T04:53:23.056Z',
+    updatedAt: '2025-07-10T04:53:23.056Z'
+  },
+  {
+    id: 30,
+    name: 'GET /users/:userId',
+    path: '/users/:userId',
+    module: 'USERS',
+    method: 'GET',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-10T04:53:23.056Z',
+    updatedAt: '2025-07-10T04:53:23.056Z'
+  },
+  {
+    id: 29,
+    name: 'GET /users',
+    path: '/users',
+    module: 'USERS',
+    method: 'GET',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-10T04:53:23.056Z',
+    updatedAt: '2025-07-10T04:53:23.056Z'
+  },
+  {
+    id: 28,
+    name: 'DELETE /roles/:roleId',
+    path: '/roles/:roleId',
+    module: 'ROLES',
+    method: 'DELETE',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-10T04:53:23.056Z',
+    updatedAt: '2025-07-10T04:53:23.056Z'
+  },
+  {
+    id: 26,
+    name: 'POST /roles',
+    path: '/roles',
+    module: 'ROLES',
+    method: 'POST',
+    createdById: null,
+    updatedById: null,
+    createdAt: '2025-07-10T04:53:23.056Z',
+    updatedAt: '2025-07-10T04:53:23.056Z'
   },
   {
     id: 25,
@@ -561,9 +682,9 @@ const permissions = [
     updatedAt: '2025-07-10T04:53:23.056Z'
   },
   {
-    id: 13,
-    name: 'POST /auth/logout',
-    path: '/auth/logout',
+    id: 14,
+    name: 'POST /auth/forgot-password',
+    path: '/auth/forgot-password',
     module: 'AUTH',
     method: 'POST',
     createdById: null,
@@ -572,9 +693,9 @@ const permissions = [
     updatedAt: '2025-07-10T04:53:23.056Z'
   },
   {
-    id: 14,
-    name: 'POST /auth/forgot-password',
-    path: '/auth/forgot-password',
+    id: 13,
+    name: 'POST /auth/logout',
+    path: '/auth/logout',
     module: 'AUTH',
     method: 'POST',
     createdById: null,
@@ -609,72 +730,6 @@ const permissions = [
     name: 'POST /auth/otp',
     path: '/auth/otp',
     module: 'AUTH',
-    method: 'POST',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-10T04:53:23.056Z',
-    updatedAt: '2025-07-10T04:53:23.056Z'
-  },
-  {
-    id: 33,
-    name: 'DELETE /users/:userId',
-    path: '/users/:userId',
-    module: 'USERS',
-    method: 'DELETE',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-10T04:53:23.056Z',
-    updatedAt: '2025-07-10T04:53:23.056Z'
-  },
-  {
-    id: 31,
-    name: 'POST /users',
-    path: '/users',
-    module: 'USERS',
-    method: 'POST',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-10T04:53:23.056Z',
-    updatedAt: '2025-07-10T04:53:23.056Z'
-  },
-  {
-    id: 30,
-    name: 'GET /users/:userId',
-    path: '/users/:userId',
-    module: 'USERS',
-    method: 'GET',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-10T04:53:23.056Z',
-    updatedAt: '2025-07-10T04:53:23.056Z'
-  },
-  {
-    id: 29,
-    name: 'GET /users',
-    path: '/users',
-    module: 'USERS',
-    method: 'GET',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-10T04:53:23.056Z',
-    updatedAt: '2025-07-10T04:53:23.056Z'
-  },
-  {
-    id: 28,
-    name: 'DELETE /roles/:roleId',
-    path: '/roles/:roleId',
-    module: 'ROLES',
-    method: 'DELETE',
-    createdById: null,
-    updatedById: null,
-    createdAt: '2025-07-10T04:53:23.056Z',
-    updatedAt: '2025-07-10T04:53:23.056Z'
-  },
-  {
-    id: 26,
-    name: 'POST /roles',
-    path: '/roles',
-    module: 'ROLES',
     method: 'POST',
     createdById: null,
     updatedById: null,

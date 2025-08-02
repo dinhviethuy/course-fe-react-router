@@ -35,7 +35,8 @@ export default [
       ...prefix('/admin/users', [index('routes/admin/users/list/index.tsx')]),
       route('/admin/roles', 'routes/admin/role/list/index.tsx'),
       route('/admin/permissions', 'routes/admin/permission/list/index.tsx'),
-      route('/admin/coupons', 'routes/admin/coupon/list/index.tsx')
+      route('/admin/coupons', 'routes/admin/coupon/list/index.tsx'),
+      ...prefix('/admin/students', [index('routes/admin/student/list/index.tsx')])
     ])
   ])
 ] satisfies RouteConfig

@@ -84,8 +84,8 @@ export const GetUsersQuerySchema = z
       }
       return undefined
     }, z.coerce.number().int().positive().optional()),
-    orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc),
-    sortBy: z.enum([SortBy.FullName, SortBy.Email, SortBy.CreatedAt]).default(SortBy.CreatedAt),
+    orderBy: z.enum([OrderBy.Asc, OrderBy.Desc]).default(OrderBy.Desc).optional(),
+    sortBy: z.enum([SortBy.FullName, SortBy.Email, SortBy.CreatedAt]).default(SortBy.CreatedAt).optional(),
     getAll: z
       .preprocess((value: any) => {
         if (typeof value === 'string') {

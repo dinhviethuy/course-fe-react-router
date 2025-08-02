@@ -60,7 +60,7 @@ export function MultiSelect({ options, selected, onChange, disabled }: IProps) {
       <PopoverContent className='w-full p-0'>
         <Command>
           <CommandInput placeholder='Tìm kiếm...' />
-          <CommandList>
+          <CommandList className='scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
             {options.map((option) => (
               <CommandItem key={option.id} onSelect={() => toggleValue(option.id)} className='cursor-pointer'>
                 <div

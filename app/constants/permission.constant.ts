@@ -347,5 +347,24 @@ export const ADMIN_PERMISSIONS = {
       path: '/media/images/upload',
       module: 'MEDIA'
     }
+  },
+  STUDENTS: {
+    PUT_STUDENTS_COURSEENROLLMENTID: {
+      method: 'PUT',
+      path: '/students/:courseEnrollmentId',
+      module: 'STUDENTS'
+    },
+    POST_STUDENTS: { method: 'POST', path: '/students', module: 'STUDENTS' },
+    GET_STUDENTS_COURSEENROLLMENTID: {
+      method: 'GET',
+      path: '/students/:courseEnrollmentId',
+      module: 'STUDENTS'
+    },
+    GET_STUDENTS: { method: 'GET', path: '/students', module: 'STUDENTS' },
+    DELETE_STUDENTS_COURSEENROLLMENTID: {
+      method: 'DELETE',
+      path: '/students/:courseEnrollmentId',
+      module: 'STUDENTS'
+    }
   }
 }
