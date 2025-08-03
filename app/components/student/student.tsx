@@ -12,7 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/comp
 import { CourseEnrollmentStatus, type CourseEnrollmentStatusType } from "~/constants/course-enrollment.constant";
 import { cn } from "~/lib/utils";
 import type { ListCoursesResType } from "~/types/course.type";
-import type { CreateCourseEnrollmentBodyType } from "~/types/student.type";
+import type { CreateCourseEnrollmentBodyType, UpdateCourseEnrollmentBodyType } from "~/types/student.type";
 import type { GetUsersResType } from "~/types/user.type";
 
 interface IPropsChildren {
@@ -114,18 +114,19 @@ function MultiSelect({ options, selected, onChange, disabled }: IPropsChildren) 
 interface IProps {
   isOpen: boolean,
   setIsOpen: (isOpen: boolean) => void,
-  setValue: UseFormSetValue<CreateCourseEnrollmentBodyType>,
-  handleSubmit: UseFormHandleSubmit<CreateCourseEnrollmentBodyType>,
-  onSubmit: (data: CreateCourseEnrollmentBodyType) => void,
+  setValue: UseFormSetValue<CreateCourseEnrollmentBodyType | UpdateCourseEnrollmentBodyType>,
+  handleSubmit: UseFormHandleSubmit<CreateCourseEnrollmentBodyType | UpdateCourseEnrollmentBodyType>,
+  onSubmit: (data: CreateCourseEnrollmentBodyType | UpdateCourseEnrollmentBodyType) => void,
   // register: UseFormRegister<CreateCourseEnrollmentBodyType>,
-  control: Control<CreateCourseEnrollmentBodyType>,
-  watch: UseFormWatch<CreateCourseEnrollmentBodyType>,
-  errors: FieldErrors<CreateCourseEnrollmentBodyType>,
+  control: Control<CreateCourseEnrollmentBodyType | UpdateCourseEnrollmentBodyType>,
+  watch: UseFormWatch<CreateCourseEnrollmentBodyType | UpdateCourseEnrollmentBodyType>,
+  errors: FieldErrors<CreateCourseEnrollmentBodyType | UpdateCourseEnrollmentBodyType>,
   isPending: boolean,
   titleBox: string,
   children: React.ReactElement,
   reset: () => void,
-  disabled?: boolean
+  disabled?: boolean,
+  isCreate?: boolean,
   tooltipText: string,
   listCourse: ListCoursesResType['courses'],
   listUser: GetUsersResType['users'],
@@ -149,6 +150,7 @@ export default function Student({
   tooltipText,
   listCourse,
   listUser,
+  isCreate = true
 }: IProps) {
 
   return (
@@ -193,8 +195,12 @@ export default function Student({
                   </SelectTrigger>
                   <SelectContent>
                     {Object.values(CourseEnrollmentStatus).map((status) => (
-                      <SelectItem key={status} value={status} className="cursor-pointer">
-                        {status}
+                      <SelectItem key={status} value={status} className="cursor-pointer flex items-center gap-2">
+                        <span
+                          className={cn("size-1.5 rounded-full", status === CourseEnrollmentStatus.ACTIVE ? 'bg-emerald-500' : 'bg-red-500')}
+                          aria-hidden="true"
+                        ></span>
+                        {status === CourseEnrollmentStatus.ACTIVE ? 'Hoạt động' : 'Bị chặn'}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -251,7 +257,7 @@ export default function Student({
             </div>
             <div className="space-y-2">
               <Label htmlFor="module">Người dùng</Label>
-              <Controller
+              {isCreate && <Controller
                 control={control}
                 name='userIds'
                 render={({ field }) => (
@@ -263,10 +269,49 @@ export default function Student({
                   />
                 )}
               />
-              {errors.userIds && (
-                <p className="text-sm text-red-500">{errors.userIds.message}</p>
+              }
+              {isCreate && ((errors as any).userIds) && (
+                <p className="text-sm text-red-500">{(errors as any).userIds.message}</p>
               )}
             </div>
+            {!isCreate &&
+              <Select
+                onValueChange={(value) => setValue('userId', Number(value))}
+                value={watch('userId')?.toString() ?? ''}
+                disabled={disabled}
+                required
+              >
+                <SelectTrigger className="w-full" >
+                  {(() => {
+                    const selectedUser = listUser.find(c => c.id === watch('userId'));
+                    return selectedUser ? (
+                      <div className="flex gap-1 items-center truncate text-sm">
+                        <span className="font-medium truncate">{selectedUser.fullName}</span>
+                        <span className="text-muted-foreground">·</span>
+                        <span className="text-xs text-muted-foreground truncate">{selectedUser.email}</span>
+                      </div>
+                    ) : (
+                      <span className="truncate">Chọn người dùng</span>
+                    );
+                  })()}
+                </SelectTrigger>
+                <SelectContent>
+                  {listUser.map((user) => (
+                    <SelectItem key={user.id} value={user.id.toString()} className="cursor-pointer">
+                      <div className="flex flex-col gap-2">
+                        <span className="text-sm font-medium truncate max-w-[300px]" title={user.fullName}>
+                          {user.fullName}
+                        </span>
+                        <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            }
+            {isCreate && ((errors as any).userId) && (
+              <p className="text-sm text-red-500">{(errors as any).userId.message}</p>
+            )}
           </div>
           <DialogFooter className={cn("border-t px-6 py-4", {
             "hidden": disabled

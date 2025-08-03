@@ -464,8 +464,20 @@ function Coupons() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value='all'>Tất cả trạng thái</SelectItem>
-            <SelectItem value='true'>Hoạt động</SelectItem>
-            <SelectItem value='false'>Không hoạt động</SelectItem>
+            <SelectItem value='true' className='flex items-center gap-2'>
+              <span
+                className={cn("size-1.5 rounded-full bg-emerald-500")}
+                aria-hidden="true"
+              ></span>
+              Hoạt động
+            </SelectItem>
+            <SelectItem value='false' className='flex items-center gap-2'>
+              <span
+                className={cn("size-1.5 rounded-full bg-red-500")}
+                aria-hidden="true"
+              ></span>
+              Không hoạt động
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>

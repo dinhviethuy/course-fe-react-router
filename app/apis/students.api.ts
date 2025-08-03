@@ -6,6 +6,7 @@ import type {
   GetCourseEnrollmentListResType,
   GetCourseEnrollmentParamsType,
   GetCourseEnrollmentQueryType,
+  UpdateCourseEnrollmentBodyType,
   UpdateCourseEnrollmentResType
 } from '~/types/student.type'
 import type { SuccessResponse } from '~/types/success.type'
@@ -15,7 +16,7 @@ const studentApi = {
     http.post<SuccessResponse<CreateCourseEnrollmentResType>>('/students', body),
   detailStudent: (params: GetCourseEnrollmentParamsType) =>
     http.get<SuccessResponse<GetCourseEnrollmentDetailResType>>(`/students/${params.courseEnrollmentId}`),
-  updateStudent: (params: GetCourseEnrollmentParamsType, body: CreateCourseEnrollmentBodyType) =>
+  updateStudent: (params: GetCourseEnrollmentParamsType, body: UpdateCourseEnrollmentBodyType) =>
     http.put<SuccessResponse<UpdateCourseEnrollmentResType>>(`/students/${params.courseEnrollmentId}`, body),
   deleteStudent: (params: GetCourseEnrollmentParamsType) =>
     http.delete<SuccessResponse<boolean>>(`/students/${params.courseEnrollmentId}`),

@@ -130,8 +130,20 @@ export function User({ children, boxTitle, roles, handleSubmit, onSubmit, regist
                     <SelectValue placeholder="Chọn trạng thái" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={UserStatus.ACTIVE}>Hoạt động</SelectItem>
-                    <SelectItem value={UserStatus.BLOCKED}>Bị chặn</SelectItem>
+                    <SelectItem value={UserStatus.ACTIVE} className='flex items-center gap-2'>
+                      <span
+                        className={cn("size-1.5 rounded-full bg-emerald-500")}
+                        aria-hidden="true"
+                      ></span>
+                      Hoạt động
+                    </SelectItem>
+                    <SelectItem value={UserStatus.BLOCKED} className='flex items-center gap-2'>
+                      <span
+                        className={cn("size-1.5 rounded-full bg-red-500")}
+                        aria-hidden="true"
+                      ></span>
+                      Bị chặn
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.status && <p className="text-red-500">{errors.status.message}</p>}

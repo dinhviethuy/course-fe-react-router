@@ -3,7 +3,8 @@ import studentApi from '~/apis/students.api'
 import type {
   CreateCourseEnrollmentBodyType,
   GetCourseEnrollmentParamsType,
-  GetCourseEnrollmentQueryType
+  GetCourseEnrollmentQueryType,
+  UpdateCourseEnrollmentBodyType
 } from '~/types/student.type'
 
 export const useCreateStudentMutation = () => {
@@ -28,7 +29,7 @@ export const useListStudentQuery = (query?: GetCourseEnrollmentQueryType) => {
 
 export const useUpdateStudentMutation = () => {
   return useMutation({
-    mutationFn: ({ params, body }: { params: GetCourseEnrollmentParamsType; body: CreateCourseEnrollmentBodyType }) =>
+    mutationFn: ({ params, body }: { params: GetCourseEnrollmentParamsType; body: UpdateCourseEnrollmentBodyType }) =>
       studentApi.updateStudent(params, body)
   })
 }

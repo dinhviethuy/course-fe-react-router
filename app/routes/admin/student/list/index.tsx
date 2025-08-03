@@ -14,6 +14,8 @@ import { toast } from 'sonner'
 import AdminGuard from '~/components/guard/admin-guard'
 import Loading from '~/components/loading/loading'
 import CreateStudent from '~/components/student/create-student'
+import StudentDetail from '~/components/student/student-detail'
+import UpdateStudent from '~/components/student/update-student'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,7 +36,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/comp
 import { CourseEnrollmentStatus, type CourseEnrollmentStatusType } from '~/constants/course-enrollment.constant'
 import { OrderBy, type OrderByType, PAGE_LIMIT, SortBy, type SortByType } from '~/constants/other.constant'
 import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
-import { UserStatus, type UserStatusType } from '~/constants/user.constant'
 import { useDeleteStudentMutation, useListStudentQuery } from '~/hooks/useStudent'
 import { cn, formatDate, handleError } from '~/lib/utils'
 import type { GetCourseEnrollmentListResType } from '~/types/student.type'
@@ -156,7 +157,7 @@ function getColumns({
       header: 'Tên khóa học',
       cell: ({ row }) => (
         <div className='flex flex-col gap-2'>
-          <div className='flex items-center gap-2'>
+          <div className='flex items-center flex-wrap gap-2'>
             <img src={row.original.course.image} alt={row.original.course.title} className='w-10 h-10 rounded-md' />
             <span className='wrap-break-word'>{row.original.course.title}</span>
           </div>
@@ -221,6 +222,12 @@ function getColumns({
       header: 'Hành động',
       cell: ({ row }) => (
         <div className='flex gap-2 items-center'>
+          <AdminGuard path={ADMIN_PERMISSIONS.STUDENTS.GET_STUDENTS_COURSEENROLLMENTID.path} method={ADMIN_PERMISSIONS.STUDENTS.GET_STUDENTS_COURSEENROLLMENTID.method}>
+            <StudentDetail data={row.original} />
+          </AdminGuard>
+          <AdminGuard path={ADMIN_PERMISSIONS.STUDENTS.PUT_STUDENTS_COURSEENROLLMENTID.path} method={ADMIN_PERMISSIONS.STUDENTS.PUT_STUDENTS_COURSEENROLLMENTID.method}>
+            <UpdateStudent data={row.original} />
+          </AdminGuard>
           <AdminGuard path={ADMIN_PERMISSIONS.STUDENTS.DELETE_STUDENTS_COURSEENROLLMENTID.path} method={ADMIN_PERMISSIONS.STUDENTS.DELETE_STUDENTS_COURSEENROLLMENTID.method}>
             <AlertDialog>
               <TooltipProvider delayDuration={0}>
@@ -412,14 +419,26 @@ function Students() {
           value={titleCourse}
           onChange={(e) => setTitleCourse(e.target.value)}
         />
-        <Select value={status} onValueChange={(value) => setStatus(value as (UserStatusType | 'all'))}>
+        <Select value={status} onValueChange={(value) => setStatus(value as (CourseEnrollmentStatusType | 'all'))}>
           <SelectTrigger className='w-[120px] sm:w-[200px]'>
             <SelectValue placeholder='Lọc theo trạng thái' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='all'>Trạng thái</SelectItem>
-            <SelectItem value={UserStatus.ACTIVE}>Hoạt động</SelectItem>
-            <SelectItem value={UserStatus.BLOCKED}>Bị chặn</SelectItem>
+            <SelectItem value='all'>Tất cả</SelectItem>
+            <SelectItem value={CourseEnrollmentStatus.ACTIVE} className='flex items-center gap-2'>
+              <span
+                className={cn("size-1.5 rounded-full bg-emerald-500")}
+                aria-hidden="true"
+              ></span>
+              Hoạt động
+            </SelectItem>
+            <SelectItem value={CourseEnrollmentStatus.BLOCKED} className='flex items-center gap-2'>
+              <span
+                className={cn("size-1.5 rounded-full bg-red-500")}
+                aria-hidden="true"
+              ></span>
+              Bị chặn
+            </SelectItem>
           </SelectContent>
         </Select>
         <Select

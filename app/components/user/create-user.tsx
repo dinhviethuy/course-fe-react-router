@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import { User } from "~/components/user/user";
+import { UserStatus } from "~/constants/user.constant";
 import { useCreateUserMutation } from "~/hooks/useUser";
 import { handleError } from "~/lib/utils";
 import type { GetRolesResType } from "~/types/role.type";
@@ -18,6 +19,9 @@ interface IProps {
 export default function CreateUser({ roles }: IProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { register, handleSubmit, formState: { errors }, setValue, watch, reset, setError } = useForm({
+    defaultValues: {
+      status: UserStatus.ACTIVE
+    },
     resolver: zodResolver(CreateUserBodySchema)
   })
 

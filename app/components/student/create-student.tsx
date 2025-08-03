@@ -79,13 +79,12 @@ export default function CreateStudent() {
       setIsOpen={setIsOpen}
       setValue={setValue as any}
       handleSubmit={handleSubmit}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit as any}
       watch={watch as any}
       errors={errors}
-      isPending={false}
+      isPending={createStudentMutation.isPending}
       titleBox="Thêm học viên"
       reset={handleReset}
-      disabled={false}
       tooltipText="Thêm học viên"
       control={control as any}
       listCourse={listCourse?.data.data.courses || []}

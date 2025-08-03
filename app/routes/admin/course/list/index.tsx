@@ -436,8 +436,20 @@ function Courses() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value='all'>Trạng thái</SelectItem>
-            <SelectItem value='false'>Đã xuất bản</SelectItem>
-            <SelectItem value='true'>Bản nháp</SelectItem>
+            <SelectItem value='false' className='flex items-center gap-2'>
+              <span
+                className={cn("size-1.5 rounded-full bg-emerald-500")}
+                aria-hidden="true"
+              ></span>
+              Đã xuất bản
+            </SelectItem>
+            <SelectItem value='true' className='flex items-center gap-2'>
+              <span
+                className={cn("size-1.5 rounded-full bg-amber-500")}
+                aria-hidden="true"
+              ></span>
+              Bản nháp
+            </SelectItem>
           </SelectContent>
         </Select>
         <Select

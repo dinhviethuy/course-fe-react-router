@@ -41,6 +41,8 @@ export default function UpdateRole({ roleId }: IProps) {
       toast.success('Cập nhật vai trò thành công')
     } catch (error) {
       handleError({ error, setError })
+    } finally {
+      setIsOpen(true)
     }
   }
   useEffect(() => {
@@ -53,6 +55,7 @@ export default function UpdateRole({ roleId }: IProps) {
       permissionIds: permissonIds
     })
   }, [reset, role])
+
   return (
     <Role
       handleSubmit={handleSubmit}
