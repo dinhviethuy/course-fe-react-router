@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import NotFound from '~/components/error-page/error-page'
+import Loading from '~/components/loading/loading'
 import { Badge } from '~/components/ui/badge'
 import { OrderStatus } from '~/constants/order.constant'
 import { useGetOrderDetail } from '~/hooks/useOrder'
@@ -25,6 +26,7 @@ export default function OrderDetail() {
       getOrderDetail.refetch()
     })
   }, [getOrderDetail])
+  if (getOrderDetail.isPending) return <Loading />
   if (!data) return <NotFound statusCode={404} message='Đơn hàng không tồn tại' isShowButton={false} />
   const order = data.data
   const { totalPrice, price, discountFixed, priceAfterDiscount } = getTotalPrice({
