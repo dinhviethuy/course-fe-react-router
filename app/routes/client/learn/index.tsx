@@ -128,6 +128,42 @@ function RenderLesson({
   )
 }
 
+function RenderSheet({
+  chapters,
+  courseSlug,
+  lessonIdQuery,
+  titleChapter,
+  chapterIdQuery
+}: {
+  chapters: GetCourseDetailResType['chapters']
+  lessonIdQuery?: number
+  courseSlug: string
+  titleChapter: string,
+  chapterIdQuery?: number
+}) {
+  const [isOpenMenu, setIsOpenMenu] = useState(false)
+  const isMinLg = useMediaQuery({ query: '(min-width: 1024px)' })
+
+  return (
+    <Sheet open={isOpenMenu && !isMinLg} onOpenChange={setIsOpenMenu}>
+      <SheetTrigger onClick={() => setIsOpenMenu(true)}>
+        <BookOpenCheck className='w-6 h-6 cursor-pointer' />
+      </SheetTrigger>
+      <SheetContent className='z-[9999]'>
+        <div className='pl-4 mt-8 pr-2 flex sticky top-16 flex-col max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
+          <MenuLesson
+            chapters={chapters}
+            lessonId={lessonIdQuery}
+            chapterId={chapterIdQuery}
+            courseSlug={courseSlug}
+            titleChapter={titleChapter}
+          />
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
 function Lesson({
   lessonId,
   chapters,
@@ -137,31 +173,14 @@ function Lesson({
   chapters: GetCourseDetailResType['chapters']
   courseSlug: string
 }) {
-  const [isOpenMenu, setIsOpenMenu] = useState(false)
   const [titleChapter, setTitleChapter] = useState(chapters.length > 0 ? chapters[0].title! : '')
-  const isMinLg = useMediaQuery({ query: '(min-width: 1024px)' })
   const { lessonIdQuery, chapterIdQuery, lessonIdPrev, lessonIdNext } = getLessonIdAndChapterId(chapters, lessonId)
   return (
     <>
       <div className='grid grid-cols-12'>
         <div className='lg:col-span-9 col-span-12 flex flex-col gap-4 relative lg:mt-0 mt-6'>
           <div className='lg:hidden absolute -top-12 right-4'>
-            <Sheet open={isOpenMenu && !isMinLg} onOpenChange={setIsOpenMenu}>
-              <SheetTrigger onClick={() => setIsOpenMenu(true)}>
-                <BookOpenCheck className='w-6 h-6 cursor-pointer' />
-              </SheetTrigger>
-              <SheetContent className='z-[9999]'>
-                <div className='pl-4 mt-8 pr-2 flex sticky top-16 flex-col max-h-full overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-zinc-200 dark:scrollbar-thumb-zinc-500 dark:scrollbar-track-zinc-900'>
-                  <MenuLesson
-                    chapters={chapters}
-                    lessonId={lessonIdQuery}
-                    chapterId={chapterIdQuery}
-                    courseSlug={courseSlug}
-                    titleChapter={titleChapter}
-                  />
-                </div>
-              </SheetContent>
-            </Sheet>
+            <RenderSheet chapters={chapters} courseSlug={courseSlug} lessonIdQuery={lessonIdQuery} titleChapter={titleChapter} chapterIdQuery={chapterIdQuery} />
           </div>
           {lessonIdQuery && (
             <RenderLesson

@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { useQueryClient } from '@tanstack/react-query'
 import { GripVertical, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, NavLink } from 'react-router'
 import { toast } from 'sonner'
 import AdminGuard from '~/components/guard/admin-guard'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '~/components/ui/alert-dialog'
@@ -138,10 +138,10 @@ export default function SortableLesson({
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
               <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.PUT_MANAGE_LESSONS_LESSONID.method}>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  <Link to={`?lessonId=${lesson.id}`} className='w-full' preventScrollReset>
+                <DropdownMenuItem asChild>
+                  <NavLink to={`?lessonId=${lesson.id}`} className='w-full' preventScrollReset>
                     Sửa
-                  </Link>
+                  </NavLink>
                 </DropdownMenuItem>
               </AdminGuard>
               <AdminGuard path={ADMIN_PERMISSIONS.MANAGE_LESSONS.DELETE_MANAGE_LESSONS_LESSONID.path} method={ADMIN_PERMISSIONS.MANAGE_LESSONS.DELETE_MANAGE_LESSONS_LESSONID.method}>

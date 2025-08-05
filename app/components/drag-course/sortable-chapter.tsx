@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, MoreVertical } from 'lucide-react'
 import { useState } from 'react'
 import type { UseFormSetError } from 'react-hook-form'
-import { Link } from 'react-router'
+import { NavLink } from 'react-router'
 import UpdateChapter from '~/components/chapter/update-chapter'
 import AdminGuard from '~/components/guard/admin-guard'
 import { AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion'
@@ -137,10 +137,10 @@ export default function SortableChapter({
 
                 <DropdownMenuContent align='end'>
                   <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.path} method={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.method}>
-                    <DropdownMenuItem>
-                      <Link to={`?chapterId=${chapter.id}`} preventScrollReset>
+                    <DropdownMenuItem asChild>
+                      <NavLink to={`?chapterId=${chapter.id}`} preventScrollReset>
                         Tạo bài học mới
-                      </Link>
+                      </NavLink>
                     </DropdownMenuItem>
                   </AdminGuard>
                   <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path} method={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method}>
