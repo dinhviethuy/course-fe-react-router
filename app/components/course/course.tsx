@@ -100,7 +100,7 @@ export default function Course({
               hidden: !isDirty || disabled
             })}
           >
-            <Button variant='outline' className='cursor-pointer' onClick={() => reset({
+            <Button variant='outline' type='button' className='cursor-pointer' onClick={() => reset({
               benefits: data.benefits,
               courseIds: data.courseType === CourseType.COMBO ? data.courseIds : undefined,
               courseType: data.courseType,

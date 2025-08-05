@@ -57,11 +57,6 @@ export default function NumberCustom({ minValue, maxValue, label, control, name,
                     onChange(0)
                   }
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.currentTarget.blur()
-                  }
-                }}
               />
               <div className="flex h-[calc(100%+2px)] flex-col">
                 <Button
