@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { CouponType } from '~/constants/counpon.constant'
 import { CourseType } from '~/constants/course.constant'
 import { OrderStatus } from '~/constants/order.constant'
+import { CourseSchema } from '~/types/course.type'
 import { UserSchema } from '~/types/user.type'
 
 export const OrderSchema = z.object({
@@ -38,7 +39,15 @@ export const OrderItemSnapshotSchema = z.object({
 export const GetOrderListResSchema = z.object({
   orders: z.array(
     OrderSchema.extend({
-      snapshots: z.array(OrderItemSnapshotSchema)
+      snapshots: z.array(
+        OrderItemSnapshotSchema.extend({
+          course: CourseSchema.pick({
+            title: true,
+            image: true,
+            slug: true
+          }).nullable()
+        })
+      )
     }).omit({
       createdById: true,
       updatedById: true,

@@ -149,11 +149,11 @@ function getColumns({
       cell: ({ row }) => (
         <div className='flex items-center gap-2 flex-wrap'>
           <img
-            src={row.original.snapshots[0]?.courseImage || ''}
-            alt={row.original.snapshots[0]?.courseTitle || ''}
+            src={row.original.snapshots[0]?.course?.image || row.original.snapshots[0]?.courseImage || ''}
+            alt={row.original.snapshots[0]?.course?.title || row.original.snapshots[0]?.courseTitle || ''}
             className='w-10 h-10 rounded-md'
           />
-          <span className='wrap-break-word'>{row.original.snapshots[0]?.courseTitle}</span>
+          <span className='wrap-break-word'>{row.original.snapshots[0]?.course?.title || row.original.snapshots[0]?.courseTitle}</span>
         </div>
       )
     },

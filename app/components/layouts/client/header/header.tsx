@@ -28,8 +28,8 @@ export default function Header({ isAuth, isHeaderAbsolute = false }: { isAuth: b
     <>
       <header
         className={cn({
-          'sticky top-0 left-0 right-0 z-10 bg-background h-16 px-4 sm:px-4 xl:px-4 border-b': !isHeaderAbsolute,
-          'absolute top-0 left-0 right-0 z-10 bg-transparent h-16 px-4 sm:px-4 xl:px-4': isHeaderAbsolute
+          'sticky top-0 left-0 right-0 z-[100] bg-background h-16 px-4 sm:px-4 xl:px-4 border-b': !isHeaderAbsolute,
+          'absolute top-0 left-0 right-0 z-[100] bg-transparent h-16 px-4 sm:px-4 xl:px-4': isHeaderAbsolute
         })}
       >
         <div className='flex items-center justify-between h-full w-full mx-auto md:container'>
