@@ -1,10 +1,11 @@
-import type { Route } from '.react-router/types/app/routes/client/courses/+types/course'
 import { Accordion } from '@radix-ui/react-accordion'
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
+import type { AxiosResponse } from 'axios'
 import { BrainCircuit, CheckIcon, ListVideo } from 'lucide-react'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { Link, useLoaderData, useNavigate, type LoaderFunctionArgs, type MetaFunction } from 'react-router'
 import { toast } from 'sonner'
+import courseApi from '~/apis/course.api'
 import VideoIframe from '~/components/art-player/video-iframe'
 import NotFound from '~/components/error-page/error-page'
 import Wrapper from '~/components/layouts/client/wrapper/wrapper'
@@ -37,10 +38,40 @@ import { cn, formatCurrency, formatDate, handleError } from '~/lib/utils'
 import { useAuthStore } from '~/stores/useAuthStore'
 import type { GetListCartResType } from '~/types/cart.type'
 import type { GetValidateCouponResType } from '~/types/coupon.type'
+import type { GetCourseDetailResType } from '~/types/course.type'
 import type { CreateOrderBodyType } from '~/types/order.type'
+import type { SuccessResponse } from '~/types/success.type'
 
-export function meta({ params }: Route.MetaArgs) {
-  return [{ title: `${params.courseSlug}` }, { name: 'description', content: `${params.courseSlug}` }]
+export async function loader({ params }: LoaderFunctionArgs) {
+  const courseSlug = params.courseSlug as string
+  const queryClient = new QueryClient()
+
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: ['course', courseSlug],
+      queryFn: () => courseApi.getCourseDetailBySlug({ slug: courseSlug })
+    })
+
+    const courseData = queryClient.getQueryData<AxiosResponse<SuccessResponse<GetCourseDetailResType>>>([
+      'course',
+      courseSlug
+    ])
+
+    return {
+      courseSlug,
+      title: courseData?.data.data.title || 'Không tìm thấy khóa học'
+    }
+  } catch {
+    throw new Response('Not Found', { status: 404 })
+  }
+}
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [{ title: 'Không tìm thấy khóa học 111' }]
+
+  return [
+    { title: data.title },
+    { name: 'description', content: data.title }
+  ]
 }
 
 function ShowDialogPay({
@@ -173,10 +204,10 @@ function ShowDialogPay({
   )
 }
 
-export default function Course({ params }: Route.ComponentProps) {
+export default function Course() {
+  const { courseSlug } = useLoaderData<typeof loader>()
   const [item, setItem] = useState<GetListCartResType['cartItems'][number] | null>(null)
   const { isAuthenticated } = useAuthStore()
-  const { courseSlug } = params
   const { data: courseDetail, isPending, isError } = useGetCourseDetailBySlugQuery({ slug: courseSlug })
   const courseDetailData = courseDetail?.data
   const { data: listCourse } = useListCourseQuery(undefined, Boolean(courseDetailData))

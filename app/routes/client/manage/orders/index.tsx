@@ -9,7 +9,7 @@ import {
   type Updater
 } from '@tanstack/react-table'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
 import {
@@ -321,17 +321,17 @@ export default function Orders() {
     pageIndex: 0,
     pageSize: PAGE_LIMIT
   })
-  const { data: orders, refetch } = useGetOrder({
+  const getOders = useGetOrder({
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
     status: status === 'ALL' ? undefined : status
   })
   const cancelOrderMutation = useCancalOrderMutation()
-  const data = orders?.data
+  const data = getOders?.data?.data
   const handleCancel = async (orderId: number) => {
     try {
       await cancelOrderMutation.mutateAsync({ orderId })
-      refetch()
+      getOders.refetch()
       toast.success('Hủy đơn hàng thành công')
     } catch (error) {
       handleError({
@@ -339,12 +339,16 @@ export default function Orders() {
       })
     }
   }
+  const handlePayment = useCallback(() => {
+    getOders.refetch()
+    toast.success('Đơn hàng đã được thanh toán thành công')
+  }, [getOders])
   useEffect(() => {
-    paymentSocket.on('payment', () => {
-      toast.success('Đơn hàng đã được thanh toán thành công')
-      refetch()
-    })
-  }, [refetch])
+    paymentSocket.on('payment', handlePayment)
+    return () => {
+      paymentSocket.off('payment', handlePayment)
+    }
+  }, [handlePayment])
   const columns = getColumns({ handleCancel })
   return (
     <div>

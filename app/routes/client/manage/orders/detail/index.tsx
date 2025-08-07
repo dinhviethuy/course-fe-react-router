@@ -1,6 +1,6 @@
 import type { Route } from '.react-router/types/app/routes/client/manage/orders/detail/+types'
 import { CheckIcon, Loader2Icon } from 'lucide-react'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import NotFound from '~/components/error-page/error-page'
@@ -20,12 +20,17 @@ export default function OrderDetail() {
   const { orderId } = useParams<{ orderId: string }>()
   const getOrderDetail = useGetOrderDetail({ orderId: Number(orderId) })
   const data = getOrderDetail?.data?.data
-  useEffect(() => {
-    paymentSocket.on('payment', () => {
-      toast.success('Đơn hàng đã được thanh toán thành công')
-      getOrderDetail.refetch()
-    })
+  const handlePayment = useCallback(() => {
+    getOrderDetail.refetch()
+    toast.success('Đơn hàng đã được thanh toán thành công')
   }, [getOrderDetail])
+  useEffect(() => {
+    paymentSocket.on('payment', handlePayment)
+    return () => {
+      paymentSocket.off('payment', handlePayment)
+    }
+  }, [handlePayment])
+
   if (getOrderDetail.isPending) return <Loading />
   if (!data) return <NotFound statusCode={404} message='Đơn hàng không tồn tại' isShowButton={false} />
   const order = data.data
