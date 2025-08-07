@@ -34,6 +34,7 @@ type PaginationLinkProps = {
 function PaginationLink({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) {
   return (
     <Link
+      preventScrollReset
       to={props.href || ''}
       aria-current={isActive ? 'page' : undefined}
       className={cn(

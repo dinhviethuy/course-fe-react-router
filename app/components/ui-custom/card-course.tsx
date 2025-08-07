@@ -12,16 +12,16 @@ interface CardCourseProps {
 
 export default function CardCourse({ course, isBought = false }: CardCourseProps) {
   return (
-    <Link to={`/courses/${course.slug}`}>
-      <Card className='pt-0 hover:border-primary transition-colors duration-300 cursor-pointer h-[288px] w-[350px] sm:w-full sm:h-full'>
-        <CardHeader className='overflow-hidden p-0 h-[200px] relative'>
+    <Link to={`/courses/${course.slug}`} className='w-full'>
+      <Card className='pt-0 hover:border-primary transition-colors duration-300 cursor-pointer h-[288px] max-w-[350px] sm:w-full sm:h-full mx-auto'>
+        <CardHeader className='overflow-hidden p-0 grid grid-rows-1 h-[200px] w-full relative'>
           <CardDescription className='w-full h-full p-0 overflow-hidden'>
             {isBought && (
               <Badge variant='default' className='absolute top-1 right-1'>
                 <p className='text-xs font-medium'>Đã mua</p>
               </Badge>
             )}
-            <LazyLoadImage src={course.image} alt='logo' className='w-full h-full object-cover rounded-t-xl' />
+            <LazyLoadImage src={course.image} alt='logo' className='w-full h-full object-cover rounded-t-xl rounded-b-none' />
           </CardDescription>
         </CardHeader>
         <CardContent>

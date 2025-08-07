@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router'
 import NotFound from '~/components/error-page/error-page'
 import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import CardCourse from '~/components/ui-custom/card-course'
+import CardCourseSkeleton from '~/components/ui-custom/card-course-skeleton'
 import PaginationCustom from '~/components/ui-custom/pagination-custom'
 import { PAGE_LIMIT } from '~/constants/other.constant'
 import { useListCourseQuery } from '~/hooks/useCourse'
@@ -15,7 +16,7 @@ export default function Home() {
   const [params] = useSearchParams()
   let page = Number(params.get('page') || 1)
   if (isNaN(page)) page = 1
-  const { data: listCourse } = useListCourseQuery({
+  const { data: listCourse, isPending } = useListCourseQuery({
     limit: PAGE_LIMIT + 2,
     page: page
   })
@@ -34,6 +35,14 @@ export default function Home() {
             </p>
           </div>
           <div className='sm:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-4 gap-6 flex flex-wrap justify-center'>
+            {isPending && (
+              <>
+                <CardCourseSkeleton />
+                <CardCourseSkeleton />
+                <CardCourseSkeleton />
+                <CardCourseSkeleton />
+              </>
+            )}
             {data?.data.courses.map((course) => (
               <CardCourse key={course.id} course={course} />
             ))}

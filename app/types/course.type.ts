@@ -70,7 +70,8 @@ export const GetCoursesQuerySchema = z
         }
         return false
       }, z.boolean())
-      .optional()
+      .optional(),
+    skipCourseId: z.coerce.number().int().positive().optional()
   })
   .strict()
 

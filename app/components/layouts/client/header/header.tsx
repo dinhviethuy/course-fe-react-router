@@ -33,13 +33,11 @@ export default function Header({ isAuth, isHeaderAbsolute = false }: { isAuth: b
           'absolute top-0 left-0 right-0 z-[100] bg-transparent h-16 px-4 sm:px-4 xl:px-4': isHeaderAbsolute
         })}
       >
-        <div className='flex items-center justify-between h-full w-full mx-auto md:container'>
+        <div className='flex items-center justify-between h-full w-full mx-auto md:container px-4'>
           <div className='flex items-center gap-8'>
-            <div>
-              <Link to='/'>
-                <LazyLoadImage src='https://github.com/shadcn.png' alt='logo' className='w-10 h-10 rounded-full' />
-              </Link>
-            </div>
+            <Link to='/' className='h-10 w-10'>
+              <LazyLoadImage src='https://github.com/shadcn.png' alt='logo' className='w-10 h-10 rounded-full' />
+            </Link>
             <div>
               <ul className='items-center gap-4 hidden sm:flex'>
                 {navItems.map((item) => (

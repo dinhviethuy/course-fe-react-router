@@ -24,17 +24,15 @@ export default function LazyLoadImage({
   height?: number
 }) {
   return (
-    <Suspense fallback={
-      <div className={cn(className, 'w-full h-full')}>
-        <Skeleton />
-      </div>
-    }>
+    <Suspense fallback={<Skeleton className={cn(className, 'h-full w-full')} />}>
       <Component
         src={src}
         alt={alt}
         className={className}
         width={width}
         height={height}
+        loading='lazy'
+        decoding='async'
       />
     </Suspense>
   )

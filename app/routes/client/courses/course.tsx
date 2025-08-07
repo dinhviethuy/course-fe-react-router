@@ -2,8 +2,8 @@ import { Accordion } from '@radix-ui/react-accordion'
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import type { AxiosResponse } from 'axios'
 import { BrainCircuit, CheckIcon, ListVideo } from 'lucide-react'
-import { useState } from 'react'
-import { Link, useLoaderData, useNavigate, type LoaderFunctionArgs, type MetaFunction } from 'react-router'
+import { Suspense, useState } from 'react'
+import { Link, useLoaderData, useNavigate, useSearchParams, type LoaderFunctionArgs, type MetaFunction } from 'react-router'
 import { toast } from 'sonner'
 import courseApi from '~/apis/course.api'
 import VideoIframe from '~/components/art-player/video-iframe'
@@ -12,7 +12,9 @@ import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import Loading from '~/components/loading/loading'
 import AccordionCustom from '~/components/ui-custom/accordion-custom'
 import CardCourse from '~/components/ui-custom/card-course'
+import CardCourseSkeleton from '~/components/ui-custom/card-course-skeleton'
 import LazyLoadImage from '~/components/ui-custom/lazy-image'
+import PaginationCustom from '~/components/ui-custom/pagination-custom'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +31,7 @@ import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import { Card, CardDescription } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
+import { Skeleton } from '~/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { OrderStatus } from '~/constants/order.constant'
 import { useAddToCartMutation, useGetListCart } from '~/hooks/useCart'
@@ -205,13 +208,51 @@ function ShowDialogPay({
   )
 }
 
+function RelatedCourses({ courseId }: { courseId: number }) {
+  const [params] = useSearchParams()
+  let page = Number(params.get('page') || 1)
+  if (isNaN(page)) page = 1
+  const { data: listCourse, isPending } = useListCourseQuery({
+    limit: 4,
+    page,
+    skipCourseId: courseId
+  }, Boolean(courseId))
+  return (
+    <>
+      <div className='flex flex-col gap-4'>
+        <div className='sm:grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 sm:gap-4 gap-6 flex flex-wrap justify-center'>
+          {isPending ? (
+            <>
+              <CardCourseSkeleton />
+              <CardCourseSkeleton />
+              <CardCourseSkeleton />
+              <CardCourseSkeleton />
+            </>
+          ) : listCourse && listCourse?.data.data.courses?.length > 0 ? (
+            listCourse?.data.data.courses.map((course) =>
+              <CardCourse key={course.id} course={course} />
+            )
+          ) : (
+            <div className='flex justify-center items-center h-full col-span-4'>
+              <h3 className='text-xl font-semibold'>Không có khóa học liên quan</h3>
+            </div>
+          )}
+        </div>
+        {listCourse?.data?.data && listCourse?.data?.data.totalPages > 1 && (
+          <PaginationCustom currentPage={page} totalPages={listCourse?.data?.data.totalPages || 0} />
+        )}
+      </div>
+    </>
+  )
+}
+
 export default function Course() {
   const { courseSlug } = useLoaderData<typeof loader>()
   const [item, setItem] = useState<GetListCartResType['cartItems'][number] | null>(null)
   const { isAuthenticated } = useAuthStore()
   const { data: courseDetail, isPending, isError } = useGetCourseDetailBySlugQuery({ slug: courseSlug })
   const courseDetailData = courseDetail?.data
-  const { data: listCourse } = useListCourseQuery(undefined, Boolean(courseDetailData))
+
   const { data: listCourseBought } = useBoughtCoursesQuery({
     getAll: true
   }, Boolean(courseDetailData) && Boolean(isAuthenticated))
@@ -229,7 +270,6 @@ export default function Course() {
   }, isAuthenticated)
   const listCartData = listCart?.data
   const listCourseBoughtData = listCourseBought?.data
-  const data = listCourse?.data
   if (isPending) return <Loading />
   if (!courseDetailData || isError) return <NotFound statusCode={404} message='Không tìm thấy trang' />
   const {
@@ -434,7 +474,9 @@ export default function Course() {
           <div className='xl:col-span-2 lg:col-span-2 md:col-span-4 col-span-1'>
             <div className='flex flex-col gap-4 items-center xl:items-end'>
               <Avatar className='w-25 h-25'>
-                <AvatarImage src='https://github.com/shadcn.png' className='object-cover' />
+                <Suspense fallback={<Skeleton className='h-25 w-25 rounded-full' />}>
+                  <AvatarImage src='https://github.com/shadcn.png' className='object-cover' loading='lazy' />
+                </Suspense>
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <span className='text-lg font-semibold'>{author?.fullName}</span>
@@ -506,19 +548,7 @@ export default function Course() {
               </p>
             </TabsContent>
             <TabsContent value='related' className='mt-4'>
-              <div className='sm:grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 sm:gap-4 gap-6 flex flex-wrap justify-center'>
-                {data && data.data.courses.length > 0 ? (
-                  data.data.courses.map((course) => {
-                    if (course.slug !== courseSlug) {
-                      return <CardCourse key={course.id} course={course} />
-                    }
-                  })
-                ) : (
-                  <div className='flex justify-center items-center h-full col-span-4'>
-                    <h3 className='text-xl font-semibold'>Không có khóa học liên quan</h3>
-                  </div>
-                )}
-              </div>
+              <RelatedCourses courseId={courseDetailData.data.id} />
             </TabsContent>
           </Tabs>
         </div>
