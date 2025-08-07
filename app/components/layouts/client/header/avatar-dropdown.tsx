@@ -34,6 +34,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
       })
     }
   }
+  if (!isAuthenticated) return
   if (isPending) return <Skeleton className='h-10 w-10 rounded-full' />
 
   return (
