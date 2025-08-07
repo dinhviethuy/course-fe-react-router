@@ -179,20 +179,22 @@ export default function Course({ params }: Route.ComponentProps) {
   const { courseSlug } = params
   const { data: courseDetail, isPending, isError } = useGetCourseDetailBySlugQuery({ slug: courseSlug })
   const courseDetailData = courseDetail?.data
-  const { data: listCourse } = useListCourseQuery()
-  const { data: listCourseBought } = useBoughtCoursesQuery()
+  const { data: listCourse } = useListCourseQuery(undefined, Boolean(courseDetailData))
+  const { data: listCourseBought } = useBoughtCoursesQuery({
+    getAll: true
+  }, Boolean(courseDetailData) && Boolean(isAuthenticated))
   const addToCartMutation = useAddToCartMutation()
   const queryClient = useQueryClient()
   const createOrderMutation = useCreateOrderMutation()
   const { data: order } = useGetOrder({
     getAll: true,
     status: OrderStatus.PENDING
-  })
+  }, isAuthenticated)
   const orderData = order?.data
   const navigate = useNavigate()
   const { data: listCart } = useGetListCart({
     getAll: true
-  })
+  }, isAuthenticated)
   const listCartData = listCart?.data
   const listCourseBoughtData = listCourseBought?.data
   const data = listCourse?.data

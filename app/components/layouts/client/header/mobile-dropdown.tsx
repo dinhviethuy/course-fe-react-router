@@ -17,7 +17,7 @@ import { useAuthStore } from '~/stores/useAuthStore'
 export default function MobileDropdown({ totalCart }: { totalCart: number }) {
   const { isAuthenticated, setIsAuthenticated, setIsLogout, isAdmin } = useAuthStore()
   const navigate = useNavigate()
-  const { data: profile } = useGetProfileQuery()
+  const { data: profile } = useGetProfileQuery(isAuthenticated)
   const user = profile?.data?.data
   const logoutMutation = useLogoutMutation()
   const handleLogout = async () => {
@@ -38,7 +38,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
       <DropdownMenuTrigger className='cursor-pointer flex items-center justify-center'>
         <MenuIcon className='w-6 h-6' />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='w-52 sm:hidden block z-[1000]'>
+      <DropdownMenuContent className='w-56 sm:hidden block z-[1000]'>
         <DropdownMenuLabel
           className={cn({
             hidden: !isAuthenticated || !user

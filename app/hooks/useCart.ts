@@ -2,10 +2,11 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import cartApi from '~/apis/cart.api'
 import type { CreateCartBodyType, GetCartParamsType, GetCartQueryType } from '~/types/cart.type'
 
-export const useGetListCart = (query?: GetCartQueryType) => {
+export const useGetListCart = (query?: GetCartQueryType, enabled = true) => {
   return useQuery({
     queryKey: ['cart', query],
-    queryFn: () => cartApi.getCart(query)
+    queryFn: () => cartApi.getCart(query),
+    enabled
   })
 }
 

@@ -24,7 +24,7 @@ const courseApi = {
   getCourseDetailById: (param: GetCourseParamsIdType) =>
     http.get<SuccessResponse<GetCourseDetailResType>>(`/courses/${param.courseId}`),
   listCourse: (query?: GetCoursesQueryType, isBought?: boolean) => {
-    const { page, limit, orderBy, sortBy, maxPrice, minPrice, search } = query || {}
+    const { page, limit, orderBy, sortBy, maxPrice, minPrice, search, getAll } = query || {}
     const params = new URLSearchParams()
     if (page) params.append('page', page.toString())
     if (limit) params.append('limit', limit.toString())
@@ -33,6 +33,7 @@ const courseApi = {
     if (maxPrice) params.append('maxPrice', maxPrice.toString())
     if (minPrice) params.append('minPrice', minPrice.toString())
     if (search) params.append('search', search)
+    if (getAll) params.append('getAll', getAll.toString())
     if (isBought) return http.get<SuccessResponse<ListCoursesResType>>(`/courses/bought?${params.toString()}`)
     return http.get<SuccessResponse<ListCoursesResType>>(`/courses?${params.toString()}`)
   },

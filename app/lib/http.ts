@@ -1,6 +1,7 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import axios from 'axios'
 import envConfig from '~/lib/config'
+import { handleError } from '~/lib/utils'
 
 class Http {
   instance: AxiosInstance
@@ -27,12 +28,7 @@ class Http {
       },
       (error: AxiosError) => {
         if (![422, 401].includes(error.response?.status || 0)) {
-          const data = error.response?.data
-          let message = 'Đã xảy ra lỗi'
-          if (data && typeof data === 'object' && 'message' in data) {
-            message = (data as { message: string }).message
-          }
-          console.log(message)
+          handleError({ error })
         }
         return Promise.reject(error)
       }

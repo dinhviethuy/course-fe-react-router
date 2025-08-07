@@ -3,11 +3,11 @@ import userApi from '~/apis/user.api'
 import type { ChangePasswordBodyType, UpdateProfileBodyType } from '~/types/profile.type'
 import type { CreateUserBodyType, GetUserParamsType, GetUsersQueryType, UpdateUserBodyType } from '~/types/user.type'
 
-export const useGetProfileQuery = () => {
+export const useGetProfileQuery = (enabled = true) => {
   return useQuery({
     queryKey: ['profile'],
     queryFn: () => userApi.getProfile(),
-    staleTime: 0
+    enabled
   })
 }
 

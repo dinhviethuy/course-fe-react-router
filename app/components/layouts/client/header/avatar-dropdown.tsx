@@ -17,7 +17,7 @@ import { useAuthStore } from '~/stores/useAuthStore'
 export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
   const { isAuthenticated, setIsAuthenticated, setIsLogout, isAdmin } = useAuthStore()
   const navigate = useNavigate()
-  const { data: profile } = useGetProfileQuery()
+  const { data: profile } = useGetProfileQuery(isAuthenticated)
   const user = profile?.data?.data
   const logoutMutation = useLogoutMutation()
   const handleLogout = async () => {

@@ -22,7 +22,7 @@ const navItems = [
 export default function Header({ isAuth, isHeaderAbsolute = false }: { isAuth: boolean; isHeaderAbsolute?: boolean }) {
   const { data: listCartData } = useGetListCart({
     getAll: true
-  })
+  }, isAuth)
   const totalCart = listCartData?.data?.data?.totalItems || 0
   return (
     <>

@@ -13,7 +13,6 @@ import type {
   GetCourseDetailResTypeForAdmin,
   ReorderChaptersAndLessonsBodyType
 } from '~/types/course.type'
-import type { ErrorResponse } from '~/types/success.type'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -55,7 +54,7 @@ export const handleError = ({
   duration?: number
 }) => {
   if (error instanceof AxiosError) {
-    const { statusCode, message } = error.response?.data as ErrorResponse
+    const { statusCode, message } = error.response?.data || {}
     if (statusCode === 422) {
       if (Array.isArray(message) && setError) {
         message.forEach((item) => {

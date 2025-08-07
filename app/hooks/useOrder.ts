@@ -2,10 +2,11 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import orderApi from '~/apis/order.api'
 import type { CreateOrderBodyType, GetOrderListQueryType, GetOrderParamType } from '~/types/order.type'
 
-export const useGetOrder = (query?: GetOrderListQueryType) => {
+export const useGetOrder = (query?: GetOrderListQueryType, enabled = true) => {
   return useQuery({
     queryKey: ['order-list', query],
-    queryFn: () => orderApi.getOrder(query)
+    queryFn: () => orderApi.getOrder(query),
+    enabled: enabled
   })
 }
 

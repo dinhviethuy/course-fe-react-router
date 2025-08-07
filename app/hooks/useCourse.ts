@@ -32,17 +32,19 @@ export const useGetCourseDetailByIdQuery = (param: GetCourseParamsIdType) => {
   })
 }
 
-export const useListCourseQuery = (query?: GetCoursesQueryType) => {
+export const useListCourseQuery = (query?: GetCoursesQueryType, enabled = true) => {
   return useQuery({
     queryKey: ['list-course', query],
-    queryFn: () => courseApi.listCourse(query)
+    queryFn: () => courseApi.listCourse(query),
+    enabled: enabled
   })
 }
 
-export const useBoughtCoursesQuery = (query?: GetCoursesQueryType) => {
+export const useBoughtCoursesQuery = (query?: GetCoursesQueryType, enabled = true) => {
   return useQuery({
     queryKey: ['bought-courses', query],
-    queryFn: () => courseApi.listCourse(query, true)
+    queryFn: () => courseApi.listCourse(query, true),
+    enabled: enabled
   })
 }
 
