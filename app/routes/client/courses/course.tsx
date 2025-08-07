@@ -473,13 +473,15 @@ export default function Course() {
           </div>
           <div className='xl:col-span-2 lg:col-span-2 md:col-span-4 col-span-1'>
             <div className='flex flex-col gap-4 items-center xl:items-end'>
-              <Avatar className='w-25 h-25'>
-                <Suspense fallback={<Skeleton className='h-25 w-25 rounded-full' />}>
-                  <AvatarImage src='https://github.com/shadcn.png' className='object-cover' loading='lazy' />
-                </Suspense>
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <span className='text-lg font-semibold'>{author?.fullName}</span>
+              <div className='flex flex-col justify-center items-center gap-2'>
+                <Avatar className='w-25 h-25'>
+                  <Suspense fallback={<Skeleton className='h-25 w-25 rounded-full' />}>
+                    <AvatarImage src='https://github.com/shadcn.png' className='object-cover' loading='lazy' />
+                  </Suspense>
+                  <AvatarFallback>{author?.fullName?.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <span className='text-lg font-semibold text-center'>{author?.fullName}</span>
+              </div>
             </div>
           </div>
         </div>

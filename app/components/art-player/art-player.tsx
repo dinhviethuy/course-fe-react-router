@@ -1,5 +1,5 @@
 import Artplayer from 'artplayer'
-import { useEffect, useRef } from 'react'
+import { memo, useCallback, useEffect, useRef } from 'react'
 
 interface PlayerProps {
   option: any
@@ -7,34 +7,54 @@ interface PlayerProps {
   className?: string
 }
 
-export default function ArtPlayer({ option, getInstance, className }: PlayerProps) {
+const ArtPlayer = memo(({ option, getInstance, className }: PlayerProps) => {
   const artRef = useRef<HTMLDivElement>(null)
+  const artInstanceRef = useRef<Artplayer | null>(null)
+
+  const memoizedGetInstance = useCallback((instance: Artplayer) => {
+    if (getInstance && typeof getInstance === 'function') {
+      getInstance(instance)
+    }
+  }, [getInstance])
 
   useEffect(() => {
-    const art = new Artplayer({
-      ...option,
-      container: artRef.current,
-      autoPlay: true,
-      setting: true,
-      playbackRate: true,
-      aspectRatio: true,
-      fullscreen: true,
-      fullscreenWeb: true,
-      screenshot: true,
-      pip: true,
-      fastForward: true
-    })
+    if (!artInstanceRef.current || artInstanceRef.current.url !== option.url) {
+      if (artInstanceRef.current) {
+        artInstanceRef.current.destroy(false)
+      }
 
-    if (getInstance && typeof getInstance === 'function') {
-      getInstance(art)
+      const art = new Artplayer({
+        ...option,
+        container: artRef.current,
+        autoPlay: true,
+        setting: true,
+        playbackRate: true,
+        aspectRatio: true,
+        fullscreen: true,
+        fullscreenWeb: true,
+        screenshot: true,
+        pip: true,
+        fastForward: true
+      })
+
+      artInstanceRef.current = art
+      memoizedGetInstance(art)
     }
 
     return () => {
-      if (art && art.destroy) {
-        art.destroy(false)
+      if (artInstanceRef.current && artInstanceRef.current.destroy) {
+        artInstanceRef.current.destroy(false)
+        artInstanceRef.current = null
       }
     }
-  }, [getInstance, option])
+  }, [option, memoizedGetInstance])
 
-  return <div ref={artRef} className={className}></div>
-}
+  return (
+    <div
+      ref={artRef}
+      className={className}
+    />
+  )
+})
+
+export default ArtPlayer

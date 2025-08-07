@@ -54,12 +54,12 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             hidden: !isAuthenticated || !user
           })}
         />
-        <DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link to='/' className='w-full'>
             Trang chủ
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: isAuthenticated
           })}
@@ -68,7 +68,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             Đăng nhập
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: isAuthenticated
           })}
@@ -77,7 +77,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             Đăng ký
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated || !user || !isAdmin
           })}
@@ -86,7 +86,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             Trang quản trị
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated || !user
           })}
@@ -95,7 +95,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             Tài khoản
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated || !user
           })}
@@ -104,7 +104,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             Khoá học đã mua
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated || !user
           })}
@@ -118,7 +118,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             )}
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated || !user
           })}
@@ -133,7 +133,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
           })}
         />
         {isAuthenticated && user && (
-          <DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <div className='w-full cursor-pointer' onClick={handleLogout}>
               Đăng xuất
             </div>

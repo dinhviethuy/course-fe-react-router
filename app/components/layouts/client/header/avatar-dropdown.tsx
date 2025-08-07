@@ -9,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
+import { Skeleton } from '~/components/ui/skeleton'
 import { useLogoutMutation } from '~/hooks/useAuth'
 import { useGetProfileQuery } from '~/hooks/useUser'
 import { cn, handleError } from '~/lib/utils'
@@ -17,7 +18,7 @@ import { useAuthStore } from '~/stores/useAuthStore'
 export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
   const { isAuthenticated, setIsAuthenticated, setIsLogout, isAdmin } = useAuthStore()
   const navigate = useNavigate()
-  const { data: profile } = useGetProfileQuery(isAuthenticated)
+  const { data: profile, isPending } = useGetProfileQuery(isAuthenticated)
   const user = profile?.data?.data
   const logoutMutation = useLogoutMutation()
   const handleLogout = async () => {
@@ -42,8 +43,8 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
         })}
       >
         <div className='relative'>
-          <Avatar>
-            <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
+          <Avatar className='h-10 w-10'>
+            {isPending ? <Skeleton className='h-10 w-10 rounded-full' /> : <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>}
           </Avatar>
           {totalCart > 0 && (
             <Badge className='border-background absolute -top-1.5 left-full min-w-5 -translate-x-3.5 px-1'>
@@ -68,12 +69,12 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
             hidden: !isAuthenticated || !user
           })}
         />
-        <DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link to='/' className='w-full'>
             Trang chủ
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: isAuthenticated
           })}
@@ -82,7 +83,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
             Đăng nhập
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: isAuthenticated
           })}
@@ -91,7 +92,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
             Đăng ký
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated || !isAdmin
           })}
@@ -100,7 +101,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
             Trang quản trị
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated
           })}
@@ -109,7 +110,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
             Tài khoản
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated
           })}
@@ -118,7 +119,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
             Khóa học đã mua
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated
           })}
@@ -132,7 +133,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
             )}
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated
           })}
@@ -146,7 +147,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
             hidden: !isAuthenticated || !user
           })}
         />
-        <DropdownMenuItem
+        <DropdownMenuItem asChild
           className={cn({
             hidden: !isAuthenticated
           })}

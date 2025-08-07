@@ -1,6 +1,6 @@
 import type { Route } from '.react-router/types/app/routes/client/learn/+types'
 import { BookOpenCheck, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Link, useSearchParams } from 'react-router'
 import ArtPlayer from '~/components/art-player/art-player'
@@ -72,19 +72,36 @@ function RenderLesson({
   setTitleChapter: (title: string) => void
 }) {
   const { data: lessonDetail, isPending } = useGetLessonDetailQuery({ lessonId })
+
+  const videoUrl = useMemo(() => lessonDetail?.data.data.videoUrl ?? '', [lessonDetail?.data.data.videoUrl])
+
+  const playerOption = useMemo(() => ({
+    url: videoUrl
+  }), [videoUrl])
+
+  useEffect(() => {
+    if (lessonDetail) {
+      const titleChapter = chapters.find(
+        (chapter) => chapter.id === lessonDetail?.data.data.chapterId
+      )?.title || ''
+      setTitleChapter(titleChapter)
+    }
+  }, [lessonDetail, chapters, setTitleChapter])
+
   if (isPending) return null
   if (!lessonDetail) return <NotFound statusCode={404} message='Không tìm thấy bài học' />
-  const titleChapter = chapters.find((chapter) => chapter.id === lessonDetail?.data.data.chapterId)?.title || ''
-  setTitleChapter(titleChapter)
+
+  const titleChapter = chapters.find(
+    (chapter) => chapter.id === lessonDetail?.data.data.chapterId
+  )?.title || ''
+
   return (
     <>
       <div className='pr-2'>
         <ArtPlayer
-          option={{
-            url: lessonDetail?.data.data.videoUrl ?? ''
-          }}
+          option={playerOption}
           className={cn('w-full h-[220px] sm:h-[400px] md:h-[500px] xl:h-[600px] 2xl:h-[700px]', {
-            hidden: !lessonDetail?.data.data.videoUrl
+            hidden: !videoUrl
           })}
         />
       </div>
