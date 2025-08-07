@@ -82,7 +82,7 @@ export default function MobileDropdown({ totalCart }: { totalCart: number }) {
             hidden: !isAuthenticated || !user || !isAdmin
           })}
         >
-          <Link to='/manage/profile' className='w-full'>
+          <Link to='/admin/dashboard' className='w-full'>
             Trang quản trị
           </Link>
         </DropdownMenuItem>
