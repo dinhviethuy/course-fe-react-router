@@ -1,6 +1,7 @@
 import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from 'lucide-react'
 import { useEffect } from 'react'
 import type { UseFormRegister, UseFormSetValue } from 'react-hook-form'
+import LazyLoadImage from '~/components/ui-custom/lazy-image'
 
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -86,7 +87,7 @@ export default function UploadImage({
 
           {previewUrl ? (
             <div className='relative w-[300px] h-[200px] group rounded overflow-hidden border border-border'>
-              <img
+              <LazyLoadImage
                 src={previewUrl}
                 alt={files?.[0]?.file?.name || 'Uploaded image'}
                 className={cn('w-full h-full object-contain transition-opacity duration-300', {

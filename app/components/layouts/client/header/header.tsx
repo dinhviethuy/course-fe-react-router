@@ -2,6 +2,7 @@ import { Link, NavLink } from 'react-router'
 import AvatarDropdown from '~/components/layouts/client/header/avatar-dropdown'
 import MobileDropdown from '~/components/layouts/client/header/mobile-dropdown'
 import { ModeToggle } from '~/components/mode-toggle'
+import LazyLoadImage from '~/components/ui-custom/lazy-image'
 import { Button } from '~/components/ui/button'
 import { useGetListCart } from '~/hooks/useCart'
 import { cn } from '~/lib/utils'
@@ -36,7 +37,7 @@ export default function Header({ isAuth, isHeaderAbsolute = false }: { isAuth: b
           <div className='flex items-center gap-8'>
             <div>
               <Link to='/'>
-                <img src='https://github.com/shadcn.png' alt='logo' className='w-10 h-10 rounded-full' />
+                <LazyLoadImage src='https://github.com/shadcn.png' alt='logo' className='w-10 h-10 rounded-full' />
               </Link>
             </div>
             <div>

@@ -12,6 +12,7 @@ import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import Loading from '~/components/loading/loading'
 import AccordionCustom from '~/components/ui-custom/accordion-custom'
 import CardCourse from '~/components/ui-custom/card-course'
+import LazyLoadImage from '~/components/ui-custom/lazy-image'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -141,7 +142,7 @@ function ShowDialogPay({
             <div className='flex flex-col gap-6'>
               <div className='grid grid-cols-6 gap-4'>
                 <div className='flex gap-2 items-center md:col-span-3 col-span-6'>
-                  <img src={course.image} alt={course.title} className='w-12 h-12 rounded-md object-cover' />
+                  <LazyLoadImage src={course.image} alt={course.title} className='w-12 h-12 rounded-md object-cover' />
                   <span className='text-base font-semibold text-primary'>{course.title}</span>
                 </div>
                 <div className='flex flex-col gap-2 col-span-1 md:col-span-1'>

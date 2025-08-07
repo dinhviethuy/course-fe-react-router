@@ -5,6 +5,7 @@ import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import NotFound from '~/components/error-page/error-page'
 import Loading from '~/components/loading/loading'
+import LazyLoadImage from '~/components/ui-custom/lazy-image'
 import { Badge } from '~/components/ui/badge'
 import { OrderStatus } from '~/constants/order.constant'
 import { useGetOrderDetail } from '~/hooks/useOrder'
@@ -116,7 +117,7 @@ export default function OrderDetail() {
                 khi sẽ không nhận diện được QR này)
               </p>
               <div>
-                <img
+                <LazyLoadImage
                   src={`${envConfig.VITE_BANK_QR_BASE_URL}?acc=${envConfig.VITE_BANK_ACCOUNT_NUMBER}&bank=${envConfig.VITE_BANK_CODE}&amount=${totalPrice}&des=DH${order.id}`}
                   alt='QR Code'
                   width={320}
@@ -137,7 +138,7 @@ export default function OrderDetail() {
             </li>
             <li className='grid grid-cols-3 gap-4'>
               <div className='col-span-2 text-base flex items-center flex-wrap md:flex-nowrap gap-4'>
-                <img
+                <LazyLoadImage
                   src={order.snapshots[0].courseImage || ''}
                   alt={order.snapshots[0].courseTitle || ''}
                   className='w-12 h-12'

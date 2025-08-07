@@ -14,6 +14,7 @@ import { Link } from 'react-router'
 import { toast } from 'sonner'
 import AdminGuard from '~/components/guard/admin-guard'
 import Loading from '~/components/loading/loading'
+import LazyLoadImage from '~/components/ui-custom/lazy-image'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -135,7 +136,7 @@ function getColumns({
       header: 'Khóa học',
       cell: ({ row }) => (
         <div className='flex items-center gap-2 flex-wrap'>
-          <img src={row.original.image} alt={row.original.title} className='w-10 h-10 rounded-md' />
+          <LazyLoadImage src={row.original.image} alt={row.original.title} className='w-10 h-10 rounded-md' />
           <span className='wrap-break-word'>{row.original.title}</span>
         </div>
       )

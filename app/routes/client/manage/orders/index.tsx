@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-r
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
+import LazyLoadImage from '~/components/ui-custom/lazy-image'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -148,7 +149,7 @@ function getColumns({
       header: 'Khóa học',
       cell: ({ row }) => (
         <div className='flex items-center gap-2 flex-wrap'>
-          <img
+          <LazyLoadImage
             src={row.original.snapshots[0]?.course?.image || row.original.snapshots[0]?.courseImage || ''}
             alt={row.original.snapshots[0]?.course?.title || row.original.snapshots[0]?.courseTitle || ''}
             className='w-10 h-10 rounded-md'

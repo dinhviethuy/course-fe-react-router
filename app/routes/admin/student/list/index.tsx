@@ -16,6 +16,7 @@ import Loading from '~/components/loading/loading'
 import CreateStudent from '~/components/student/create-student'
 import StudentDetail from '~/components/student/student-detail'
 import UpdateStudent from '~/components/student/update-student'
+import LazyLoadImage from '~/components/ui-custom/lazy-image'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -158,7 +159,7 @@ function getColumns({
       cell: ({ row }) => (
         <div className='flex flex-col gap-2'>
           <div className='flex items-center flex-wrap gap-2'>
-            <img src={row.original.course.image} alt={row.original.course.title} className='w-10 h-10 rounded-md' />
+            <LazyLoadImage src={row.original.course.image} alt={row.original.course.title} className='w-10 h-10 rounded-md' />
             <span className='wrap-break-word'>{row.original.course.title}</span>
           </div>
         </div>

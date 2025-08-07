@@ -1,4 +1,4 @@
-import { cn } from '~/lib/utils'
+import { cn } from "~/lib/utils"
 
 interface LoadingProps {
   className?: string
@@ -6,7 +6,7 @@ interface LoadingProps {
 
 export default function Loading({ className }: LoadingProps) {
   return (
-    <div className={cn('flex justify-center items-center flex-1 bg-background dark:bg-background', className)}>
+    <div className={cn('flex justify-center items-center min-h-screen bg-background', className)}>
       <span className='loader'></span>
     </div>
   )

@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import LazyLoadImage from '~/components/ui-custom/lazy-image'
 import { Badge } from '~/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader } from '~/components/ui/card'
 import { formatCurrency } from '~/lib/utils'
@@ -20,7 +21,7 @@ export default function CardCourse({ course, isBought = false }: CardCourseProps
                 <p className='text-xs font-medium'>Đã mua</p>
               </Badge>
             )}
-            <img src={course.image} alt='logo' className='w-full h-full object-cover rounded-t-xl' />
+            <LazyLoadImage src={course.image} alt='logo' className='w-full h-full object-cover rounded-t-xl' />
           </CardDescription>
         </CardHeader>
         <CardContent>

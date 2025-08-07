@@ -1,6 +1,7 @@
 import { parse } from 'cookie'
 import { useEffect } from 'react'
 import { Outlet, useLoaderData, type LoaderFunctionArgs } from 'react-router'
+import Loading from '~/components/loading/loading'
 import http from '~/lib/http'
 import { CheckAdmin, handleError } from '~/lib/utils'
 import { useAuthStore, type PermissionStoreType } from '~/stores/useAuthStore'
@@ -46,9 +47,7 @@ export default function LayoutInit() {
   }, [isAuthenticated, isLoading, setIsAuthenticated, setIsLoading, permissions, setPermissions, setIsAdmin])
   if (isLoadingAuthStore)
     return (
-      <div className='flex justify-center items-center min-h-screen bg-accent-foreground dark:bg-background'>
-        <span className='loader'></span>
-      </div>
+      <Loading />
     )
   return <Outlet />
 }
