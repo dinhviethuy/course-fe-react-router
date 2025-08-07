@@ -77,7 +77,7 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link to='/' className='flex gap-2 items-center'>
                   <Home />
                   Trang chủ
@@ -85,7 +85,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className='cursor-pointer'>
+            <DropdownMenuItem onClick={handleLogout} className='cursor-pointer' asChild>
               <LogOut />
               Đăng xuất
             </DropdownMenuItem>

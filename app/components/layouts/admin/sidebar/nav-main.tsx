@@ -89,7 +89,7 @@ export function NavMain({
                   sideOffset={4}
                 >
                   {item.items?.map((subItem) => (
-                    <DropdownMenuItem className='gap-2 p-2'>
+                    <DropdownMenuItem className='gap-2 p-2' asChild>
                       <NavLink to={subItem.url}>
                         <span>{subItem.title}</span>
                       </NavLink>
