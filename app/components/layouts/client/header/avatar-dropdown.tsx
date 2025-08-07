@@ -34,6 +34,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
       })
     }
   }
+  if (isPending) return <Skeleton className='h-10 w-10 rounded-full' />
 
   return (
     <DropdownMenu>
@@ -44,7 +45,7 @@ export default function AvatarDropdown({ totalCart }: { totalCart: number }) {
       >
         <div className='relative'>
           <Avatar className='h-10 w-10'>
-            {isPending ? <Skeleton className='h-10 w-10 rounded-full' /> : <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>}
+            <AvatarFallback>{user?.fullName?.charAt(0)}</AvatarFallback>
           </Avatar>
           {totalCart > 0 && (
             <Badge className='border-background absolute -top-1.5 left-full min-w-5 -translate-x-3.5 px-1'>
