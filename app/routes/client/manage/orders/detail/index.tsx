@@ -1,7 +1,7 @@
 import type { Route } from '.react-router/types/app/routes/client/manage/orders/detail/+types'
 import { CheckIcon, Loader2Icon } from 'lucide-react'
 import { useCallback, useEffect } from 'react'
-import { useParams } from 'react-router'
+import { Link, useParams } from 'react-router'
 import { toast } from 'sonner'
 import NotFound from '~/components/error-page/error-page'
 import Loading from '~/components/loading/loading'
@@ -50,7 +50,7 @@ export default function OrderDetail() {
           Sau khi chuyển khoản thành công, hệ thống sẽ tự động xác nhận đơn hàng sau vài giây
         </p>
         <p className='text-sm text-muted-foreground'>
-          Nếu có bất cứ vấn đề gì về chuyển khoản, hãy nhắn tin cho page Đinh Viết Huy để được hỗ trợ
+          Nếu có bất cứ vấn đề gì về chuyển khoản, hãy nhắn tin cho <Link to={envConfig.VITE_PAGE_URL} className='font-bold'>Page</Link> để được hỗ trợ
         </p>
       </div>
       <div data-orientation='horizontal' role='none' className='shrink-0 bg-border h-[1px] w-full my-6' />

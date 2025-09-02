@@ -7,6 +7,7 @@ import Lesson from '~/components/lesson/lesson'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { useGetLessonDetailAdminQuery, useUpdateLessonMutation } from '~/hooks/useLesson'
 import { useUploadVideoMutation } from '~/hooks/useMedia'
+import { videoSocket } from '~/lib/socket'
 import { handleError } from '~/lib/utils'
 import { UpdateLessonBodySchema } from '~/types/lesson.type'
 
@@ -60,6 +61,10 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
     })
   }, [lessonDetail, reset])
 
+  useEffect(() => {
+    if (!lessonDetail) return
+    videoSocket.on('duration', () => queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] }))
+  }, [queryClient, courseId, lessonDetail])
 
   if (isPending || !lessonDetail) return null
 
@@ -94,6 +99,8 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
     }
   }
 
+
+
   return (
     <Lesson
       control={control as any}
@@ -107,7 +114,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       lessonIdPrev={lessonIdPrev}
       lessonIdNext={lessonIdNext}
       buttonText='Cập nhật bài học'
-      isPending={updateLessonMutation.isPending}
+      isPending={updateLessonMutation.isPending || uploadVideoMutation.isPending}
       disabled={disabled}
     />
   )

@@ -9,7 +9,9 @@ const envSchema = z.object({
   VITE_BANK_ACCOUNT_NAME: z.string(),
   VITE_BANK_ACCOUNT_NUMBER: z.string(),
   VITE_BANK_CODE: z.string(),
-  VITE_BANK_QR_BASE_URL: z.string()
+  VITE_BANK_QR_BASE_URL: z.string(),
+  VITE_TIMEOUT: z.coerce.number().default(0),
+  VITE_PAGE_URL: z.string()
 })
 
 const envClient = envSchema.safeParse(import.meta.env)

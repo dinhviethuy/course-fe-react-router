@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
@@ -8,6 +8,7 @@ import { default as Lesson } from '~/components/lesson/lesson'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { useCreateLessonMutation } from '~/hooks/useLesson'
 import { useUploadVideoMutation } from '~/hooks/useMedia'
+import { videoSocket } from '~/lib/socket'
 import { handleError } from '~/lib/utils'
 import { CreateLessonBodySchema } from '~/types/lesson.type'
 
@@ -80,6 +81,10 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
     }
   }
 
+  useEffect(() => {
+    videoSocket.on('duration', () => queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] }))
+  }, [queryClient, courseId])
+
   return (
     <Lesson
       control={control as any}
@@ -90,7 +95,7 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
       setValue={setValue as any}
       setFile={setFile}
       buttonText='Tạo ngay'
-      isPending={createLessonMutation.isPending}
+      isPending={createLessonMutation.isPending || uploadVideoMutation.isPending}
     />
   )
 }

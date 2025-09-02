@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import NotFound from '~/components/error-page/error-page'
 import Wrapper from '~/components/layouts/client/wrapper/wrapper'
 import CardCourse from '~/components/ui-custom/card-course'
@@ -6,6 +6,7 @@ import CardCourseSkeleton from '~/components/ui-custom/card-course-skeleton'
 import PaginationCustom from '~/components/ui-custom/pagination-custom'
 import { PAGE_LIMIT } from '~/constants/other.constant'
 import { useListCourseQuery } from '~/hooks/useCourse'
+import envConfig from '~/lib/config'
 import type { Route } from './+types/index'
 
 export function meta({ }: Route.MetaArgs) {
@@ -31,7 +32,7 @@ export default function Home() {
           <div className='flex flex-col items-center justify-center gap-2'>
             <h1 className='text-[20px] font-bold'>Mua càng nhiều, giá sẽ càng rẻ</h1>
             <p className='text-[16px] text-muted-foreground text-center'>
-              Nhắn tin cho Huy để có giá tốt nếu combo bạn muốn mua không có sẵn
+              Nhắn tin cho <Link to={envConfig.VITE_PAGE_URL} className='font-bold'>Page</Link> để có giá tốt nếu combo bạn muốn mua không có sẵn
             </p>
           </div>
           <div className='sm:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-4 gap-6 flex flex-wrap justify-center'>

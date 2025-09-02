@@ -8,14 +8,20 @@ class Http {
   constructor() {
     this.instance = axios.create({
       baseURL: envConfig.VITE_API_URL,
-      timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      timeout: envConfig.VITE_TIMEOUT,
       withCredentials: true
     })
     this.instance.interceptors.request.use(
       (config: any) => {
+        const isFormData = config.data instanceof FormData
+        if (!isFormData) {
+          config.headers = {
+            ...config.headers,
+            'Content-Type': config.headers?.['Content-Type'] ?? 'application/json'
+          }
+        } else {
+          if (config.headers) delete config.headers['Content-Type']
+        }
         return config
       },
       (error: any) => {
