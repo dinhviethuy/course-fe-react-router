@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { default as Lesson } from '~/components/lesson/lesson'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { useCreateLessonMutation } from '~/hooks/useLesson'
-import { useUploadVideoMutation } from '~/hooks/useMedia'
+import { useInitVideoMutation, useUploadVideoByNameMutation } from '~/hooks/useMedia'
 import { videoSocket } from '~/lib/socket'
 import { handleError } from '~/lib/utils'
 import { CreateLessonBodySchema } from '~/types/lesson.type'
@@ -47,7 +47,8 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
     )
   })
 
-  const uploadVideoMutation = useUploadVideoMutation()
+  const initVideoMutation = useInitVideoMutation()
+  const uploadVideoByNameMutation = useUploadVideoByNameMutation()
   const createLessonMutation = useCreateLessonMutation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -55,11 +56,16 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
   const onSubmit = async () => {
     try {
       if (file) {
+        // 1) init để nhận url ngay
+        const init = await initVideoMutation.mutateAsync((file as File).name)
+        const { url } = init.data.data
+        setValue('videoUrl', url)
+        setValue('duration', 0)
+        // 2) upload nền theo filename
+        const filename = url.split('/').pop() as string
         const formData = new FormData()
         formData.append('files', file as File)
-        const res = await uploadVideoMutation.mutateAsync(formData)
-        setValue('videoUrl', res.data.data[0].url)
-        setValue('duration', res.data.data[0].duration)
+        uploadVideoByNameMutation.mutate({ filename, body: formData })
       } else setValue('videoUrl', null)
       // Đảm bảo description luôn là string, không phải undefined
       const body = getValues()
@@ -82,8 +88,13 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
   }
 
   useEffect(() => {
-    videoSocket.on('duration', () => queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] }))
-  }, [queryClient, courseId])
+    if (!file) return
+    videoSocket.on('duration', () => {
+      queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
+      toast.success('Độ dài video đã được cập nhật')
+    })
+
+  }, [queryClient, courseId, file])
 
   return (
     <Lesson
@@ -95,7 +106,7 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
       setValue={setValue as any}
       setFile={setFile}
       buttonText='Tạo ngay'
-      isPending={createLessonMutation.isPending || uploadVideoMutation.isPending}
+      isPending={createLessonMutation.isPending || initVideoMutation.isPending || uploadVideoByNameMutation.isPending}
     />
   )
 }

@@ -14,7 +14,19 @@ const mediaApi = {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
-    })
+    }),
+  initVideo: (originalName: string) =>
+    http.post<SuccessResponse<UploadVideoResType>>('media/videos/init', { originalName }),
+  uploadVideoByName: (filename: string, body: FormData) =>
+    http.post<SuccessResponse<UploadVideoResType[]>>(
+      `media/videos/upload-by-name?filename=${encodeURIComponent(filename)}`,
+      body,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
 }
 
 export default mediaApi

@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import Lesson from '~/components/lesson/lesson'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { useGetLessonDetailAdminQuery, useUpdateLessonMutation } from '~/hooks/useLesson'
-import { useUploadVideoMutation } from '~/hooks/useMedia'
+import { useInitVideoMutation, useUploadVideoByNameMutation } from '~/hooks/useMedia'
 import { videoSocket } from '~/lib/socket'
 import { handleError } from '~/lib/utils'
 import { UpdateLessonBodySchema } from '~/types/lesson.type'
@@ -47,7 +47,8 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
     )
   })
 
-  const uploadVideoMutation = useUploadVideoMutation()
+  const initVideoMutation = useInitVideoMutation()
+  const uploadVideoByNameMutation = useUploadVideoByNameMutation()
   const updateLessonMutation = useUpdateLessonMutation()
   const queryClient = useQueryClient()
 
@@ -63,7 +64,11 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
 
   useEffect(() => {
     if (!lessonDetail) return
-    videoSocket.on('duration', () => queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] }))
+    videoSocket.on('duration', () => {
+      queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
+      toast.success('Độ dài video đã được cập nhật')
+    })
+
   }, [queryClient, courseId, lessonDetail])
 
   if (isPending || !lessonDetail) return null
@@ -73,11 +78,14 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
   const onSubmit = async () => {
     try {
       if (file) {
+        const init = await initVideoMutation.mutateAsync((file as File).name)
+        const { url } = init.data.data
+        setValue('videoUrl', url)
+        setValue('duration', 0)
+        const filename = url.split('/').pop() as string
         const formData = new FormData()
         formData.append('files', file as File)
-        const res = await uploadVideoMutation.mutateAsync(formData)
-        setValue('videoUrl', res.data.data[0].url)
-        setValue('duration', res.data.data[0].duration)
+        uploadVideoByNameMutation.mutate({ filename, body: formData })
       }
       const body = getValues()
       await updateLessonMutation.mutateAsync({
@@ -114,7 +122,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       lessonIdPrev={lessonIdPrev}
       lessonIdNext={lessonIdNext}
       buttonText='Cập nhật bài học'
-      isPending={updateLessonMutation.isPending || uploadVideoMutation.isPending}
+      isPending={updateLessonMutation.isPending || initVideoMutation.isPending || uploadVideoByNameMutation.isPending}
       disabled={disabled}
     />
   )
