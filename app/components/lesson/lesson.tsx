@@ -11,6 +11,7 @@ import { Switch } from '~/components/ui/switch'
 import UploadVideo from '~/components/uploads/upload-video'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { ClientOnly } from '~/layout/admin/client-only'
+import envConfig from '~/lib/config'
 import { type CreateLessonBodyType, type UpdateLessonBodyType } from '~/types/lesson.type'
 
 type LessonType = CreateLessonBodyType | UpdateLessonBodyType
@@ -88,7 +89,7 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
             <div className='rounded-xl overflow-hidden border relative'>
               <UploadVideo
                 register={register}
-                videoUrl={lesson?.videoUrl}
+                videoUrl={lesson?.videoUrl ? `${envConfig.VITE_API_URL}/media/static/videos-azure/${lesson?.videoUrl}` : null}
                 setValue={setValue}
                 setFile={setFile}
                 disabled={disabled}

@@ -14,6 +14,7 @@ import { Button } from '~/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '~/components/ui/sheet'
 import { useCanAccessCourseMutation, useGetCourseDetailBySlugQuery } from '~/hooks/useCourse'
 import { useGetLessonDetailQuery } from '~/hooks/useLesson'
+import envConfig from '~/lib/config'
 import { cn, getLessonIdAndChapterId } from '~/lib/utils'
 import type { GetCourseDetailResType } from '~/types/course.type'
 
@@ -73,7 +74,7 @@ function RenderLesson({
 }) {
   const { data: lessonDetail, isPending } = useGetLessonDetailQuery({ lessonId })
 
-  const videoUrl = useMemo(() => lessonDetail?.data.data.videoUrl ?? '', [lessonDetail?.data.data.videoUrl])
+  const videoUrl = useMemo(() => `${envConfig.VITE_API_URL}/media/static/videos-azure/${lessonDetail?.data.data.videoUrl ?? ''}`, [lessonDetail?.data.data.videoUrl])
 
   const playerOption = useMemo(() => ({
     url: videoUrl

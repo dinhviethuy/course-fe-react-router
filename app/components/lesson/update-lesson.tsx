@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import Lesson from '~/components/lesson/lesson'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { useGetLessonDetailAdminQuery, useUpdateLessonMutation } from '~/hooks/useLesson'
-import { useInitVideoMutation, useUploadVideoByNameMutation } from '~/hooks/useMedia'
+import { useInitVideoMutation, useUploadToAzure, useUploadVideoByNameMutation, useUploadVideoSuccessMutation } from '~/hooks/useMedia'
 import { videoSocket } from '~/lib/socket'
 import { handleError } from '~/lib/utils'
 import { UpdateLessonBodySchema } from '~/types/lesson.type'
@@ -50,8 +50,9 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
   const initVideoMutation = useInitVideoMutation()
   const uploadVideoByNameMutation = useUploadVideoByNameMutation()
   const updateLessonMutation = useUpdateLessonMutation()
+  const uploadVideoSuccessMutation = useUploadVideoSuccessMutation()
   const queryClient = useQueryClient()
-
+  const uploadToAzureMutation = useUploadToAzure()
   useEffect(() => {
     reset({
       title: lessonDetail?.data.data.title,
@@ -79,13 +80,12 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
     try {
       if (file) {
         const init = await initVideoMutation.mutateAsync((file as File).name)
-        const { url } = init.data.data
-        setValue('videoUrl', url)
+        const { url, key } = init.data.data
+        setValue('videoUrl', key.split('.')[0])
         setValue('duration', 0)
-        const filename = url.split('/').pop() as string
-        const formData = new FormData()
-        formData.append('files', file as File)
-        uploadVideoByNameMutation.mutate({ filename, body: formData })
+        await uploadToAzureMutation.mutateAsync({ sasUrl: url, file: file as File })
+        await uploadVideoSuccessMutation.mutateAsync({ key })
+        toast.success('Đã bắt đầu xử lý video')
       }
       const body = getValues()
       await updateLessonMutation.mutateAsync({
@@ -122,7 +122,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       lessonIdPrev={lessonIdPrev}
       lessonIdNext={lessonIdNext}
       buttonText='Cập nhật bài học'
-      isPending={updateLessonMutation.isPending || initVideoMutation.isPending || uploadVideoByNameMutation.isPending}
+      isPending={updateLessonMutation.isPending || initVideoMutation.isPending || uploadVideoByNameMutation.isPending || uploadToAzureMutation.isPending || uploadVideoSuccessMutation.isPending}
       disabled={disabled}
     />
   )

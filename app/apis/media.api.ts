@@ -26,7 +26,11 @@ const mediaApi = {
           'Content-Type': 'multipart/form-data'
         }
       }
-    )
+    ),
+  uploadVideoSuccess: (key: string) => http.post<SuccessResponse<boolean>>('media/videos/upload-success', { key }),
+  generateWriteSasUrl: (filename: string) =>
+    http.post<SuccessResponse<string>>('media/videos/generate-write-sas-url', { filename }),
+  getVideoInfo: (key: string) => http.post<SuccessResponse<number>>('media/videos/get-video-info', { key })
 }
 
 export default mediaApi

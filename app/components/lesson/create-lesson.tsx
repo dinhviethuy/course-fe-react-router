@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { default as Lesson } from '~/components/lesson/lesson'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { useCreateLessonMutation } from '~/hooks/useLesson'
-import { useInitVideoMutation, useUploadVideoByNameMutation } from '~/hooks/useMedia'
+import { useInitVideoMutation, useUploadToAzure, useUploadVideoByNameMutation, useUploadVideoSuccessMutation } from '~/hooks/useMedia'
 import { videoSocket } from '~/lib/socket'
 import { handleError } from '~/lib/utils'
 import { CreateLessonBodySchema } from '~/types/lesson.type'
@@ -52,20 +52,20 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
   const createLessonMutation = useCreateLessonMutation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-
+  const uploadVideoSuccessMutation = useUploadVideoSuccessMutation()
+  const uploadToAzureMutation = useUploadToAzure()
   const onSubmit = async () => {
     try {
       if (file) {
         // 1) init để nhận url ngay
         const init = await initVideoMutation.mutateAsync((file as File).name)
-        const { url } = init.data.data
-        setValue('videoUrl', url)
+        const { url, key } = init.data.data
+        setValue('videoUrl', key.split('.')[0])
         setValue('duration', 0)
         // 2) upload nền theo filename
-        const filename = url.split('/').pop() as string
-        const formData = new FormData()
-        formData.append('files', file as File)
-        uploadVideoByNameMutation.mutate({ filename, body: formData })
+        await uploadToAzureMutation.mutateAsync({ sasUrl: url, file: file as File })
+        await uploadVideoSuccessMutation.mutateAsync({ key })
+        toast.success('Đã bắt đầu xử lý video')
       } else setValue('videoUrl', null)
       // Đảm bảo description luôn là string, không phải undefined
       const body = getValues()
@@ -76,11 +76,7 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
         duration: body.duration ?? 0,
         chapterId: chapterIdQuery
       }
-      const res = await createLessonMutation.mutateAsync(lessonBody)
-      navigate(`/admin/courses/edit/${courseId}?lessonId=${res.data.data.id}`, {
-        preventScrollReset: true
-      })
-      queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
+      await createLessonMutation.mutateAsync(lessonBody)
       toast.success('Tạo bài học mới thành công')
     } catch (error) {
       handleError({ error, setError })
@@ -89,12 +85,15 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
 
   useEffect(() => {
     if (!file) return
-    videoSocket.on('duration', () => {
+    videoSocket.on('duration', (id: number) => {
       queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
+      navigate(`/admin/courses/edit/${courseId}?lessonId=${id}`, {
+        preventScrollReset: true
+      })
       toast.success('Độ dài video đã được cập nhật')
     })
 
-  }, [queryClient, courseId, file])
+  }, [queryClient, courseId, file, navigate])
 
   return (
     <Lesson
@@ -106,7 +105,7 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
       setValue={setValue as any}
       setFile={setFile}
       buttonText='Tạo ngay'
-      isPending={createLessonMutation.isPending || initVideoMutation.isPending || uploadVideoByNameMutation.isPending}
+      isPending={createLessonMutation.isPending || initVideoMutation.isPending || uploadVideoByNameMutation.isPending || uploadToAzureMutation.isPending || uploadVideoSuccessMutation.isPending}
     />
   )
 }

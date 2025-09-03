@@ -1,3 +1,4 @@
+import { BlockBlobClient } from '@azure/storage-blob'
 import { AxiosError } from 'axios'
 import { clsx, type ClassValue } from 'clsx'
 import { format, intervalToDuration } from 'date-fns'
@@ -13,6 +14,7 @@ import type {
   GetCourseDetailResTypeForAdmin,
   ReorderChaptersAndLessonsBodyType
 } from '~/types/course.type'
+import type { ErrorResponse } from '~/types/success.type'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -54,7 +56,7 @@ export const handleError = ({
   duration?: number
 }) => {
   if (error instanceof AxiosError) {
-    const { statusCode, message } = error.response?.data || {}
+    const { statusCode, message } = error.response?.data as ErrorResponse
     if (statusCode === 422) {
       if (Array.isArray(message) && setError) {
         message.forEach((item) => {
@@ -256,4 +258,19 @@ export function CheckAdmin(permissions: PermissionStoreType[]) {
       })
     )
   )
+}
+
+export async function uploadWithAzureSdk(
+  sasUrl: string,
+  file: File,
+  onProgress?: (percent: number) => void
+): Promise<void> {
+  const client = new BlockBlobClient(sasUrl)
+
+  await client.uploadData(file, {
+    blockSize: 4 * 1024 * 1024,
+    concurrency: 4,
+    blobHTTPHeaders: { blobContentType: file.type || 'application/octet-stream' },
+    onProgress: (e) => onProgress?.(Math.round((e.loadedBytes / file.size) * 100))
+  })
 }
