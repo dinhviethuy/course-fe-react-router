@@ -1,15 +1,15 @@
 // ~/components/uploads/upload-video.tsx
-import { AlertCircleIcon, ImageIcon, UploadIcon } from 'lucide-react';
-import { useEffect, useRef } from 'react'; // Import useRef
-import type { UseFormRegister, UseFormSetValue } from 'react-hook-form';
-import ArtPlayer from '~/components/art-player/art-player';
+import { AlertCircleIcon, ImageIcon, UploadIcon } from 'lucide-react'
+import { useEffect, useRef } from 'react' // Import useRef
+import type { UseFormRegister, UseFormSetValue } from 'react-hook-form'
+import ArtPlayer from '~/components/art-player/art-player'
 
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { ADMIN_PERMISSIONS } from '~/constants/permission.constant';
-import { useFileUpload, type FileMetadata } from '~/hooks/use-file-upload';
-import { CheckAccess, cn } from '~/lib/utils';
-import { useAuthStore } from '~/stores/useAuthStore';
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { ADMIN_PERMISSIONS } from '~/constants/permission.constant'
+import { useFileUpload, type FileMetadata } from '~/hooks/use-file-upload'
+import { CheckAccess, cn } from '~/lib/utils'
+import { useAuthStore } from '~/stores/useAuthStore'
 
 export default function UploadVideo({
   register,
@@ -40,9 +40,9 @@ export default function UploadVideo({
     maxSize
   })
 
-  const prevVideoUrlRef = useRef(videoUrl);
+  const prevVideoUrlRef = useRef(videoUrl)
 
-  const previewUrl = disabled ? null : files[0]?.preview || videoUrl || null;
+  const previewUrl = disabled ? null : files[0]?.preview || videoUrl || null
 
   useEffect(() => {
     if (disabled) return
@@ -58,11 +58,11 @@ export default function UploadVideo({
   useEffect(() => {
     if (videoUrl !== prevVideoUrlRef.current) {
       if (files.length > 0) {
-        removeFile(files[0].id);
+        removeFile(files[0].id)
       }
-      prevVideoUrlRef.current = videoUrl;
+      prevVideoUrlRef.current = videoUrl
     }
-  }, [videoUrl, files, removeFile, setValue]);
+  }, [videoUrl, files, removeFile, setValue])
 
   return (
     <div className='flex flex-col gap-2'>
@@ -84,6 +84,7 @@ export default function UploadVideo({
                   url: previewUrl
                 }}
                 className={cn('w-full max-auto h-[200px] sm:h-[300px] md:h-[400px] xl:h-[500px] 2xl:h-[600px]')}
+                canSkip={true}
               />
 
               <div className={cn('flex justify-center gap-4', (disabled || !isShowUpload) && 'hidden')}>
@@ -99,20 +100,31 @@ export default function UploadVideo({
                       shouldDirty: true,
                       shouldValidate: true
                     })
-                    setFile(null);
+                    setFile(null)
                   }}
                   aria-label='Remove video'
                 >
                   Xóa
                 </Button>
-                <Button variant='secondary' type='button' className='flex gap-2 cursor-pointer h-10' onClick={openFileDialog} disabled={disabled || !isShowUpload}>
+                <Button
+                  variant='secondary'
+                  type='button'
+                  className='flex gap-2 cursor-pointer h-10'
+                  onClick={openFileDialog}
+                  disabled={disabled || !isShowUpload}
+                >
                   <UploadIcon className='size-4' />
                   Thay video
                 </Button>
               </div>
             </div>
           ) : (
-            <div className={cn('flex flex-col items-center justify-center px-4 py-3 text-center', (disabled || !isShowUpload) && 'hidden')}>
+            <div
+              className={cn(
+                'flex flex-col items-center justify-center px-4 py-3 text-center',
+                (disabled || !isShowUpload) && 'hidden'
+              )}
+            >
               <div
                 className='bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border'
                 aria-hidden='true'
@@ -120,7 +132,13 @@ export default function UploadVideo({
                 <ImageIcon className='size-4 opacity-60' />
               </div>
               <p className='mb-1.5 text-sm font-medium'>Drop your video here</p>
-              <Button variant='outline' type='button' className='mt-4 cursor-pointer' onClick={openFileDialog} disabled={disabled || !isShowUpload}>
+              <Button
+                variant='outline'
+                type='button'
+                className='mt-4 cursor-pointer'
+                onClick={openFileDialog}
+                disabled={disabled || !isShowUpload}
+              >
                 <UploadIcon className='-ms-1 size-4 opacity-60' aria-hidden='true' />
                 Select video
               </Button>

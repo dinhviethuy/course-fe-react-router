@@ -18,7 +18,7 @@ import envConfig from '~/lib/config'
 import { cn, getLessonIdAndChapterId } from '~/lib/utils'
 import type { GetCourseDetailResType } from '~/types/course.type'
 
-export function meta({ }: Route.MetaArgs) {
+export function meta({}: Route.MetaArgs) {
   return [{ title: 'Khu vực học tập' }, { name: 'description', content: 'Khu vực học tập' }]
 }
 
@@ -74,17 +74,21 @@ function RenderLesson({
 }) {
   const { data: lessonDetail, isPending } = useGetLessonDetailQuery({ lessonId })
 
-  const videoUrl = useMemo(() => `${envConfig.VITE_API_URL}/media/static/videos-azure/${lessonDetail?.data.data.videoUrl ?? ''}`, [lessonDetail?.data.data.videoUrl])
+  const videoUrl = useMemo(() => {
+    const raw = lessonDetail?.data.data.videoUrl
+    return raw ? `${raw}` : null
+  }, [lessonDetail?.data.data.videoUrl])
 
-  const playerOption = useMemo(() => ({
-    url: videoUrl
-  }), [videoUrl])
+  const playerOption = useMemo(
+    () => ({
+      url: videoUrl ?? ''
+    }),
+    [videoUrl]
+  )
 
   useEffect(() => {
     if (lessonDetail) {
-      const titleChapter = chapters.find(
-        (chapter) => chapter.id === lessonDetail?.data.data.chapterId
-      )?.title || ''
+      const titleChapter = chapters.find((chapter) => chapter.id === lessonDetail?.data.data.chapterId)?.title || ''
       setTitleChapter(titleChapter)
     }
   }, [lessonDetail, chapters, setTitleChapter])
@@ -92,9 +96,7 @@ function RenderLesson({
   if (isPending) return null
   if (!lessonDetail) return <NotFound statusCode={404} message='Không tìm thấy bài học' />
 
-  const titleChapter = chapters.find(
-    (chapter) => chapter.id === lessonDetail?.data.data.chapterId
-  )?.title || ''
+  const titleChapter = chapters.find((chapter) => chapter.id === lessonDetail?.data.data.chapterId)?.title || ''
 
   return (
     <>
@@ -156,7 +158,7 @@ function RenderSheet({
   chapters: GetCourseDetailResType['chapters']
   lessonIdQuery?: number
   courseSlug: string
-  titleChapter: string,
+  titleChapter: string
   chapterIdQuery?: number
 }) {
   const [isOpenMenu, setIsOpenMenu] = useState(false)
@@ -198,7 +200,13 @@ function Lesson({
       <div className='grid grid-cols-12'>
         <div className='lg:col-span-9 col-span-12 flex flex-col gap-4 relative lg:mt-0 mt-6'>
           <div className='lg:hidden absolute -top-12 right-4'>
-            <RenderSheet chapters={chapters} courseSlug={courseSlug} lessonIdQuery={lessonIdQuery} titleChapter={titleChapter} chapterIdQuery={chapterIdQuery} />
+            <RenderSheet
+              chapters={chapters}
+              courseSlug={courseSlug}
+              lessonIdQuery={lessonIdQuery}
+              titleChapter={titleChapter}
+              chapterIdQuery={chapterIdQuery}
+            />
           </div>
           {lessonIdQuery && (
             <RenderLesson

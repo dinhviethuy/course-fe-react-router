@@ -1,6 +1,13 @@
 import { Label } from '@radix-ui/react-dropdown-menu'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
-import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue } from 'react-hook-form'
+import {
+  Controller,
+  type Control,
+  type FieldErrors,
+  type UseFormHandleSubmit,
+  type UseFormRegister,
+  type UseFormSetValue
+} from 'react-hook-form'
 import { Link } from 'react-router'
 import MarkdownEditor from '~/components/markdown-editor/markdown-editor'
 import { Button } from '~/components/ui/button'
@@ -16,28 +23,38 @@ import { type CreateLessonBodyType, type UpdateLessonBodyType } from '~/types/le
 
 type LessonType = CreateLessonBodyType | UpdateLessonBodyType
 interface IProps {
-  lesson?: LessonType,
-  onSubmit: (data: Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>) => void,
-  handleSubmit: UseFormHandleSubmit<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
-  register: UseFormRegister<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
-  errors: FieldErrors<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
-  control: Control<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
-  setValue: UseFormSetValue<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>,
-  setFile: (file: File | FileMetadata | null) => void,
-  lessonIdPrev?: number,
-  lessonIdNext?: number,
-  buttonText: string,
-  isPending: boolean,
+  lesson?: LessonType
+  onSubmit: (data: Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>) => void
+  handleSubmit: UseFormHandleSubmit<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
+  register: UseFormRegister<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
+  errors: FieldErrors<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
+  control: Control<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
+  setValue: UseFormSetValue<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
+  setFile: (file: File | FileMetadata | null) => void
+  lessonIdPrev?: number
+  lessonIdNext?: number
+  buttonText: string
+  isPending: boolean
   disabled?: boolean
 }
 
-export default function Lesson({ lesson, onSubmit, handleSubmit, control, register, errors, setValue, setFile, lessonIdPrev, lessonIdNext, buttonText, isPending, disabled }: IProps) {
-
+export default function Lesson({
+  lesson,
+  onSubmit,
+  handleSubmit,
+  control,
+  register,
+  errors,
+  setValue,
+  setFile,
+  lessonIdPrev,
+  lessonIdNext,
+  buttonText,
+  isPending,
+  disabled
+}: IProps) {
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className='w-full max-w-5xl'
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className='w-full max-w-5xl'>
       <div className=' space-y-10'>
         <Card className='shadow-lg'>
           <CardHeader className='flex justify-between flex-wrap-reverse gap-4'>
@@ -74,7 +91,9 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
                 <Controller
                   name='isDraft'
                   control={control}
-                  render={({ field }) => <Switch disabled={disabled} checked={field.value} onCheckedChange={field.onChange} />}
+                  render={({ field }) => (
+                    <Switch disabled={disabled} checked={field.value} onCheckedChange={field.onChange} />
+                  )}
                 />
               </div>
               {errors.isDraft && <p className='text-sm text-red-500'>{errors.isDraft.message}</p>}
@@ -89,7 +108,7 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
             <div className='rounded-xl overflow-hidden border relative'>
               <UploadVideo
                 register={register}
-                videoUrl={lesson?.videoUrl ? `${envConfig.VITE_API_URL}/media/static/videos-azure/${lesson?.videoUrl}` : null}
+                videoUrl={lesson?.videoUrl ? `${lesson?.videoUrl}` : null}
                 setValue={setValue}
                 setFile={setFile}
                 disabled={disabled}
@@ -106,30 +125,25 @@ export default function Lesson({ lesson, onSubmit, handleSubmit, control, regist
             <ScrollArea className='rounded-md'>
               <Controller
                 control={control}
-                name="description"
+                name='description'
                 render={({ field }) => (
                   <ClientOnly>
-                    <MarkdownEditor
-                      value={field.value}
-                      onChange={field.onChange}
-                      disabled={disabled}
-                    />
+                    <MarkdownEditor value={field.value} onChange={field.onChange} disabled={disabled} />
                   </ClientOnly>
                 )}
               />
               {errors.description && <p className='text-red-500'>{errors.description.message}</p>}
             </ScrollArea>
           </CardContent>
-
         </Card>
-        {!disabled &&
+        {!disabled && (
           <CardFooter className='flex justify-center'>
             <Button type='submit' className='cursor-pointer' disabled={isPending}>
               {isPending && <Loader2 className='w-4 h-4 animate-spin' />}
               {buttonText}
             </Button>
           </CardFooter>
-        }
+        )}
       </div>
     </form>
   )

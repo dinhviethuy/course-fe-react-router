@@ -6,7 +6,13 @@ import { toast } from 'sonner'
 import Lesson from '~/components/lesson/lesson'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { useGetLessonDetailAdminQuery, useUpdateLessonMutation } from '~/hooks/useLesson'
-import { useInitVideoMutation, useUploadToAzure, useUploadVideoByNameMutation, useUploadVideoSuccessMutation } from '~/hooks/useMedia'
+import {
+  useInitVideoMutation,
+  useUploadToAzure,
+  useUploadVideoByNameMutation,
+  useUploadVideoMutation,
+  useUploadVideoSuccessMutation
+} from '~/hooks/useMedia'
 import { videoSocket } from '~/lib/socket'
 import { handleError } from '~/lib/utils'
 import { UpdateLessonBodySchema } from '~/types/lesson.type'
@@ -53,6 +59,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
   const uploadVideoSuccessMutation = useUploadVideoSuccessMutation()
   const queryClient = useQueryClient()
   const uploadToAzureMutation = useUploadToAzure()
+  const uploadVideoMutation = useUploadVideoMutation()
   useEffect(() => {
     reset({
       title: lessonDetail?.data.data.title,
@@ -69,7 +76,6 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       queryClient.refetchQueries({ queryKey: ['course-detail-admin', courseId] })
       toast.success('Độ dài video đã được cập nhật')
     })
-
   }, [queryClient, courseId, lessonDetail])
 
   if (isPending || !lessonDetail) return null
@@ -79,12 +85,16 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
   const onSubmit = async () => {
     try {
       if (file) {
-        const init = await initVideoMutation.mutateAsync((file as File).name)
-        const { url, key } = init.data.data
-        setValue('videoUrl', key.split('.')[0])
-        setValue('duration', 0)
-        await uploadToAzureMutation.mutateAsync({ sasUrl: url, file: file as File })
-        await uploadVideoSuccessMutation.mutateAsync({ key })
+        // const init = await initVideoMutation.mutateAsync((file as File).name)
+        // const { url, key } = init.data.data
+        // setValue('videoUrl', key.split('.')[0])
+        // setValue('duration', 0)
+        // await uploadToAzureMutation.mutateAsync({ sasUrl: url, file: file as File })
+        // await uploadVideoSuccessMutation.mutateAsync({ key })
+        let body = new FormData()
+        body.append('files', file as File)
+        const res = await uploadVideoMutation.mutateAsync(body)
+        setValue('videoUrl', res.data.data[0].url)
         toast.success('Đã bắt đầu xử lý video')
       }
       const body = getValues()
@@ -107,8 +117,6 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
     }
   }
 
-
-
   return (
     <Lesson
       control={control as any}
@@ -122,7 +130,13 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       lessonIdPrev={lessonIdPrev}
       lessonIdNext={lessonIdNext}
       buttonText='Cập nhật bài học'
-      isPending={updateLessonMutation.isPending || initVideoMutation.isPending || uploadVideoByNameMutation.isPending || uploadToAzureMutation.isPending || uploadVideoSuccessMutation.isPending}
+      isPending={
+        updateLessonMutation.isPending ||
+        initVideoMutation.isPending ||
+        uploadVideoByNameMutation.isPending ||
+        uploadToAzureMutation.isPending ||
+        uploadVideoSuccessMutation.isPending
+      }
       disabled={disabled}
     />
   )
