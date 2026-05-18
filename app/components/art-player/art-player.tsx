@@ -13,6 +13,7 @@ const ArtPlayer = memo(({ option, getInstance, className, canSkip, maxAllowedTim
   const artRef = useRef<HTMLDivElement>(null)
   const artInstanceRef = useRef<Artplayer | null>(null)
   const watchedTimeRef = useRef(0)
+  const wasPlayingBeforeHiddenRef = useRef(false)
 
   const memoizedGetInstance = useCallback(
     (instance: Artplayer) => {
@@ -42,16 +43,20 @@ const ArtPlayer = memo(({ option, getInstance, className, canSkip, maxAllowedTim
         fullscreenWeb: true,
         screenshot: true,
         pip: true,
-        fastForward: false
+        fastForward: canSkip ?? false
       })
 
       artInstanceRef.current = art
       memoizedGetInstance(art)
       const handleVisibilityChange = () => {
         if (document.hidden) {
+          wasPlayingBeforeHiddenRef.current = !art.video.paused
+
           art.pause()
         } else {
-          art.play()
+          if (wasPlayingBeforeHiddenRef.current) {
+            art.play()
+          }
         }
       }
 
