@@ -1,10 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
 import { default as Lesson } from '~/components/lesson/lesson'
+import { LessonType } from '~/constants/lesson.constant'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { useCreateLessonMutation } from '~/hooks/useLesson'
 import {
@@ -40,7 +41,8 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
       duration: 0,
       isDraft: true,
       title: '',
-      videoUrl: null
+      videoUrl: null,
+      type: LessonType.CONTENT
     },
     resolver: zodResolver(
       CreateLessonBodySchema.pick({
@@ -48,7 +50,8 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
         description: true,
         videoUrl: true,
         isDraft: true,
-        duration: true
+        duration: true,
+        type: true
       })
     )
   })
@@ -75,7 +78,7 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
         let body = new FormData()
         body.append('files', file as File)
         const res = await uploadVideoMutation.mutateAsync(body)
-        setValue('videoUrl', res.data.data[0].url)
+        setValue('videoUrl', res.data.data[0].key)
 
         toast.success('Đã bắt đầu xử lý video')
       } else setValue('videoUrl', null)
@@ -83,17 +86,21 @@ export default function CreateLesson({ chapterIdQuery, courseId }: Iprops) {
       const body = getValues()
       const lessonBody = {
         ...body,
+        type: body.type ?? LessonType.CONTENT,
         description: body.description ?? '',
         isDraft: body.isDraft ?? true,
         duration: body.duration ?? 0,
         chapterId: chapterIdQuery
       }
       await createLessonMutation.mutateAsync(lessonBody)
-      toast.success('Tạo bài học mới thành công')
+      toast.success(`Tạo ${lessonBody.type === LessonType.CONTENT ? 'bài học' : 'bài kiểm tra'} mới thành công`)
     } catch (error) {
       handleError({ error, setError })
     }
   }
+
+  // const currentType = useWatch({ control, name: 'type' })
+  // const isContent = currentType === LessonType.CONTENT
 
   useEffect(() => {
     if (!file) return

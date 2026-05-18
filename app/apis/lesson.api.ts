@@ -23,7 +23,10 @@ const lessonApi = {
     http.put<SuccessResponse<UpdateLessonResType>>(`/manage-lessons/${param.lessonId}`, body),
 
   deleteLesson: (param: GetLessonParamsType) =>
-    http.delete<SuccessResponse<boolean>>(`/manage-lessons/${param.lessonId}`)
+    http.delete<SuccessResponse<boolean>>(`/manage-lessons/${param.lessonId}`),
+
+  completeLesson: (param: GetLessonParamsType) =>
+    http.post<SuccessResponse<boolean>>(`/lessons/${param.lessonId}/complete`)
 }
 
 export default lessonApi

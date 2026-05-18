@@ -1,4 +1,5 @@
 import z from 'zod'
+import { LessonType } from '~/constants/lesson.constant'
 
 export const LessonSchema = z.object({
   id: z.number().int().positive(),
@@ -6,6 +7,7 @@ export const LessonSchema = z.object({
   description: z.string().default(''),
   order: z.number().min(0).default(0),
   isDraft: z.boolean().default(true),
+  type: z.enum(['CONTENT', 'QUIZ']).default('CONTENT'),
   chapterId: z.number().int().positive(),
   duration: z.number().min(0).default(0),
   videoUrl: z.string().nullable(),
@@ -24,19 +26,28 @@ export const CreateLessonBodySchema = LessonSchema.pick({
   description: true,
   isDraft: true,
   chapterId: true,
+  type: true,
   duration: true,
   videoUrl: true
 })
   .strict()
   .refine((data) => {
-    if (!data.videoUrl) {
+    if (!data.videoUrl && data.type === LessonType.CONTENT) {
       if (!data.description) {
         return {
           message: 'Không có video thì phải có mô tả',
           path: ['videoUrl', 'description']
         }
       }
+    } else {
+      if (data.type == LessonType.QUIZ && data.videoUrl) {
+        return {
+          message: 'Đây là quiz không phải content',
+          path: ['videoUrl', 'type']
+        }
+      }
     }
+
     return true
   })
 

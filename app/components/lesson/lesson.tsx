@@ -2,6 +2,7 @@ import { Label } from '@radix-ui/react-dropdown-menu'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import {
   Controller,
+  useWatch,
   type Control,
   type FieldErrors,
   type UseFormHandleSubmit,
@@ -16,20 +17,21 @@ import { Input } from '~/components/ui/input'
 import { ScrollArea } from '~/components/ui/scroll-area'
 import { Switch } from '~/components/ui/switch'
 import UploadVideo from '~/components/uploads/upload-video'
+import { LessonType } from '~/constants/lesson.constant'
 import { type FileMetadata } from '~/hooks/use-file-upload'
 import { ClientOnly } from '~/layout/admin/client-only'
 import envConfig from '~/lib/config'
 import { type CreateLessonBodyType, type UpdateLessonBodyType } from '~/types/lesson.type'
 
-type LessonType = CreateLessonBodyType | UpdateLessonBodyType
+type LessonFormType = CreateLessonBodyType | UpdateLessonBodyType
 interface IProps {
-  lesson?: LessonType
-  onSubmit: (data: Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>) => void
-  handleSubmit: UseFormHandleSubmit<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
-  register: UseFormRegister<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
-  errors: FieldErrors<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
-  control: Control<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
-  setValue: UseFormSetValue<Omit<LessonType, 'chapterId' | 'courseId' | 'duration'>>
+  lesson?: LessonFormType
+  onSubmit: (data: Omit<LessonFormType, 'chapterId' | 'courseId' | 'duration'>) => void
+  handleSubmit: UseFormHandleSubmit<Omit<LessonFormType, 'chapterId' | 'courseId' | 'duration'>>
+  register: UseFormRegister<Omit<LessonFormType, 'chapterId' | 'courseId' | 'duration'>>
+  errors: FieldErrors<Omit<LessonFormType, 'chapterId' | 'courseId' | 'duration'>>
+  control: Control<Omit<LessonFormType, 'chapterId' | 'courseId' | 'duration'>>
+  setValue: UseFormSetValue<Omit<LessonFormType, 'chapterId' | 'courseId' | 'duration'>>
   setFile: (file: File | FileMetadata | null) => void
   lessonIdPrev?: number
   lessonIdNext?: number
@@ -53,12 +55,15 @@ export default function Lesson({
   isPending,
   disabled
 }: IProps) {
+  const currentType = useWatch({ control: control as any, name: 'type' as any })
+  const isContent = currentType === LessonType.CONTENT
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='w-full max-w-5xl'>
       <div className=' space-y-10'>
         <Card className='shadow-lg'>
           <CardHeader className='flex justify-between flex-wrap-reverse gap-4'>
-            <CardTitle className='text-xl'>📋 Thông tin bài học</CardTitle>
+            <CardTitle className='text-xl'>📋 {isContent ? 'Thông tin bài học' : 'Bài kiểm tra'}</CardTitle>
             <div className='flex gap-2'>
               {lessonIdPrev && (
                 <Link to={`?lessonId=${lessonIdPrev}`} preventScrollReset>
@@ -80,14 +85,35 @@ export default function Lesson({
           </CardHeader>
           <CardContent className='space-y-6'>
             <div className='space-y-2'>
-              <Label className='font-semibold'>Tên bài học</Label>
+              <Label className='font-semibold'>Loại</Label>
+              <div className='flex items-center justify-between rounded-md border px-4 py-3 bg-muted'>
+                <span className='text-sm text-muted-foreground'>{isContent ? 'Bài học' : 'Bài kiểm tra'}</span>
+                <Controller
+                  name={'type' as any}
+                  control={control as any}
+                  render={({ field }) => (
+                    <Switch
+                      disabled={disabled}
+                      checked={field.value === LessonType.CONTENT}
+                      onCheckedChange={(value) => field.onChange(value ? LessonType.CONTENT : LessonType.QUIZ)}
+                    />
+                  )}
+                />
+              </div>
+              {errors.type && <p className='text-sm text-red-500'>{errors.type.message}</p>}
+            </div>
+            <div className='space-y-2'>
+              <Label className='font-semibold'>{isContent ? 'Tên bài học' : 'Tên bài kiểm tra'}</Label>
               <Input {...register('title')} required disabled={disabled} />
               {errors.title && <p className='text-sm text-red-500'>{errors.title.message}</p>}
             </div>
+
             <div className='space-y-2'>
               <Label className='font-semibold'>Trạng thái bản nháp</Label>
               <div className='flex items-center justify-between rounded-md border px-4 py-3 bg-muted'>
-                <span className='text-sm text-muted-foreground'>Lưu bài học dưới dạng bản nháp</span>
+                <span className='text-sm text-muted-foreground'>
+                  Lưu bài {isContent ? 'học' : 'kiểm tra'} dưới dạng bản nháp
+                </span>
                 <Controller
                   name='isDraft'
                   control={control}
@@ -100,26 +126,30 @@ export default function Lesson({
             </div>
           </CardContent>
         </Card>
+        {isContent && (
+          <Card className='shadow-lg'>
+            <CardHeader>
+              <CardTitle className='text-xl'>🎬 Video bài học</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='rounded-xl overflow-hidden border relative'>
+                <UploadVideo
+                  register={register}
+                  videoUrl={
+                    lesson?.videoUrl ? `${envConfig.VITE_API_URL}/media/static/videos/${lesson.videoUrl}` : null
+                  }
+                  setValue={setValue}
+                  setFile={setFile}
+                  disabled={disabled}
+                />
+                {errors.videoUrl && <p className='text-red-500'>{errors.videoUrl.message}</p>}
+              </div>
+            </CardContent>
+          </Card>
+        )}
         <Card className='shadow-lg'>
           <CardHeader>
-            <CardTitle className='text-xl'>🎬 Video bài học</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='rounded-xl overflow-hidden border relative'>
-              <UploadVideo
-                register={register}
-                videoUrl={lesson?.videoUrl ? `${lesson?.videoUrl}` : null}
-                setValue={setValue}
-                setFile={setFile}
-                disabled={disabled}
-              />
-              {errors.videoUrl && <p className='text-red-500'>{errors.videoUrl.message}</p>}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className='shadow-lg'>
-          <CardHeader>
-            <CardTitle className='text-xl'>📝 Mô tả bài học</CardTitle>
+            <CardTitle className='text-xl'>📝 Mô tả {isContent ? 'bài học' : 'bài kiểm tra'}</CardTitle>
           </CardHeader>
           <CardContent>
             <ScrollArea className='rounded-md'>

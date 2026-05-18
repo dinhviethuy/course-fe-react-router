@@ -76,7 +76,7 @@ function RenderLesson({
 
   const videoUrl = useMemo(() => {
     const raw = lessonDetail?.data.data.videoUrl
-    return raw ? `${raw}` : null
+    return raw ? `${envConfig.VITE_API_URL}/media/static/videos/${raw}` : null
   }, [lessonDetail?.data.data.videoUrl])
 
   const playerOption = useMemo(
@@ -101,12 +101,12 @@ function RenderLesson({
   return (
     <>
       <div className='pr-2'>
-        <ArtPlayer
-          option={playerOption}
-          className={cn('w-full h-[220px] sm:h-[400px] md:h-[500px] xl:h-[600px] 2xl:h-[700px]', {
-            hidden: !videoUrl
-          })}
-        />
+        {videoUrl && (
+          <ArtPlayer
+            option={playerOption}
+            className='w-full h-[220px] sm:h-[400px] md:h-[500px] xl:h-[600px] 2xl:h-[700px]'
+          />
+        )}
       </div>
       <div>
         <div className='flex justify-between items-center pr-2'>

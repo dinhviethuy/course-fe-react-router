@@ -15,7 +15,8 @@ import {
 } from '~/hooks/useMedia'
 import { videoSocket } from '~/lib/socket'
 import { handleError } from '~/lib/utils'
-import { UpdateLessonBodySchema } from '~/types/lesson.type'
+import { LessonSchema } from '~/types/lesson.type'
+import { LessonType } from '~/constants/lesson.constant'
 
 interface Iprops {
   lessonIdQuery: number
@@ -43,12 +44,13 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
     setError
   } = useForm({
     resolver: zodResolver(
-      UpdateLessonBodySchema.pick({
+      LessonSchema.pick({
         title: true,
         description: true,
         videoUrl: true,
         isDraft: true,
-        duration: true
+        duration: true,
+        type: true
       })
     )
   })
@@ -66,7 +68,8 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
       description: lessonDetail?.data.data.description,
       videoUrl: lessonDetail?.data.data.videoUrl,
       isDraft: lessonDetail?.data.data.isDraft,
-      duration: lessonDetail?.data.data.duration
+      duration: lessonDetail?.data.data.duration,
+      type: lessonDetail?.data.data.type
     })
   }, [lessonDetail, reset])
 
@@ -94,7 +97,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
         let body = new FormData()
         body.append('files', file as File)
         const res = await uploadVideoMutation.mutateAsync(body)
-        setValue('videoUrl', res.data.data[0].url)
+        setValue('videoUrl', res.data.data[0].key)
         toast.success('Đã bắt đầu xử lý video')
       }
       const body = getValues()
@@ -104,6 +107,7 @@ export default function UpdateLesson({ lessonIdQuery, courseId, lessonIdPrev, le
         },
         body: {
           ...body,
+          type: body.type ?? lesson.type ?? LessonType.CONTENT,
           description: body.description ?? '',
           isDraft: body.isDraft ?? true,
           duration: body.duration ?? 0,

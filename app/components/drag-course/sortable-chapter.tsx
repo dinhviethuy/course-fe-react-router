@@ -40,12 +40,15 @@ export default function SortableChapter({
   children: React.ReactNode
   isExpanded: boolean
   isAnyChapterDragging: boolean
-  handleUpdateChapter: (body: Omit<UpdateChatperBodyType, 'courseId'>, chapterId: number, setError?: UseFormSetError<any>) => void
+  handleUpdateChapter: (
+    body: Omit<UpdateChatperBodyType, 'courseId'>,
+    chapterId: number,
+    setError?: UseFormSetError<any>
+  ) => void
   handleDeleteChapter: (chapterId: number) => void
-  isPending: boolean,
+  isPending: boolean
   disabled?: boolean
 }) {
-
   const { permissions } = useAuthStore()
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const isReorder = CheckAccess({
@@ -54,19 +57,22 @@ export default function SortableChapter({
     permissions
   })
 
-  const isShowMenu = CheckAccess({
-    method: ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method,
-    path: ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path,
-    permissions
-  }) || CheckAccess({
-    method: ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.method,
-    path: ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.path,
-    permissions
-  }) || CheckAccess({
-    method: ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.method,
-    path: ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.path,
-    permissions
-  })
+  const isShowMenu =
+    CheckAccess({
+      method: ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method,
+      path: ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path,
+      permissions
+    }) ||
+    CheckAccess({
+      method: ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.method,
+      path: ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.path,
+      permissions
+    }) ||
+    CheckAccess({
+      method: ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.method,
+      path: ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.path,
+      permissions
+    })
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `chapter-${chapter.id}`,
@@ -98,7 +104,11 @@ export default function SortableChapter({
         <div className='flex justify-between items-center gap-2 md:gap-4'>
           <AccordionTrigger className='py-2 text-[15px] leading-6 flex items-center gap-2 justify-between'>
             <div className='flex gap-2 items-center'>
-              <span className={cn('cursor-move', (disabled || !isReorder) && 'cursor-not-allowed opacity-50')}  {...attributes} {...listeners}>
+              <span
+                className={cn('cursor-move', (disabled || !isReorder) && 'cursor-not-allowed opacity-50')}
+                {...attributes}
+                {...listeners}
+              >
                 <GripVertical size={16} />
               </span>
               <span>{chapter.title}</span>
@@ -106,7 +116,10 @@ export default function SortableChapter({
             </div>
           </AccordionTrigger>
           <div className='flex gap-1'>
-            <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path} method={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method}>
+            <AdminGuard
+              path={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path}
+              method={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method}
+            >
               <div className='hidden sm:flex items-center gap-2'>
                 <span>Nháp</span>
                 <Switch
@@ -126,7 +139,7 @@ export default function SortableChapter({
                 />
               </div>
             </AdminGuard>
-            {!disabled && isShowMenu &&
+            {!disabled && isShowMenu && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant='ghost' className='h-8 w-8 p-0'>
@@ -136,19 +149,28 @@ export default function SortableChapter({
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align='end'>
-                  <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.path} method={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.method}>
+                  <AdminGuard
+                    path={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.path}
+                    method={ADMIN_PERMISSIONS.CHAPTERS.POST_CHAPTERS.method}
+                  >
                     <DropdownMenuItem asChild>
                       <NavLink to={`?chapterId=${chapter.id}`} preventScrollReset>
-                        Tạo bài học mới
+                        Tạo bài học/quiz mới
                       </NavLink>
                     </DropdownMenuItem>
                   </AdminGuard>
-                  <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path} method={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method}>
+                  <AdminGuard
+                    path={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.path}
+                    method={ADMIN_PERMISSIONS.CHAPTERS.PUT_CHAPTERS_CHAPTERID.method}
+                  >
                     <UpdateChapter chapter={chapter} isPending={isPending} handleUpdateChapter={handleUpdateChapter}>
                       <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Sửa</DropdownMenuItem>
                     </UpdateChapter>
                   </AdminGuard>
-                  <AdminGuard path={ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.path} method={ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.method}>
+                  <AdminGuard
+                    path={ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.path}
+                    method={ADMIN_PERMISSIONS.CHAPTERS.DELETE_CHAPTERS_CHAPTERID.method}
+                  >
                     <DropdownMenuItem
                       className='text-red-600'
                       onSelect={(e) => {
@@ -159,10 +181,9 @@ export default function SortableChapter({
                       Xóa
                     </DropdownMenuItem>
                   </AdminGuard>
-
                 </DropdownMenuContent>
               </DropdownMenu>
-            }
+            )}
           </div>
         </div>
         <AccordionContent className={`pt-2 ${shouldCollapseContent ? 'dnd-kit-chapter-content-collapsed' : ''}`}>
