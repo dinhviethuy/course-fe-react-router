@@ -36,3 +36,9 @@ export const useDeleteLessonMutation = () => {
     mutationFn: (param: GetLessonParamsType) => lessonApi.deleteLesson(param)
   })
 }
+
+export const useCompleteLessonMutation = () => {
+  return useMutation({
+    mutationFn: (param: GetLessonParamsType) => lessonApi.completeLesson(param)
+  })
+}
